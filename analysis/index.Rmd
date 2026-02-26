@@ -1,0 +1,30 @@
+---
+title: "Home"
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+
+# **M1 - EDSB - Projet de Huong PHAM**
+
+## **R**
+
+### Les tests statistiques à l'aide de R - Biostats
+
+#### [Chapitre 1 - Preservation de R](Gael_1.html)
+
+#### Chapitre 4 - Les étapes d'un test statistique
+
+Distribution de probabilité
+
+[Excercices](4_Excercice.html)
+
+## **Data Mining**
+
+```{r}
+library(workflowr)
+wflow_use_github("tthanhhuong")
+```

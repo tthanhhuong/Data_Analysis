@@ -1,0 +1,16 @@
+---
+title: "4_Excercice"
+author: "Huong PHAM"
+date: "2026-02-26"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Les étapes d'un test statistique
+
+```{r}
+
+```
+
+Cas des variables discrètes
