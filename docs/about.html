@@ -289,7 +289,7 @@ $(document).ready(function () {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -300,8 +300,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -314,9 +314,9 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
@@ -339,33 +339,36 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree551fb641d424fd65e41297ceef28c8e2cf0c47bctargetblank551fb64a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb77660e0f2300e78f7f5c794d38762aef5420594targetblankb77660ea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/551fb641d424fd65e41297ceef28c8e2cf0c47bc" target="_blank">551fb64</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b77660e0f2300e78f7f5c794d38762aef5420594" target="_blank">b77660e</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree551fb641d424fd65e41297ceef28c8e2cf0c47bctargetblank551fb64a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb77660e0f2300e78f7f5c794d38762aef5420594targetblankb77660ea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -375,7 +378,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/551fb641d424fd65e41297ceef28c8e2cf0c47bc" target="_blank">551fb64</a>.
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b77660e0f2300e78f7f5c794d38762aef5420594" target="_blank">b77660e</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -397,6 +400,7 @@ Ignored files:
 
 Unstaged changes:
     Modified:   .gitignore
+    Modified:   analysis/about.Rmd
 
 </code></pre>
 <p>
@@ -440,6 +444,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/tthanhhuong/Data_Analysis/b77660e0f2300e78f7f5c794d38762aef5420594/docs/about.html" target="_blank">b77660e</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -557,6 +578,7 @@ build the HTML files, and commit the HTML files</p></li>
 <li><p>Push the changes to GitHub or GitLab with <a
 href="https://workflowr.github.io/workflowr/reference/wflow_git_push.html"><code>wflow_git_push()</code></a> (or <code>git push</code> in
 the Terminal)</p></li>
+<li><p><code>wflow_publish(republish=T, message = "Republish entire site")</code></p></li>
 </ol>
 <p>This ensures that the code version recorded at the top of an HTML
 file corresponds to the state of the Git repository at the time it was

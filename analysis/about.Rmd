@@ -23,6 +23,8 @@ This is the general workflow:
 
 6.  Push the changes to GitHub or GitLab with [`wflow_git_push()`](https://workflowr.github.io/workflowr/reference/wflow_git_push.html) (or `git push` in the Terminal)
 
+7.  `wflow_publish(republish=T, message = "Republish entire site")`
+
 This ensures that the code version recorded at the top of an HTML file corresponds to the state of the Git repository at the time it was built.
 
 The only exception to this workflow is if you are updating the aesthetics of your website (e.g. anytime you make edits to`analysis/_site.yml`). In this case you’ll want to update all the published HTML files, regardless of whether or not their corresponding R Markdown files have been updated. To republish every HTML page, run [`wflow_publish()`](https://workflowr.github.io/workflowr/reference/wflow_publish.html) with`republish = TRUE`. This behavior is only previewed below by specifying `dry_run = TRUE`.

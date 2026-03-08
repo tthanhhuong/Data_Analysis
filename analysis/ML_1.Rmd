@@ -48,7 +48,7 @@ Considérons les résultats d’une étude clinique portant sur la comparaison d
 
     ```
 
-    Après avoir vérifiez les hypothèses nécessaire à une analyse de la variance, réalisez cette analyse avec R. L’effet du traitement a-t-il un effet significatif sur la pression artérielle systolique ?
+    3.  Après avoir vérifiez les hypothèses nécessaire à une analyse de la variance, réalisez cette analyse avec R. L’effet du traitement a-t-il un effet significatif sur la pression artérielle systolique ?
 
     ```{r}
 
@@ -102,7 +102,7 @@ Considérons les résultats d’une étude clinique portant sur la comparaison d
     # de 0.99 indique de 99% de la variance de la pression artérielle peut être attribuable au traitement.
     ```
 
-3.  Effectuez des comparaisons deux à deux en utilisant les méthodes statistiques appropriées. Est-il nécessaire de corriger pour la multiplicité des tests ? Pourquoi ?
+    4.  Effectuez des comparaisons deux à deux en utilisant les méthodes statistiques appropriées. Est-il nécessaire de corriger pour la multiplicité des tests ? Pourquoi ?
 
     ```{r}
 
