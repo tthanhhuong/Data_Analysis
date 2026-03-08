@@ -24,7 +24,12 @@ Distribution de probabilité
 
 ## **Data Mining**
 
-```{r}
-library(workflowr)
-wflow_use_github("tthanhhuong")
-```
+## **Modèle Linéaire**
+
+### [1. Analyse de la variance à un facteur (ANOVA I)](ML_1.html)
+
+### [2. Régression linéaire simple](ML_2.html)
+
+### [3. Analyse de la variance à deux facteurs (ANOVA II)](ML_3.html)
+
+### [4. Régression linéaire multiple et analyse en covariance (ANCOVA)](ML_4.html)

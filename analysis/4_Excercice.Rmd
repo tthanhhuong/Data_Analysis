@@ -9,8 +9,8 @@ editor_options:
 
 ## Les étapes d'un test statistique
 
-```{r}
+### Exercice 1 :
 
-```
+La fonction `hist()` néccessite de reconstituer l'effectif des 400 colleges, cad à générer un vecteur de 400 valeurs. Il est obtenu avec la fonction `rep()`.
 
-Cas des variables discrètes
+Il faut en suit tracer l'histogramme en fréquence, cela n'existe pas dans `hist()`.

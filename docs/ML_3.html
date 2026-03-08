@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="PHAM Huong" />
+
+<meta name="date" content="2026-03-08" />
+
+<title>TD3 R - Analyse de la variance à deux facteurs</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data_Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/tthanhhuong/Data_Analysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">TD3 R - Analyse de la variance à deux
+facteurs</h1>
+<h4 class="author">PHAM Huong</h4>
+<h4 class="date">2026-03-08</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-03-08
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 2
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20260226code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20260226)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20260226code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20260226)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it
+difficult for you and others to run your code on a different machine.
+Change the absolute path(s) below to the suggested relative path(s) to
+make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/Users/thanhhuong/R/Data_Analysis
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.Rhistory
+
+Untracked files:
+    Untracked:  analysis/ML_1.Rmd
+    Untracked:  analysis/ML_2.Rmd
+    Untracked:  analysis/ML_3.Rmd
+    Untracked:  analysis/ML_4.Rmd
+
+Unstaged changes:
+    Modified:   analysis/4_Excercice.Rmd
+    Modified:   analysis/Gael_1.Rmd
+    Modified:   analysis/about.Rmd
+    Modified:   analysis/index.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="exercice-1---exemple-du-cours" class="section level1">
+<h1>Exercice 1 - Exemple du cours</h1>
+<p>Une compagnie pharmaceutique américaine souhaite évaluer l’efficacité
+d’un nouveau médicament permettant de réduire la durée d’un épisode de
+fièvre selon le sexe (Femme - Homme) et l’ethnie (Cau- casien, Africain
+Americain, Hispanique). Six groupes ont été formés, correspondant à
+toutes les com- binaisons possibles de ces deux facteurs. Nous disposons
+d’un échantillon de 5 individus pour chaque combinaison des deux
+facteurs, soit 30 observations au total, n’ayant aucun lien entre eux.
+Nous dispo- sons des informations suivantes : — Le sexe (Femme/Homme) ;
+— L’ethnie (Africain Amerciain/Caucasien/Hispanique) — La durée
+nécessaire pour réduire la fièvre (en minutes).</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données ANOVA_II_exercice1.csv dans R. Puis
+mettez en forme les données si nécessaire.</p>
+<pre class="r"><code>## 1. Importation des données 
+setwd(&quot;/Users/thanhhuong/R/Data_Analysis&quot;)
+exercice1 &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/ANOVA_II_exercice1.csv&quot;,
+                   sep = &quot;;&quot;,
+                   header = TRUE)
+
+# Mise en forme
+str(exercice1)</code></pre>
+<pre><code>&#39;data.frame&#39;:   30 obs. of  4 variables:
+ $ Obs   : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ Sexe  : chr  &quot;Femme&quot; &quot;Femme&quot; &quot;Femme&quot; &quot;Femme&quot; ...
+ $ Ethnie: chr  &quot;Caucasien&quot; &quot;Caucasien&quot; &quot;Caucasien&quot; &quot;Caucasien&quot; ...
+ $ Duree : int  25 29 47 26 28 46 51 33 47 41 ...</code></pre>
+<pre class="r"><code>exercice1$Sexe &lt;- as.factor(exercice1$Sexe)
+exercice1$Ethnie &lt;- as.factor(exercice1$Ethnie)
+exercice1 &lt;- exercice1[,c(-1)]
+str(exercice1)</code></pre>
+<pre><code>&#39;data.frame&#39;:   30 obs. of  3 variables:
+ $ Sexe  : Factor w/ 2 levels &quot;Femme&quot;,&quot;Homme&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ Ethnie: Factor w/ 3 levels &quot;Africain Americain&quot;,..: 2 2 2 2 2 1 1 1 1 1 ...
+ $ Duree : int  25 29 47 26 28 46 51 33 47 41 ...</code></pre></li>
+<li><p>Effectuez des statistiques descriptives de la durée nécessaire
+pour réduire la fièvre globalement, pour chaque facteur, puis pour
+chaque combinaison des deux facteurs. Représentez graphiquement ces
+derniers éléments. Que pouvez-vous dire ?</p>
+<pre class="r"><code>## 2. Statistiques descriptives
+# Statistiques descriptives
+mean(exercice1$Duree)</code></pre>
+<pre><code>[1] 39.5</code></pre>
+<pre class="r"><code>## Approche 1 : 
+library(tidyverse) </code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;tibble&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;tidyr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;readr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;purrr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;dplyr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;lubridate&#39; was built under R version 4.4.3</code></pre>
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.0     ✔ readr     2.1.6
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.2     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(rstatix)</code></pre>
+<pre><code>
+Attaching package: &#39;rstatix&#39;
+
+The following object is masked from &#39;package:stats&#39;:
+
+    filter</code></pre>
+<pre class="r"><code>moyenne_sexe &lt;- exercice1 %&gt;%
+  group_by(Sexe) %&gt;%
+  get_summary_stats(Duree, type = &quot;mean_sd&quot;)
+moyenne_sexe</code></pre>
+<pre><code># A tibble: 2 × 5
+  Sexe  variable     n  mean    sd
+  &lt;fct&gt; &lt;fct&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Femme Duree       15    34  10.6
+2 Homme Duree       15    45  14.1</code></pre>
+<pre class="r"><code>moyenne_ethnie &lt;- exercice1 %&gt;%
+  group_by(Ethnie) %&gt;%
+  get_summary_stats(Duree, type = &quot;mean_sd&quot;)
+moyenne_ethnie</code></pre>
+<pre><code># A tibble: 3 × 5
+  Ethnie             variable     n  mean    sd
+  &lt;fct&gt;              &lt;fct&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Africain Americain Duree       10  49.4 10.4 
+2 Caucasien          Duree       10  41.1 13.3 
+3 Hispanique         Duree       10  28    6.57</code></pre>
+<pre class="r"><code>moyenne_sexe_ethnie &lt;- exercice1 %&gt;%
+  group_by(Sexe,Ethnie) %&gt;%
+  get_summary_stats(Duree, type = &quot;mean_sd&quot;)
+moyenne_sexe_ethnie</code></pre>
+<pre><code># A tibble: 6 × 6
+  Sexe  Ethnie             variable     n  mean    sd
+  &lt;fct&gt; &lt;fct&gt;              &lt;fct&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Femme Africain Americain Duree        5  43.6  6.91
+2 Femme Caucasien          Duree        5  31    9.08
+3 Femme Hispanique         Duree        5  27.4  9.26
+4 Homme Africain Americain Duree        5  55.2 10.6 
+5 Homme Caucasien          Duree        5  51.2  7.69
+6 Homme Hispanique         Duree        5  28.6  3.21</code></pre>
+<pre class="r"><code>## Approche 2 : 
+aggregate(Duree ~ Sexe,
+          data = exercice1,
+          FUN = mean)</code></pre>
+<pre><code>   Sexe Duree
+1 Femme    34
+2 Homme    45</code></pre>
+<pre class="r"><code>aggregate(Duree ~ Ethnie,
+          data = exercice1,
+          FUN = mean)</code></pre>
+<pre><code>              Ethnie Duree
+1 Africain Americain  49.4
+2          Caucasien  41.1
+3         Hispanique  28.0</code></pre>
+<pre class="r"><code>aggregate(Duree ~ Sexe + Ethnie,
+          data = exercice1,
+          FUN = mean)</code></pre>
+<pre><code>   Sexe             Ethnie Duree
+1 Femme Africain Americain  43.6
+2 Homme Africain Americain  55.2
+3 Femme          Caucasien  31.0
+4 Homme          Caucasien  51.2
+5 Femme         Hispanique  27.4
+6 Homme         Hispanique  28.6</code></pre>
+<pre class="r"><code># Représentation graphique des données
+library(ggplot2)
+ggplot(exercice1,
+       aes(x = Ethnie, y = Duree, fill = Sexe)) +
+  geom_boxplot() +
+  theme(axis.text = element_text(size=12)) </code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-4-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(exercice1,
+       aes(x = Sexe, y = Duree, fill = Ethnie)) +
+  geom_boxplot() +
+  theme(axis.text = element_text(size=12)) </code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-4-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Pourquoi une analyse de la variance à deux facteurs est la
+méthode statistique appropriée pour analyser l’effet du sexe et de
+l’ethnie sur la durée de réduction de la fièvre ?</p></li>
+<li><p>Un terme d’intéraction entre les deux facteurs vous semble-t-il
+être pertinent ici ?</p></li>
+<li><p>Posez les hypothèses de cette ANOVA II, puis réalisez-là avec R.
+Le terme d’intéraction est-il significatif. Qu’est-ce que cela veut dire
+?</p>
+<pre class="r"><code>## 5. ANOVA II : Approche directe
+anova2 &lt;- aov(formula = Duree ~ Sexe + Ethnie + Sexe*Ethnie,
+             data = exercice1) 
+summary(anova2)</code></pre>
+<pre><code>            Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+Sexe         1  907.5   907.5  13.705  0.00111 ** 
+Ethnie       2 2328.2  1164.1  17.580 1.99e-05 ***
+Sexe:Ethnie  2  452.6   226.3   3.418  0.04943 *  
+Residuals   24 1589.2    66.2                     
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre></li>
+<li><p>Nous souhaitons maintenant réaliser cette analyse à partir de
+l’approche modélisation. Ecrivez l’équation du modèle, puis estimez-le
+avec R. Retrouvez les éléments obtenus avec l’approche directe.</p>
+<pre class="r"><code>## 6. ANOVA II : Approche modélisation
+# Modification des contrastes :
+contrasts(exercice1$Sexe)</code></pre>
+<pre><code>      Homme
+Femme     0
+Homme     1</code></pre>
+<pre class="r"><code>contrasts(exercice1$Sexe) &lt;- &quot;contr.sum&quot;
+contrasts(exercice1$Sexe)</code></pre>
+<pre><code>      [,1]
+Femme    1
+Homme   -1</code></pre>
+<pre class="r"><code>contrasts(exercice1$Ethnie)</code></pre>
+<pre><code>                   Caucasien Hispanique
+Africain Americain         0          0
+Caucasien                  1          0
+Hispanique                 0          1</code></pre>
+<pre class="r"><code>contrasts(exercice1$Ethnie) &lt;- &quot;contr.sum&quot;
+contrasts(exercice1$Ethnie) </code></pre>
+<pre><code>                   [,1] [,2]
+Africain Americain    1    0
+Caucasien             0    1
+Hispanique           -1   -1</code></pre>
+<pre class="r"><code># Estimation du modèle
+mod1 &lt;- lm(Duree ~ Sexe + Ethnie + Sexe*Ethnie,
+           data = exercice1)
+
+anova(mod1)</code></pre>
+<pre><code>Analysis of Variance Table
+
+Response: Duree
+            Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+Sexe         1  907.5  907.50 13.7050  0.001115 ** 
+Ethnie       2 2328.2 1164.10 17.5802 1.987e-05 ***
+Sexe:Ethnie  2  452.6  226.30  3.4176  0.049429 *  
+Residuals   24 1589.2   66.22                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary(anova2)</code></pre>
+<pre><code>            Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+Sexe         1  907.5   907.5  13.705  0.00111 ** 
+Ethnie       2 2328.2  1164.1  17.580 1.99e-05 ***
+Sexe:Ethnie  2  452.6   226.3   3.418  0.04943 *  
+Residuals   24 1589.2    66.2                     
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre></li>
+<li><p>Vérifiez les hypothèses du modèle, puis interprétez les résultats
+si cela vous semble pertinent. Que pouvez-vous dire ?</p>
+<pre class="r"><code>## 7. Vérification des hypothèses du modèle
+# Normalité
+residus1 &lt;- resid(mod1)
+
+library(&quot;car&quot;)</code></pre>
+<pre><code>Warning: package &#39;car&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Loading required package: carData</code></pre>
+<pre><code>Warning: package &#39;carData&#39; was built under R version 4.4.3</code></pre>
+<pre><code>
+Attaching package: &#39;car&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    recode</code></pre>
+<pre><code>The following object is masked from &#39;package:purrr&#39;:
+
+    some</code></pre>
+<pre class="r"><code>qqPlot(residus1)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-8-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>[1] 22  3</code></pre>
+<pre class="r"><code># Homoscédasticité
+exercice1$prediction1 &lt;- predict(mod1, newdata = exercice1, type = &quot;response&quot;)</code></pre>
+<pre><code>Warning: contrasts dropped from factor Sexe</code></pre>
+<pre><code>Warning: contrasts dropped from factor Ethnie</code></pre>
+<pre class="r"><code>plot(residus1 ~ exercice1$prediction1, 
+     xlab = &quot;Durée moyenne pour réduire la fièvre - prédictions&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-8-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(mod1)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-8-3.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_3.Rmd/unnamed-chunk-8-4.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_3.Rmd/unnamed-chunk-8-5.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_3.Rmd/unnamed-chunk-8-6.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Résultats 
+## Tests F
+anova(mod1)</code></pre>
+<pre><code>Analysis of Variance Table
+
+Response: Duree
+            Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+Sexe         1  907.5  907.50 13.7050  0.001115 ** 
+Ethnie       2 2328.2 1164.10 17.5802 1.987e-05 ***
+Sexe:Ethnie  2  452.6  226.30  3.4176  0.049429 *  
+Residuals   24 1589.2   66.22                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary(mod1)</code></pre>
+<pre><code>
+Call:
+lm(formula = Duree ~ Sexe + Ethnie + Sexe * Ethnie, data = exercice1)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-12.20  -3.55  -2.10   3.70  16.80 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     39.500      1.486  26.587  &lt; 2e-16 ***
+Sexe1           -5.500      1.486  -3.702  0.00111 ** 
+Ethnie1          9.900      2.101   4.712 8.64e-05 ***
+Ethnie2          1.600      2.101   0.762  0.45376    
+Sexe1:Ethnie1   -0.300      2.101  -0.143  0.88765    
+Sexe1:Ethnie2   -4.600      2.101  -2.189  0.03853 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 8.137 on 24 degrees of freedom
+Multiple R-squared:  0.6989,    Adjusted R-squared:  0.6361 
+F-statistic: 11.14 on 5 and 24 DF,  p-value: 1.237e-05</code></pre>
+<pre class="r"><code>## Estimation des paramètres
+summary(mod1)</code></pre>
+<pre><code>
+Call:
+lm(formula = Duree ~ Sexe + Ethnie + Sexe * Ethnie, data = exercice1)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-12.20  -3.55  -2.10   3.70  16.80 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     39.500      1.486  26.587  &lt; 2e-16 ***
+Sexe1           -5.500      1.486  -3.702  0.00111 ** 
+Ethnie1          9.900      2.101   4.712 8.64e-05 ***
+Ethnie2          1.600      2.101   0.762  0.45376    
+Sexe1:Ethnie1   -0.300      2.101  -0.143  0.88765    
+Sexe1:Ethnie2   -4.600      2.101  -2.189  0.03853 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 8.137 on 24 degrees of freedom
+Multiple R-squared:  0.6989,    Adjusted R-squared:  0.6361 
+F-statistic: 11.14 on 5 and 24 DF,  p-value: 1.237e-05</code></pre></li>
+<li><p>Effectuez des comparaisons deux à deux, puis représenter
+graphiquement les résultats obtenus. Que pouvez-vous conclure ?</p>
+<pre class="r"><code>## 8. Comparaison 2 à 2
+library(emmeans)</code></pre>
+<pre><code>Warning: package &#39;emmeans&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Welcome to emmeans.
+Caution: You lose important information if you filter this package&#39;s results.
+See &#39;? untidy&#39;</code></pre>
+<pre class="r"><code>emmeans(mod1, specs=pairwise ~ Ethnie|Sexe, adjust = &quot;bonferroni&quot;)</code></pre>
+<pre><code>$emmeans
+Sexe = Femme:
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   43.6 3.64 24     36.1     51.1
+ Caucasien            31.0 3.64 24     23.5     38.5
+ Hispanique           27.4 3.64 24     19.9     34.9
+
+Sexe = Homme:
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   55.2 3.64 24     47.7     62.7
+ Caucasien            51.2 3.64 24     43.7     58.7
+ Hispanique           28.6 3.64 24     21.1     36.1
+
+Confidence level used: 0.95 
+
+$contrasts
+Sexe = Femme:
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien      12.6 5.15 24   2.448  0.0661
+ Africain Americain - Hispanique     16.2 5.15 24   3.148  0.0131
+ Caucasien - Hispanique               3.6 5.15 24   0.700  1.0000
+
+Sexe = Homme:
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien       4.0 5.15 24   0.777  1.0000
+ Africain Americain - Hispanique     26.6 5.15 24   5.169 &lt;0.0001
+ Caucasien - Hispanique              22.6 5.15 24   4.391  0.0006
+
+P value adjustment: bonferroni method for 3 tests </code></pre>
+<pre class="r"><code>emmeans(mod1, specs=pairwise ~ Sexe|Ethnie, adjust = &quot;bonferroni&quot;)</code></pre>
+<pre><code>$emmeans
+Ethnie = Africain Americain:
+ Sexe  emmean   SE df lower.CL upper.CL
+ Femme   43.6 3.64 24     36.1     51.1
+ Homme   55.2 3.64 24     47.7     62.7
+
+Ethnie = Caucasien:
+ Sexe  emmean   SE df lower.CL upper.CL
+ Femme   31.0 3.64 24     23.5     38.5
+ Homme   51.2 3.64 24     43.7     58.7
+
+Ethnie = Hispanique:
+ Sexe  emmean   SE df lower.CL upper.CL
+ Femme   27.4 3.64 24     19.9     34.9
+ Homme   28.6 3.64 24     21.1     36.1
+
+Confidence level used: 0.95 
+
+$contrasts
+Ethnie = Africain Americain:
+ contrast      estimate   SE df t.ratio p.value
+ Femme - Homme    -11.6 5.15 24  -2.254  0.0336
+
+Ethnie = Caucasien:
+ contrast      estimate   SE df t.ratio p.value
+ Femme - Homme    -20.2 5.15 24  -3.925  0.0006
+
+Ethnie = Hispanique:
+ contrast      estimate   SE df t.ratio p.value
+ Femme - Homme     -1.2 5.15 24  -0.233  0.8176</code></pre>
+<pre class="r"><code>emmeans(mod1, specs=pairwise ~ Sexe, adjust = &quot;bonferroni&quot;)</code></pre>
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+<pre><code>$emmeans
+ Sexe  emmean  SE df lower.CL upper.CL
+ Femme     34 2.1 24     29.7     38.3
+ Homme     45 2.1 24     40.7     49.3
+
+Results are averaged over the levels of: Ethnie 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast      estimate   SE df t.ratio p.value
+ Femme - Homme      -11 2.97 24  -3.702  0.0011
+
+Results are averaged over the levels of: Ethnie </code></pre>
+<pre class="r"><code>emmeans(mod1, specs=pairwise ~ Ethnie, adjust = &quot;bonferroni&quot;)</code></pre>
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+<pre><code>$emmeans
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   49.4 2.57 24     44.1     54.7
+ Caucasien            41.1 2.57 24     35.8     46.4
+ Hispanique           28.0 2.57 24     22.7     33.3
+
+Results are averaged over the levels of: Sexe 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien       8.3 3.64 24   2.281  0.0952
+ Africain Americain - Hispanique     21.4 3.64 24   5.881 &lt;0.0001
+ Caucasien - Hispanique              13.1 3.64 24   3.600  0.0043
+
+Results are averaged over the levels of: Sexe 
+P value adjustment: bonferroni method for 3 tests </code></pre>
+<pre class="r"><code>emmeans(mod1, specs=pairwise ~ Ethnie|Sexe, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+Sexe = Femme:
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   43.6 3.64 24     36.1     51.1
+ Caucasien            31.0 3.64 24     23.5     38.5
+ Hispanique           27.4 3.64 24     19.9     34.9
+
+Sexe = Homme:
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   55.2 3.64 24     47.7     62.7
+ Caucasien            51.2 3.64 24     43.7     58.7
+ Hispanique           28.6 3.64 24     21.1     36.1
+
+Confidence level used: 0.95 
+
+$contrasts
+Sexe = Femme:
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien      12.6 5.15 24   2.448  0.0331
+ Africain Americain - Hispanique     16.2 5.15 24   3.148  0.0131
+ Caucasien - Hispanique               3.6 5.15 24   0.700  0.4910
+
+Sexe = Homme:
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien       4.0 5.15 24   0.777  0.4446
+ Africain Americain - Hispanique     26.6 5.15 24   5.169 &lt;0.0001
+ Caucasien - Hispanique              22.6 5.15 24   4.391  0.0003
+
+P value adjustment: BH method for 3 tests </code></pre>
+<pre class="r"><code>emmeans(mod1, specs=pairwise ~ Ethnie|Sexe, adjust = &quot;holm&quot;)</code></pre>
+<pre><code>$emmeans
+Sexe = Femme:
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   43.6 3.64 24     36.1     51.1
+ Caucasien            31.0 3.64 24     23.5     38.5
+ Hispanique           27.4 3.64 24     19.9     34.9
+
+Sexe = Homme:
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   55.2 3.64 24     47.7     62.7
+ Caucasien            51.2 3.64 24     43.7     58.7
+ Hispanique           28.6 3.64 24     21.1     36.1
+
+Confidence level used: 0.95 
+
+$contrasts
+Sexe = Femme:
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien      12.6 5.15 24   2.448  0.0441
+ Africain Americain - Hispanique     16.2 5.15 24   3.148  0.0131
+ Caucasien - Hispanique               3.6 5.15 24   0.700  0.4910
+
+Sexe = Homme:
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien       4.0 5.15 24   0.777  0.4446
+ Africain Americain - Hispanique     26.6 5.15 24   5.169 &lt;0.0001
+ Caucasien - Hispanique              22.6 5.15 24   4.391  0.0004
+
+P value adjustment: holm method for 3 tests </code></pre>
+<pre class="r"><code># Représentation graphique
+with(
+  exercice1,
+  interaction.plot(Ethnie, Sexe, Duree)
+)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-9-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggpubr)
+ggline(exercice1, # Dataset
+       x = &quot;Ethnie&quot;,
+       y = &quot;Duree&quot;,
+       color = &quot;Sexe&quot;,
+       add = c(&quot;mean_se&quot;) # add mean and standard error
+) +
+  labs(y = &quot;Durée moyenne (minutes)&quot;)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-9-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Comparez les résultats des ANOVA de type I, II et III. Que
+constatez-vous ?</p>
+<pre class="r"><code>## 9. Comparaison ANOVA TYPE I, II et III
+anova(mod1) # Type I</code></pre>
+<pre><code>Analysis of Variance Table
+
+Response: Duree
+            Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+Sexe         1  907.5  907.50 13.7050  0.001115 ** 
+Ethnie       2 2328.2 1164.10 17.5802 1.987e-05 ***
+Sexe:Ethnie  2  452.6  226.30  3.4176  0.049429 *  
+Residuals   24 1589.2   66.22                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>library(car)
+Anova(mod1, type = &quot;II&quot;) # Type II</code></pre>
+<pre><code>Anova Table (Type II tests)
+
+Response: Duree
+            Sum Sq Df F value    Pr(&gt;F)    
+Sexe         907.5  1 13.7050  0.001115 ** 
+Ethnie      2328.2  2 17.5802 1.987e-05 ***
+Sexe:Ethnie  452.6  2  3.4176  0.049429 *  
+Residuals   1589.2 24                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>Anova(mod1, type = &quot;III&quot;) # Type III</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: Duree
+            Sum Sq Df  F value    Pr(&gt;F)    
+(Intercept)  46808  1 706.8840 &lt; 2.2e-16 ***
+Sexe           908  1  13.7050  0.001115 ** 
+Ethnie        2328  2  17.5802 1.987e-05 ***
+Sexe:Ethnie    453  2   3.4176  0.049429 *  
+Residuals     1589 24                       
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre></li>
+</ol>
+</div>
+<div id="exercice-2---design-non-équilibré" class="section level1">
+<h1>Exercice 2 - Design non-équilibré</h1>
+<p>Une compagnie pharmaceutique américaine souhaite évaluer l’efficacité
+d’un nouveau médicament permettant de réduire la durée d’un épisode de
+fièvre selon le sexe (Femme - Homme) et l’ethnie (Cauca- sien, Africain
+Americain, Hispanique). Six groupes ont été formés, correspondant à
+toutes les combinai- sons possibles de ces deux facteurs. Idéalement,
+nous aurions souhaité avoir un échantillon de 5 individus pour chaque
+combinaison des deux facteurs. Cependant, le jeu de données dont nous
+disposons présente des données manquantes. Notons, par ailleurs, que les
+observations n’ont aucun lien entre elles. Comme pour l’exercice
+précédent, nous disposons des informations suivantes :</p>
+<p>— Le sexe (Femme/Homme) ; — L’ethnie (Africain
+Amerciain/Caucasien/Hispanique) — La durée nécessaire pour réduire la
+fièvre (en minutes).</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données ANOVA_II_exercice2.csv dans R. Puis
+mettez en forme les données si nécessaire.</p>
+<pre class="r"><code>## 1. Importation et mise en forme des données
+exercice2 &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/ANOVA_II_exercice2.csv&quot;,
+                      sep = &quot;;&quot;,
+                      header = TRUE)
+str(exercice2)</code></pre>
+<pre><code>&#39;data.frame&#39;:   30 obs. of  3 variables:
+ $ Sexe  : chr  &quot;Femme&quot; &quot;Femme&quot; &quot;Femme&quot; &quot;Femme&quot; ...
+ $ Ethnie: chr  &quot;Africain Americain&quot; &quot;Africain Americain&quot; &quot;Africain Americain&quot; &quot;Africain Americain&quot; ...
+ $ Duree : chr  &quot;46&quot; &quot;51&quot; NA &quot;47&quot; ...</code></pre>
+<pre class="r"><code>exercice2$Duree &lt;- as.numeric(exercice2$Duree)</code></pre>
+<pre><code>Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>str(exercice2)</code></pre>
+<pre><code>&#39;data.frame&#39;:   30 obs. of  3 variables:
+ $ Sexe  : chr  &quot;Femme&quot; &quot;Femme&quot; &quot;Femme&quot; &quot;Femme&quot; ...
+ $ Ethnie: chr  &quot;Africain Americain&quot; &quot;Africain Americain&quot; &quot;Africain Americain&quot; &quot;Africain Americain&quot; ...
+ $ Duree : num  46 51 NA 47 41 53 52 NA NA 56 ...</code></pre>
+<pre class="r"><code>exercice2 &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/ANOVA_II_exercice2.csv&quot;,
+                      sep = &quot;;&quot;,
+                      header = TRUE,
+                      na.strings = c(&quot;NA&quot;, &quot;ND&quot;, &quot;.&quot;))
+str(exercice2)</code></pre>
+<pre><code>&#39;data.frame&#39;:   30 obs. of  3 variables:
+ $ Sexe  : chr  &quot;Femme&quot; &quot;Femme&quot; &quot;Femme&quot; &quot;Femme&quot; ...
+ $ Ethnie: chr  &quot;Africain Americain&quot; &quot;Africain Americain&quot; &quot;Africain Americain&quot; &quot;Africain Americain&quot; ...
+ $ Duree : int  46 51 NA 47 41 53 52 NA NA 56 ...</code></pre>
+<pre class="r"><code>exercice2$Sexe &lt;- as.factor(exercice2$Sexe)
+exercice2$Ethnie &lt;- as.factor(exercice2$Ethnie)
+str(exercice2)</code></pre>
+<pre><code>&#39;data.frame&#39;:   30 obs. of  3 variables:
+ $ Sexe  : Factor w/ 2 levels &quot;Femme&quot;,&quot;Homme&quot;: 1 1 1 1 1 2 2 2 2 2 ...
+ $ Ethnie: Factor w/ 3 levels &quot;Africain Americain&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ Duree : int  46 51 NA 47 41 53 52 NA NA 56 ...</code></pre></li>
+<li><p>Effectuez des statistiques descriptives de la durée nécessaire
+pour réduire la fièvre globalement, pour chaque facteur, puis pour
+chaque combinaison des deux facteurs. Le design est-il équilibré ?
+Pourquoi?</p>
+<pre class="r"><code>## 2. Statistiques descriptives
+mean(exercice2$Duree)</code></pre>
+<pre><code>[1] NA</code></pre>
+<pre class="r"><code>mean(exercice2$Duree, na.rm = TRUE)</code></pre>
+<pre><code>[1] 35.23077</code></pre>
+<pre class="r"><code>aggregate(Duree ~ Sexe,
+          data = exercice2,
+          FUN = mean)</code></pre>
+<pre><code>   Sexe    Duree
+1 Femme 33.92308
+2 Homme 36.53846</code></pre>
+<pre class="r"><code>aggregate(Duree ~ Ethnie,
+          data = exercice2,
+          FUN = mean)</code></pre>
+<pre><code>              Ethnie    Duree
+1 Africain Americain 49.42857
+2          Caucasien 31.60000
+3         Hispanique 28.22222</code></pre>
+<pre class="r"><code>aggregate(Duree ~ Sexe + Ethnie,
+          data = exercice2,
+          FUN = mean)</code></pre>
+<pre><code>   Sexe             Ethnie    Duree
+1 Femme Africain Americain 46.25000
+2 Homme Africain Americain 53.66667
+3 Femme          Caucasien 29.00000
+4 Homme          Caucasien 34.20000
+5 Femme         Hispanique 27.75000
+6 Homme         Hispanique 28.60000</code></pre>
+<pre class="r"><code>moyenne_sexe_ethnie &lt;- exercice2 %&gt;%
+  group_by(Sexe,Ethnie) %&gt;%
+  get_summary_stats(Duree, type = &quot;mean_sd&quot;)
+moyenne_sexe_ethnie</code></pre>
+<pre><code># A tibble: 6 × 6
+  Sexe  Ethnie             variable     n  mean    sd
+  &lt;fct&gt; &lt;fct&gt;              &lt;fct&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Femme Africain Americain Duree        4  46.2  4.11
+2 Femme Caucasien          Duree        5  29    4.74
+3 Femme Hispanique         Duree        4  27.8  6.24
+4 Homme Africain Americain Duree        3  53.7  2.08
+5 Homme Caucasien          Duree        5  34.2  5.26
+6 Homme Hispanique         Duree        5  28.6  3.21</code></pre></li>
+<li><p>Représentez graphiquement les moyennes pour chacune des deux
+combinaisons de facteur. Que pouvez-vous dire ?</p>
+<pre class="r"><code>## 3. Représentation graphique des données
+library(ggplot2)
+ggplot(exercice2,
+       aes(x = Ethnie, y = Duree, fill = Sexe)) +
+  geom_boxplot() +
+  theme(axis.text = element_text(size=12)) </code></pre>
+<pre><code>Warning: Removed 4 rows containing non-finite outside the scale range
+(`stat_boxplot()`).</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-13-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>En présence d’un design non-équilibré, la fonction aov() n’est
+pas adaptée pour réaliser une ANOVA. Nous allons donc passer par
+l’approche modélisation pour effectuer cette analyse. Ecrivez l’équation
+du modèle, puis estimez-le avec R.</p>
+<pre class="r"><code>## 4. ANOVA II : Approche modélisation
+# Modification des contrastes :
+contrasts(exercice2$Sexe)</code></pre>
+<pre><code>      Homme
+Femme     0
+Homme     1</code></pre>
+<pre class="r"><code>contrasts(exercice2$Sexe) &lt;- &quot;contr.sum&quot;
+contrasts(exercice2$Sexe)</code></pre>
+<pre><code>      [,1]
+Femme    1
+Homme   -1</code></pre>
+<pre class="r"><code>contrasts(exercice2$Ethnie)</code></pre>
+<pre><code>                   Caucasien Hispanique
+Africain Americain         0          0
+Caucasien                  1          0
+Hispanique                 0          1</code></pre>
+<pre class="r"><code>contrasts(exercice2$Ethnie) &lt;- &quot;contr.sum&quot;
+contrasts(exercice2$Ethnie) </code></pre>
+<pre><code>                   [,1] [,2]
+Africain Americain    1    0
+Caucasien             0    1
+Hispanique           -1   -1</code></pre>
+<pre class="r"><code>mod2 &lt;- lm(Duree ~ Sexe + Ethnie + Sexe*Ethnie, 
+           data = exercice2)</code></pre></li>
+<li><p>Vérifiez les hypothèses du modèle, puis interprétez les résultats
+si cela vous semble pertinent. Que pouvez-vous dire ?</p>
+<pre class="r"><code>## 5. Vérification des hypothèses du modèle
+# En raison de la présence de données manquantes le nombre de résidus, n&#39;est pas le même que le 
+# nombre de ligne dans le dataset initial. Il est plus simple d&#39;utiliser la ligne de code suivante
+# pour vérifier les hypothèses du modèle.
+plot(mod2)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-15-1.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_3.Rmd/unnamed-chunk-15-2.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_3.Rmd/unnamed-chunk-15-3.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_3.Rmd/unnamed-chunk-15-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>shapiro.test(resid(mod2))</code></pre>
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  resid(mod2)
+W = 0.96091, p-value = 0.4098</code></pre>
+<pre class="r"><code># Résultats
+Anova(mod2, type = &quot;III&quot;) # Design non-équilibré =&gt; ANOVA de type III</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: Duree
+            Sum Sq Df   F value    Pr(&gt;F)    
+(Intercept)  33604  1 1607.2022 &lt; 2.2e-16 ***
+Sexe           127  1    6.0514   0.02312 *  
+Ethnie        2062  2   49.2990  1.86e-08 ***
+Sexe:Ethnie     45  2    1.0791   0.35887    
+Residuals      418 20                        
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># Réestimation du modèle sans interaction
+mod3 &lt;- lm(Duree ~ Sexe + Ethnie, data = exercice2)
+
+# Vérification des hypothèses du modèle
+plot(mod3)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-15-5.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_3.Rmd/unnamed-chunk-15-6.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_3.Rmd/unnamed-chunk-15-7.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_3.Rmd/unnamed-chunk-15-8.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>shapiro.test(resid(mod3))</code></pre>
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  resid(mod3)
+W = 0.94108, p-value = 0.1425</code></pre>
+<pre class="r"><code># ANOVA II pour le nouveau modèle
+Anova(mod3, type = &quot;II&quot;)</code></pre>
+<pre><code>Anova Table (Type II tests)
+
+Response: Duree
+           Sum Sq Df F value    Pr(&gt;F)    
+Sexe       118.38  1  5.6213   0.02692 *  
+Ethnie    2058.86  2 48.8837 8.034e-09 ***
+Residuals  463.29 22                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre></li>
+<li><p>Effectuez des comparaisons deux à deux, puis représenter
+graphiquement les résultats obtenus. Que pouvez-vous conclure ?</p>
+<pre class="r"><code>## 6. Comparaison 2 à 2
+library(emmeans)
+emmeans(mod3, specs=pairwise ~ Sexe, adjust = &quot;bonferroni&quot;)</code></pre>
+<pre><code>$emmeans
+ Sexe  emmean   SE df lower.CL upper.CL
+ Femme   34.3 1.28 22     31.6     36.9
+ Homme   38.6 1.29 22     35.9     41.3
+
+Results are averaged over the levels of: Ethnie 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast      estimate   SE df t.ratio p.value
+ Femme - Homme    -4.29 1.81 22  -2.371  0.0269
+
+Results are averaged over the levels of: Ethnie </code></pre>
+<pre class="r"><code>emmeans(mod3, specs=pairwise ~ Ethnie, adjust = &quot;bonferroni&quot;)</code></pre>
+<pre><code>$emmeans
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   49.7 1.74 22     46.1     53.3
+ Caucasien            31.6 1.45 22     28.6     34.6
+ Hispanique           28.0 1.53 22     24.8     31.2
+
+Results are averaged over the levels of: Sexe 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien     18.13 2.27 22   8.006 &lt;0.0001
+ Africain Americain - Hispanique    21.75 2.32 22   9.359 &lt;0.0001
+ Caucasien - Hispanique              3.62 2.11 22   1.713  0.3023
+
+Results are averaged over the levels of: Sexe 
+P value adjustment: bonferroni method for 3 tests </code></pre>
+<pre class="r"><code>emmeans(mod3, specs=pairwise ~ Sexe, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+ Sexe  emmean   SE df lower.CL upper.CL
+ Femme   34.3 1.28 22     31.6     36.9
+ Homme   38.6 1.29 22     35.9     41.3
+
+Results are averaged over the levels of: Ethnie 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast      estimate   SE df t.ratio p.value
+ Femme - Homme    -4.29 1.81 22  -2.371  0.0269
+
+Results are averaged over the levels of: Ethnie </code></pre>
+<pre class="r"><code>emmeans(mod3, specs=pairwise ~ Ethnie, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   49.7 1.74 22     46.1     53.3
+ Caucasien            31.6 1.45 22     28.6     34.6
+ Hispanique           28.0 1.53 22     24.8     31.2
+
+Results are averaged over the levels of: Sexe 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien     18.13 2.27 22   8.006 &lt;0.0001
+ Africain Americain - Hispanique    21.75 2.32 22   9.359 &lt;0.0001
+ Caucasien - Hispanique              3.62 2.11 22   1.713  0.1008
+
+Results are averaged over the levels of: Sexe 
+P value adjustment: BH method for 3 tests </code></pre>
+<pre class="r"><code>emmeans(mod3, specs=pairwise ~ Sexe, adjust = &quot;holm&quot;)</code></pre>
+<pre><code>$emmeans
+ Sexe  emmean   SE df lower.CL upper.CL
+ Femme   34.3 1.28 22     31.6     36.9
+ Homme   38.6 1.29 22     35.9     41.3
+
+Results are averaged over the levels of: Ethnie 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast      estimate   SE df t.ratio p.value
+ Femme - Homme    -4.29 1.81 22  -2.371  0.0269
+
+Results are averaged over the levels of: Ethnie </code></pre>
+<pre class="r"><code>emmeans(mod3, specs=pairwise ~ Ethnie, adjust = &quot;holm&quot;)</code></pre>
+<pre><code>$emmeans
+ Ethnie             emmean   SE df lower.CL upper.CL
+ Africain Americain   49.7 1.74 22     46.1     53.3
+ Caucasien            31.6 1.45 22     28.6     34.6
+ Hispanique           28.0 1.53 22     24.8     31.2
+
+Results are averaged over the levels of: Sexe 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                        estimate   SE df t.ratio p.value
+ Africain Americain - Caucasien     18.13 2.27 22   8.006 &lt;0.0001
+ Africain Americain - Hispanique    21.75 2.32 22   9.359 &lt;0.0001
+ Caucasien - Hispanique              3.62 2.11 22   1.713  0.1008
+
+Results are averaged over the levels of: Sexe 
+P value adjustment: holm method for 3 tests </code></pre></li>
+<li><p>Comparez les résultats des ANOVA de type I, II et III. Que
+constatez-vous ?</p>
+<pre class="r"><code>## 7. Comparaison ANOVA TYPE I, II et III
+# Types I, II et III
+anova(mod3) # Type I</code></pre>
+<pre><code>Analysis of Variance Table
+
+Response: Duree
+          Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+Sexe       1   44.46   44.46  2.1113    0.1603    
+Ethnie     2 2058.86 1029.43 48.8837 8.034e-09 ***
+Residuals 22  463.29   21.06                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>library(car)
+Anova(mod3, type = &quot;II&quot;) # Type II</code></pre>
+<pre><code>Anova Table (Type II tests)
+
+Response: Duree
+           Sum Sq Df F value    Pr(&gt;F)    
+Sexe       118.38  1  5.6213   0.02692 *  
+Ethnie    2058.86  2 48.8837 8.034e-09 ***
+Residuals  463.29 22                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>Anova(mod3, type = &quot;III&quot;) # Type III</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: Duree
+            Sum Sq Df   F value    Pr(&gt;F)    
+(Intercept)  33758  1 1603.0427 &lt; 2.2e-16 ***
+Sexe           118  1    5.6213   0.02692 *  
+Ethnie        2059  2   48.8837 8.034e-09 ***
+Residuals      463 22                        
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre></li>
+</ol>
+</div>
+<div id="exercices-supplémentaires" class="section level1">
+<h1>Exercices supplémentaires</h1>
+<div id="questions-de-cours" class="section level2">
+<h2>1 - Questions de cours</h2>
+<div id="concepts-généraux" class="section level3">
+<h3>Concepts généraux</h3>
+<ol style="list-style-type: decimal">
+<li>Quelle est la différence entre une ANOVA à un facteur et une ANOVA à
+deux facteurs ?</li>
+<li>Vrai ou Faux : Une ANOVA II permet d’étudier l’effet de deux
+variables qualitatives sur une variable quantitative.</li>
+<li>Donnez un exemple de situation où une ANOVA II est appropriée.</li>
+<li>Que signifie ‘design équilibré’ dans le cadre d’une ANOVA II ?</li>
+<li>Pourquoi l’ANOVA II est-elle préférée à deux ANOVA I séparées ?</li>
+</ol>
+</div>
+<div id="hypothèses-et-structure" class="section level3">
+<h3>Hypothèses et structure</h3>
+<ol style="list-style-type: decimal">
+<li>Citez les hypothèses nécessaires pour la validité d’une ANOVA
+II.</li>
+<li>Vrai ou Faux : L’hypothèse d’indépendance des observations se
+vérifie par un test statistique.</li>
+<li>Que représente le terme d’interaction dans une ANOVA II ?</li>
+<li>Que se passe-t-il si l’interaction est significative ?</li>
+</ol>
+</div>
+<div id="calculs-et-décomposition" class="section level3">
+<h3>Calculs et décomposition</h3>
+<ol style="list-style-type: decimal">
+<li>Complétez : SCtot = + .</li>
+<li>Définissez SC1, SC2 et SC12.</li>
+<li>Quelle est la formule du carré moyen pour le facteur 1 ?</li>
+<li>Écrivez la statistique F pour tester l’effet du facteur 2.</li>
+<li>Comment calcule-t-on les degrés de liberté pour l’interaction ? 6.
+Pourquoi compare-t-on CM inter-groupe à CM intra-groupe ?</li>
+</ol>
+</div>
+<div id="interprétation-et-tests" class="section level3">
+<h3>Interprétation et tests</h3>
+<ol style="list-style-type: decimal">
+<li>Quelles sont les trois hypothèses testées dans une ANOVA II lorsque
+le modèle contient une intéraction ?</li>
+<li>Vrai ou Faux : Si l’interaction n’est pas significative, on peut
+interpréter les effets principaux.</li>
+<li>Que conclure si Fobs &gt; Fcritique pour le facteur 1 ?</li>
+<li>Que signifie un p-value &lt; 0,05 pour l’interaction ?</li>
+<li>Pourquoi utiliser des comparaisons deux à deux après une ANOVA II
+?</li>
+</ol>
+</div>
+<div id="approche-modélisation" class="section level3">
+<h3>Approche modélisation</h3>
+<ol style="list-style-type: decimal">
+<li>Écrivez la forme générale du modèle linéaire pour une ANOVA II.</li>
+<li>Pourquoi impose-t-on des contraintes sur les paramètres du modèle
+?</li>
+<li>Vrai ou Faux : Une ANOVA II peut être exprimée comme une régression
+linéaire.</li>
+<li>Quelle méthode est utilisée pour estimer les paramètres du modèle
+?</li>
+</ol>
+</div>
+<div id="design-non-équilibré-et-types-danova" class="section level3">
+<h3>Design non-équilibré et types d’ANOVA</h3>
+<ol style="list-style-type: decimal">
+<li>Quelle est la différence entre les sommes des carrés de type I, II
+et III ?</li>
+<li>Dans quel cas privilégie-t-on l’approche de type III ?</li>
+<li>Pourquoi les résultats diffèrent-ils entre les types I, II et III en
+design non-équilibré ?</li>
+</ol>
+</div>
+</div>
+<div id="exercices-r" class="section level2">
+<h2>2 - Exercices R</h2>
+<div
+id="exercice-1-performance-sportive-effet-de-lentraînement-et-du-régime-alimentaire"
+class="section level3">
+<h3>Exercice 1 — Performance sportive : effet de l’entraînement et du
+régime alimentaire</h3>
+<p>Contexte. On étudie la performance (temps moyen sur 100 m en
+secondes) selon deux facteurs : Entrainement (Endurance, Sprint) et
+Régime alimentaire (Standard, Hyperprotéiné, Végétarien). Les données se
+trouvent dans le fichier performance_sportive_anova2.csv. Questions
+:</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le fichier et mettez en forme les données si
+nécessaire.</p>
+<pre class="r"><code>## 1. Importation et mise en forme du jeu de données 
+performance_sportive &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/Exercices supplémentaires-20260308/performance_sportive_anova2.csv&quot;,
+                                 sep = &quot;,&quot;,
+                                 dec = &quot;.&quot;,
+                                 header = TRUE)
+
+str(performance_sportive)</code></pre>
+<pre><code>&#39;data.frame&#39;:   120 obs. of  3 variables:
+ $ Entrainement: chr  &quot;Endurance&quot; &quot;Endurance&quot; &quot;Endurance&quot; &quot;Endurance&quot; ...
+ $ Regime      : chr  &quot;Standard&quot; &quot;Standard&quot; &quot;Standard&quot; &quot;Standard&quot; ...
+ $ Temps_100m_s: num  17.7 18.4 16.6 17.3 17.7 ...</code></pre>
+<pre class="r"><code>performance_sportive$Entrainement &lt;- as.factor(performance_sportive$Entrainement)
+performance_sportive$Regime &lt;- as.factor(performance_sportive$Regime)
+str(performance_sportive)</code></pre>
+<pre><code>&#39;data.frame&#39;:   120 obs. of  3 variables:
+ $ Entrainement: Factor w/ 2 levels &quot;Endurance&quot;,&quot;Sprint&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ Regime      : Factor w/ 3 levels &quot;Hyperproteine&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+ $ Temps_100m_s: num  17.7 18.4 16.6 17.3 17.7 ...</code></pre></li>
+<li><p>Décrivez la structure des données et les effectifs par
+combinaison de facteurs. Calculez le temps moyen sur 100m globale par
+facteur et par combinaison de facteurs, puis commentez.</p>
+<pre class="r"><code>## 2. Statistiques descriptives
+table(performance_sportive$Entrainement, performance_sportive$Regime)</code></pre>
+<pre><code>
+            Hyperproteine Standard Vegetarien
+  Endurance            20       20         20
+  Sprint               20       20         20</code></pre>
+<pre class="r"><code># =&gt; Design équilibré
+
+mean(performance_sportive$Temps_100m_s)</code></pre>
+<pre><code>[1] 16.08633</code></pre>
+<pre class="r"><code>aggregate(Temps_100m_s ~ Entrainement,
+          data = performance_sportive,
+          FUN = mean)</code></pre>
+<pre><code>  Entrainement Temps_100m_s
+1    Endurance     17.80983
+2       Sprint     14.36283</code></pre>
+<pre class="r"><code>aggregate(Temps_100m_s ~ Regime,
+          data = performance_sportive,
+          FUN = mean)</code></pre>
+<pre><code>         Regime Temps_100m_s
+1 Hyperproteine     15.50250
+2      Standard     16.13775
+3    Vegetarien     16.61875</code></pre>
+<pre class="r"><code>aggregate(Temps_100m_s ~ Regime + Entrainement,
+          data = performance_sportive,
+          FUN = mean)</code></pre>
+<pre><code>         Regime Entrainement Temps_100m_s
+1 Hyperproteine    Endurance      17.4605
+2      Standard    Endurance      17.7490
+3    Vegetarien    Endurance      18.2200
+4 Hyperproteine       Sprint      13.5445
+5      Standard       Sprint      14.5265
+6    Vegetarien       Sprint      15.0175</code></pre></li>
+<li><p>Représentez visuellement les moyennes par combinaison de facteurs
+et discutez une éventuelle interaction.</p>
+<pre class="r"><code>## 3. Représentation graphique des moyennes par combinaison de facteurs
+ggplot(performance_sportive,
+       aes(x = Regime, y = Temps_100m_s, fill = Entrainement)) +
+  geom_boxplot() +
+  theme(axis.text = element_text(size=12)) </code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-20-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Réalisez une ANOVA à deux facteurs avec interaction.</p>
+<pre class="r"><code>## 4. ANOVA II avec interaction
+contrasts(performance_sportive$Regime)</code></pre>
+<pre><code>              Standard Vegetarien
+Hyperproteine        0          0
+Standard             1          0
+Vegetarien           0          1</code></pre>
+<pre class="r"><code>contrasts(performance_sportive$Regime) &lt;- &quot;contr.sum&quot;
+contrasts(performance_sportive$Regime)</code></pre>
+<pre><code>              [,1] [,2]
+Hyperproteine    1    0
+Standard         0    1
+Vegetarien      -1   -1</code></pre>
+<pre class="r"><code>contrasts(performance_sportive$Entrainement)</code></pre>
+<pre><code>          Sprint
+Endurance      0
+Sprint         1</code></pre>
+<pre class="r"><code>contrasts(performance_sportive$Entrainement) &lt;- &quot;contr.sum&quot;
+contrasts(performance_sportive$Entrainement)</code></pre>
+<pre><code>          [,1]
+Endurance    1
+Sprint      -1</code></pre>
+<pre class="r"><code>aov_1 &lt;- lm(Temps_100m_s ~ Regime + Entrainement + Regime*Entrainement,
+            data = performance_sportive)</code></pre></li>
+<li><p>Vérifiez les hypothèses (normalité des résidus, homogénéité des
+variances). Discutez la robustesse des conclusions.</p>
+<pre class="r"><code>## 5. Vérification des hypothèses
+plot(aov_1, which = 1) # Homoscedasticité</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-22-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(aov_1, which = 2) # Normalité</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-22-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Testez l’interaction et, si elle n’est pas significative,
+ré-estimez le mdoèle sans intéraction inter- prétez les effets
+principaux.</p>
+<pre class="r"><code>## 6. Evaluation de l&#39;effet d&#39;interaction
+anova(aov_1)</code></pre>
+<pre><code>Analysis of Variance Table
+
+Response: Temps_100m_s
+                     Df Sum Sq Mean Sq  F value    Pr(&gt;F)    
+Regime                2  25.08   12.54  21.2681 1.414e-08 ***
+Entrainement          1 356.45  356.45 604.5805 &lt; 2.2e-16 ***
+Regime:Entrainement   2   3.30    1.65   2.7998   0.06501 .  
+Residuals           114  67.21    0.59                       
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>aov_2 &lt;- lm(Temps_100m_s ~ Regime + Entrainement,
+            data = performance_sportive)
+plot(aov_2, which = 1)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-23-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(aov_2, which = 2)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-23-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>anova(aov_2)</code></pre>
+<pre><code>Analysis of Variance Table
+
+Response: Temps_100m_s
+              Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+Regime         2  25.08   12.54  20.628 2.164e-08 ***
+Entrainement   1 356.45  356.45 586.385 &lt; 2.2e-16 ***
+Residuals    116  70.51    0.61                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre></li>
+<li><p>Si pertinent, effectuez des comparaisons deux à deux tout en
+controlant pour l’erreur de type I.</p>
+<pre class="r"><code>## 7. Comparaison 2 à 2
+emmeans(aov_2, specs=pairwise ~ Regime, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+ Regime        emmean    SE  df lower.CL upper.CL
+ Hyperproteine   15.5 0.123 116     15.3     15.7
+ Standard        16.1 0.123 116     15.9     16.4
+ Vegetarien      16.6 0.123 116     16.4     16.9
+
+Results are averaged over the levels of: Entrainement 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                   estimate    SE  df t.ratio p.value
+ Hyperproteine - Standard     -0.635 0.174 116  -3.644  0.0006
+ Hyperproteine - Vegetarien   -1.116 0.174 116  -6.403 &lt;0.0001
+ Standard - Vegetarien        -0.481 0.174 116  -2.759  0.0067
+
+Results are averaged over the levels of: Entrainement 
+P value adjustment: BH method for 3 tests </code></pre>
+<pre class="r"><code>emmeans(aov_2, specs=pairwise ~ Entrainement, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+ Entrainement emmean    SE  df lower.CL upper.CL
+ Endurance      17.8 0.101 116     17.6     18.0
+ Sprint         14.4 0.101 116     14.2     14.6
+
+Results are averaged over the levels of: Regime 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast           estimate    SE  df t.ratio p.value
+ Endurance - Sprint     3.45 0.142 116  24.215 &lt;0.0001
+
+Results are averaged over the levels of: Regime </code></pre></li>
+<li><p>Concluez sur l’effet des facteurs et l’éventuelle
+interaction.</p></li>
+</ol>
+</div>
+<div
+id="exercice-2-douleur-postopératoire-effet-du-type-de-traitement-et-du-moment"
+class="section level3">
+<h3>Exercice 2 — Douleur postopératoire : effet du type de traitement et
+du moment</h3>
+<p>Contexte. On évalue le score de douleur EVA (0–10) 2h après chirurgie
+selon deux facteurs : le Trai- tement (Morphinique, Non-morphinique) et
+le Moment d’administration du traitement (Avant, Pendant, Après
+l’intervention). Les données se trouvent dans le fichier
+douleur_postop_anova2.csv. Questions.</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le fichier et mettez en forme les données si
+nécessaire.</p>
+<pre class="r"><code>## 1. Importation et mise en forme des données
+douleur_postop &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/Exercices supplémentaires-20260308/douleur_postop_anova2.csv&quot;,
+                                 sep = &quot;,&quot;,
+                                 dec = &quot;.&quot;,
+                                 header = TRUE)
+
+str(douleur_postop)</code></pre>
+<pre><code>&#39;data.frame&#39;:   69 obs. of  3 variables:
+ $ Traitement    : chr  &quot;Morphinique&quot; &quot;Morphinique&quot; &quot;Morphinique&quot; &quot;Morphinique&quot; ...
+ $ Moment        : chr  &quot;Avant&quot; &quot;Avant&quot; &quot;Avant&quot; &quot;Avant&quot; ...
+ $ Douleur_EVA_2h: num  5 3.63 4.74 6.22 3.92 4.7 3.01 5.24 5.24 3.81 ...</code></pre>
+<pre class="r"><code>douleur_postop$Traitement &lt;- as.factor(douleur_postop$Traitement)
+douleur_postop$Moment &lt;- as.factor(douleur_postop$Moment)
+str(douleur_postop)</code></pre>
+<pre><code>&#39;data.frame&#39;:   69 obs. of  3 variables:
+ $ Traitement    : Factor w/ 2 levels &quot;Morphinique&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ Moment        : Factor w/ 3 levels &quot;Apres&quot;,&quot;Avant&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+ $ Douleur_EVA_2h: num  5 3.63 4.74 6.22 3.92 4.7 3.01 5.24 5.24 3.81 ...</code></pre></li>
+<li><p>Dressez la table des effectifs par combinaison de facteurs. Le
+design est-il équilibré ?</p>
+<pre class="r"><code>## 2. Tableau des effectifs par combinaison de facteurs
+table(douleur_postop$Traitement, douleur_postop$Moment)</code></pre>
+<pre><code>
+                  Apres Avant Pendant
+  Morphinique        16    12       9
+  Non_morphinique    10     8      14</code></pre>
+<pre class="r"><code># =&gt; Design non-équilibré</code></pre></li>
+<li><p>Réalisez des statistiques descriptives (globales, par facteur,
+par combinaison de facteurs) et représentez les moyennes par combinaison
+de facteurs. Formulez une hypothèse sur l’interaction.</p>
+<pre class="r"><code>## 3. Statistiques descriptives
+mean(douleur_postop$Douleur_EVA_2h)</code></pre>
+<pre><code>[1] 5.007101</code></pre>
+<pre class="r"><code>aggregate(Douleur_EVA_2h ~ Traitement,
+          data = douleur_postop,
+          FUN = mean)</code></pre>
+<pre><code>       Traitement Douleur_EVA_2h
+1     Morphinique       4.408108
+2 Non_morphinique       5.699688</code></pre>
+<pre class="r"><code>aggregate(Douleur_EVA_2h ~ Moment,
+          data = douleur_postop,
+          FUN = mean)</code></pre>
+<pre><code>   Moment Douleur_EVA_2h
+1   Apres       5.426538
+2   Avant       4.872500
+3 Pendant       4.650000</code></pre>
+<pre class="r"><code>aggregate(Douleur_EVA_2h ~ Traitement + Moment,
+          data = douleur_postop,
+          FUN = mean)</code></pre>
+<pre><code>       Traitement  Moment Douleur_EVA_2h
+1     Morphinique   Apres       4.890625
+2 Non_morphinique   Apres       6.284000
+3     Morphinique   Avant       4.420000
+4 Non_morphinique   Avant       5.551250
+5     Morphinique Pendant       3.534444
+6 Non_morphinique Pendant       5.367143</code></pre>
+<pre class="r"><code>## Représentation graphique
+ggplot(douleur_postop,
+       aes(x = Moment, y = Douleur_EVA_2h, fill = Traitement)) +
+  geom_boxplot() +
+  theme(axis.text = element_text(size=12)) </code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-28-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Réalisez une ANOVA à deux facteurs via l’approche modélisation
+(modèle linéaire).</p>
+<pre class="r"><code>## 4. Estimation modèle ANOVA 2
+contrasts(douleur_postop$Traitement)</code></pre>
+<pre><code>                Non_morphinique
+Morphinique                   0
+Non_morphinique               1</code></pre>
+<pre class="r"><code>contrasts(douleur_postop$Traitement) &lt;- &quot;contr.sum&quot;
+contrasts(douleur_postop$Traitement)</code></pre>
+<pre><code>                [,1]
+Morphinique        1
+Non_morphinique   -1</code></pre>
+<pre class="r"><code>contrasts(douleur_postop$Moment)</code></pre>
+<pre><code>        Avant Pendant
+Apres       0       0
+Avant       1       0
+Pendant     0       1</code></pre>
+<pre class="r"><code>contrasts(douleur_postop$Moment) &lt;- &#39;contr.sum&#39;
+contrasts(douleur_postop$Moment)</code></pre>
+<pre><code>        [,1] [,2]
+Apres      1    0
+Avant      0    1
+Pendant   -1   -1</code></pre>
+<pre class="r"><code>aov_3 &lt;- lm(Douleur_EVA_2h ~ Traitement + Moment + Traitement*Moment,
+            data = douleur_postop)</code></pre></li>
+<li><p>Vérifiez les hypothèses (normalité, homogénéité). Discutez la
+robustesse des conclusions.</p>
+<pre class="r"><code>## 5. Vérification des hypothèses
+plot(aov_3, which = 1) # Homoscedasticité</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-30-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(aov_3, which = 2) # Normalité</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-30-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Comparez les résultats obtenus à l’aide des ANOVA de type I, II
+et III. Laquelle faut-il choisir pour conclure ? Pourquoi ?</p>
+<pre class="r"><code>## 6. Comparaisons des anova de type I, II et III
+anova(aov_3) # Type I</code></pre>
+<pre><code>Analysis of Variance Table
+
+Response: Douleur_EVA_2h
+                  Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+Traitement         1 28.625 28.6250 35.8601 1.111e-07 ***
+Moment             2 14.428  7.2141  9.0376 0.0003542 ***
+Traitement:Moment  2  1.307  0.6534  0.8186 0.4456893    
+Residuals         63 50.289  0.7982                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>Anova(aov_3, type = &quot;II&quot;)</code></pre>
+<pre><code>Anova Table (Type II tests)
+
+Response: Douleur_EVA_2h
+                  Sum Sq Df F value    Pr(&gt;F)    
+Traitement        35.184  1 44.0767 8.473e-09 ***
+Moment            14.428  2  9.0376 0.0003542 ***
+Traitement:Moment  1.307  2  0.8186 0.4456893    
+Residuals         50.289 63                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>Anova(aov_3, type = &quot;III&quot;)</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: Douleur_EVA_2h
+                   Sum Sq Df   F value    Pr(&gt;F)    
+(Intercept)       1631.54  1 2043.9208 &lt; 2.2e-16 ***
+Traitement          34.31  1   42.9821 1.179e-08 ***
+Moment              15.03  2    9.4171 0.0002641 ***
+Traitement:Moment    1.31  2    0.8186 0.4456893    
+Residuals           50.29 63                        
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre></li>
+<li><p>L’interaction est-elle significative? Si non, re-estimez le
+modèle sans interaction puis concluez quant aux effets des deux
+facteurs.</p>
+<pre class="r"><code>## 7. Evaluation de l&#39;effet d&#39;interaction
+Anova(aov_3, type = &quot;III&quot;)</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: Douleur_EVA_2h
+                   Sum Sq Df   F value    Pr(&gt;F)    
+(Intercept)       1631.54  1 2043.9208 &lt; 2.2e-16 ***
+Traitement          34.31  1   42.9821 1.179e-08 ***
+Moment              15.03  2    9.4171 0.0002641 ***
+Traitement:Moment    1.31  2    0.8186 0.4456893    
+Residuals           50.29 63                        
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># =&gt; Intéraction non-significative.
+
+aov_4 &lt;- lm(Douleur_EVA_2h ~ Traitement + Moment,
+            data = douleur_postop)
+plot(aov_4, which = 1)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-32-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(aov_4, which = 2)</code></pre>
+<p><img src="figure/ML_3.Rmd/unnamed-chunk-32-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Anova(aov_4, type = &quot;II&quot;)</code></pre>
+<pre><code>Anova Table (Type II tests)
+
+Response: Douleur_EVA_2h
+           Sum Sq Df F value    Pr(&gt;F)    
+Traitement 35.184  1 44.3241 6.954e-09 ***
+Moment     14.428  2  9.0883 0.0003309 ***
+Residuals  51.596 65                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre></li>
+<li><p>Effectuez des comparaisons deux à deux si cela vous semble
+pertinent, et synthétisez les résultats.</p>
+<pre class="r"><code>## 8. Comparaison 2 à 2
+emmeans(aov_4, specs=pairwise ~ Traitement, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+ Traitement      emmean    SE df lower.CL upper.CL
+ Morphinique       4.30 0.149 65     4.01     4.60
+ Non_morphinique   5.77 0.160 65     5.45     6.09
+
+Results are averaged over the levels of: Moment 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                      estimate   SE df t.ratio p.value
+ Morphinique - Non_morphinique    -1.46 0.22 65  -6.658 &lt;0.0001
+
+Results are averaged over the levels of: Moment </code></pre>
+<pre class="r"><code>emmeans(aov_4, specs=pairwise ~ Moment, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+ Moment  emmean    SE df lower.CL upper.CL
+ Apres     5.60 0.177 65     5.24     5.95
+ Avant     5.02 0.200 65     4.62     5.42
+ Pendant   4.49 0.187 65     4.12     4.87
+
+Results are averaged over the levels of: Traitement 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast        estimate    SE df t.ratio p.value
+ Apres - Avant      0.577 0.265 65   2.176  0.0498
+ Apres - Pendant    1.104 0.260 65   4.252  0.0002
+ Avant - Pendant    0.528 0.276 65   1.911  0.0604
+
+Results are averaged over the levels of: Traitement 
+P value adjustment: BH method for 3 tests </code></pre></li>
+<li><p>Concluez et proposez une recommandation clinique.</p></li>
+</ol>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.4.2 (2024-10-31)
+Platform: aarch64-apple-darwin20
+Running under: macOS Ventura 13.6.3
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Paris
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] ggpubr_0.6.2    emmeans_2.0.1   car_3.1-5       carData_3.0-6  
+ [5] rstatix_0.7.3   lubridate_1.9.5 forcats_1.0.1   stringr_1.6.0  
+ [9] dplyr_1.2.0     purrr_1.2.1     readr_2.1.6     tidyr_1.3.2    
+[13] tibble_3.3.1    ggplot2_4.0.2   tidyverse_2.0.0
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.6       xfun_0.56          bslib_0.10.0       lattice_0.22-9    
+ [5] tzdb_0.5.0         vctrs_0.7.1        tools_4.4.2        generics_0.1.4    
+ [9] sandwich_3.1-1     pkgconfig_2.0.3    Matrix_1.7-4       RColorBrewer_1.1-3
+[13] S7_0.2.1           lifecycle_1.0.5    compiler_4.4.2     farver_2.1.2      
+[17] git2r_0.36.2       codetools_0.2-20   httpuv_1.6.16      htmltools_0.5.9   
+[21] sass_0.4.10        yaml_2.3.12        Formula_1.2-5      later_1.4.6       
+[25] pillar_1.11.1      jquerylib_0.1.4    MASS_7.3-65        cachem_1.1.0      
+[29] abind_1.4-8        multcomp_1.4-29    tidyselect_1.2.1   digest_0.6.39     
+[33] mvtnorm_1.3-3      stringi_1.8.7      splines_4.4.2      labeling_0.4.3    
+[37] rprojroot_2.1.1    fastmap_1.2.0      grid_4.4.2         cli_3.6.5         
+[41] magrittr_2.0.4     survival_3.8-6     utf8_1.2.6         TH.data_1.1-5     
+[45] broom_1.0.12       withr_3.0.2        scales_1.4.0       promises_1.5.0    
+[49] backports_1.5.0    timechange_0.4.0   estimability_1.5.1 rmarkdown_2.30    
+[53] otel_0.2.0         ggsignif_0.6.4     workflowr_1.7.2    zoo_1.8-15        
+[57] hms_1.1.4          coda_0.19-4.1      evaluate_1.0.5     knitr_1.51        
+[61] rlang_1.1.7        Rcpp_1.1.1         glue_1.8.0         rstudioapi_0.18.0 
+[65] jsonlite_2.0.0     R6_2.6.1           fs_1.6.6          </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

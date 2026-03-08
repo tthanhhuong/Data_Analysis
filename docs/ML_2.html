@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="PHAM Huong" />
+
+<meta name="date" content="2026-03-08" />
+
+<title>ML_2</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data_Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/tthanhhuong/Data_Analysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">ML_2</h1>
+<h4 class="author">PHAM Huong</h4>
+<h4 class="date">2026-03-08</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-03-08
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 2
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20260226code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20260226)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20260226code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20260226)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it
+difficult for you and others to run your code on a different machine.
+Change the absolute path(s) below to the suggested relative path(s) to
+make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/Users/thanhhuong/R/Data_Analysis
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.Rhistory
+
+Untracked files:
+    Untracked:  analysis/ML_1.Rmd
+    Untracked:  analysis/ML_2.Rmd
+
+Unstaged changes:
+    Modified:   analysis/4_Excercice.Rmd
+    Modified:   analysis/Gael_1.Rmd
+    Modified:   analysis/about.Rmd
+    Modified:   analysis/index.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="td2-r---régression-linéaire-simple" class="section level1">
+<h1><strong>TD2 R - Régression linéaire simple</strong></h1>
+<div id="exercice-1---exemple-du-cours" class="section level2">
+<h2><strong>Exercice 1 - Exemple du cours</strong></h2>
+<p>Dans le cadre d’une étude de santé publique, nous cherchons à évaluer
+le lien qui pourrait exister entre la proportion de lipides contenue
+dans l’alimentation et le taux de cholestérol chez les adultes âgés de
+45 à 65 ans.</p>
+<p>Nous disposons pour cela d’un échantillon de 250 observations pour
+lesquelles nous disposons des infor- mations suivantes :</p>
+<p>— Le taux de cholestérol en g/L (Y ) ; — La proportion moyenne de
+lipides (en pourcentage) contenue dans l’alimentation évaluée sur 1 mois
+(X). L’objectif de l’étude est de quantifier l’effet de la quantité de
+lipides sur le taux de choles- térol.</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données data_reg_lineaire_simple.csv dans R.
+Puis mettez en forme les données si nécessaire.</p>
+<pre class="r"><code>## 1. Importation du jeu de données et mise en forme
+setwd(&quot;/Users/thanhhuong/R/Data_Analysis&quot;)
+exercice1 &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/data_reg_lineaire_simple.csv&quot;, sep = &quot;,&quot;, dec = &quot;.&quot;, header = TRUE)
+
+str(exercice1)</code></pre>
+<pre><code>&#39;data.frame&#39;:   250 obs. of  3 variables:
+ $ X.1: int  1 2 3 4 5 6 7 8 9 10 ...
+ $ X  : num  30.9 39.2 41.9 36 43.9 ...
+ $ Y  : num  2.18 2.36 2.19 1.69 2.63 ...</code></pre>
+<pre class="r"><code>exercice1 &lt;- exercice1[,c(2,3)] # Retrait de la première colonne
+# exercice1 &lt;- exercice1[,c(-1)] # Méthode alternative
+
+str(exercice1)</code></pre>
+<pre><code>&#39;data.frame&#39;:   250 obs. of  2 variables:
+ $ X: num  30.9 39.2 41.9 36 43.9 ...
+ $ Y: num  2.18 2.36 2.19 1.69 2.63 ...</code></pre></li>
+<li><p>Effectuez des statistiques descriptives de chacune des variables.
+Que pouvez-vous dire ?</p>
+<pre class="r"><code>## 2. Statistiques descriptives
+#- Proportion de lipides dans l&#39;alimentation
+summary(exercice1$X)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  13.20   28.31   34.95   34.84   40.86   64.68 </code></pre>
+<pre class="r"><code>var(exercice1$X)</code></pre>
+<pre><code>[1] 92.76741</code></pre>
+<pre class="r"><code>sd(exercice1$X)</code></pre>
+<pre><code>[1] 9.631584</code></pre>
+<pre class="r"><code>boxplot(exercice1$X, 
+        ylab = &quot;Proportion de lipides dans l&#39;alimentation (%)&quot;,
+        main = &quot;Distribution de la proportion de lipides dans l&#39;alimentation&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-2-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(exercice1$X, 
+     xlab = &quot;Proportion de lipides (%)&quot;, 
+     main = &quot;Distribution de la proportion de lipides dans l&#39;alimentation &quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-2-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#- Taux de cholesterol
+summary(exercice1$Y)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.652   1.680   1.983   1.984   2.340   3.349 </code></pre>
+<pre class="r"><code>var(exercice1$Y)</code></pre>
+<pre><code>[1] 0.2609864</code></pre>
+<pre class="r"><code>sd(exercice1$Y)</code></pre>
+<pre><code>[1] 0.5108682</code></pre>
+<pre class="r"><code>boxplot(exercice1$Y, 
+        ylab = &quot;Taux de cholesterol (g/L)&quot;,
+        main = &quot;Distribution du taux de cholestérol&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-3-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(exercice1$Y, 
+     xlab = &quot;Taux de cholestérol (g/L)&quot;, 
+     main = &quot;Distribution du taux de cholesterol&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-3-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Représentez graphiquement la relation qu’il existe entre le taux
+de cholesterol et la proportion moyenne de lipides contenue dans
+l’alimentation des 250 personnes constituant l’échantillon. Quel
+graphique avez-vous utilisé ? Pourquoi ? Que constatez-vous ? Calculez
+le coefficient de corrélation linéaire.</p>
+<pre class="r"><code>## 3. Relation entre X et Y
+plot(exercice1$Y ~ exercice1$X, 
+     xlab = &quot;Pourcentage de lipides dans l&#39;alimentation&quot;,
+     ylab = &quot;Taux de cholesterol&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-4-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cor(x = exercice1$X, y = exercice1$Y)</code></pre>
+<pre><code>[1] 0.8177043</code></pre></li>
+<li><p>Pourquoi un modèle linéaire simple est la méthode statistique
+appropriée pour analyser l’effet de la proportion moyenne de lipides
+dans l’alimentation sur le taux de cholestérol ? Ecrivez l’équation du
+modèle.</p></li>
+<li><p>Calculer la moyenne de X, de Y , la variance de X et la
+covariance entre X et Y à l’aide du logiciel R, puis calculer à la main
+la valeur des estimateurs βˆ0 et βˆ1 que l’on obtient avec la méthode
+des moindres carrés ordinaires.</p>
+<pre class="r"><code>## 5. Moyennes de X et Y, variance de X et covariance entre X et Y
+meanX &lt;- mean(exercice1$X)
+meanX</code></pre>
+<pre><code>[1] 34.83702</code></pre>
+<pre class="r"><code>meanY &lt;- mean(exercice1$Y)
+meanY</code></pre>
+<pre><code>[1] 1.984327</code></pre>
+<pre class="r"><code>varX &lt;- var(exercice1$X)
+varX</code></pre>
+<pre><code>[1] 92.76741</code></pre>
+<pre class="r"><code>covXY &lt;- cov(x = exercice1$X, y = exercice1$Y)
+covXY</code></pre>
+<pre><code>[1] 4.02349</code></pre>
+<pre class="r"><code>### Estimateur des moindres carrés
+beta1 &lt;- covXY/varX
+beta1</code></pre>
+<pre><code>[1] 0.0433718</code></pre>
+<pre class="r"><code>beta0 &lt;- meanY - beta1*meanX
+beta0  </code></pre>
+<pre><code>[1] 0.4733825</code></pre></li>
+<li><p>Estimez le modèle avec R. Que constatez-vous ?</p>
+<pre class="r"><code>## 6. Estimation du modèle avec R
+modele1 &lt;- lm(formula = Y ~ X,
+              data = exercice1)
+summary(modele1)</code></pre>
+<pre><code>
+Call:
+lm(formula = Y ~ X, data = exercice1)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.74792 -0.19640 -0.02011  0.19212  0.83302 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 0.473382   0.070066   6.756    1e-10 ***
+X           0.043372   0.001939  22.370   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.2947 on 248 degrees of freedom
+Multiple R-squared:  0.6686,    Adjusted R-squared:  0.6673 
+F-statistic: 500.4 on 1 and 248 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># - Extraction des paramètres du modèle
+coef(modele1)</code></pre>
+<pre><code>(Intercept)           X 
+  0.4733825   0.0433718 </code></pre>
+<pre class="r"><code>coef(modele1)[1] # Estimation de beta0</code></pre>
+<pre><code>(Intercept) 
+  0.4733825 </code></pre>
+<pre class="r"><code>coef(modele1)[2] # Estimation de beta1</code></pre>
+<pre><code>        X 
+0.0433718 </code></pre>
+<pre class="r"><code># - Extraction des résidus d&#39;un modèle
+resid(modele1)</code></pre>
+<pre><code>            1             2             3             4             5 
+ 0.3645139435  0.1910017913 -0.1059847577 -0.3480410097  0.2523969297 
+            6             7             8             9            10 
+ 0.0541603689 -0.0191796579 -0.1142030421 -0.2804264563  0.3893486358 
+           11            12            13            14            15 
+ 0.2121737360  0.0646217659 -0.0718102706  0.0696911868  0.0802860942 
+           16            17            18            19            20 
+-0.0378214319  0.8330188834 -0.3899922253  0.0582083671 -0.1098080750 
+           21            22            23            24            25 
+ 0.6087892648  0.5302368163  0.0129158850  0.3015965796  0.3607451260 
+           26            27            28            29            30 
+-0.0917683357  0.3612595141 -0.2596714694 -0.2832897307  0.1268493522 
+           31            32            33            34            35 
+ 0.1461860376  0.1853582901 -0.0687947901 -0.0475545001 -0.0626936846 
+           36            37            38            39            40 
+ 0.2356714052  0.5050954937 -0.1196798149  0.2071290081  0.3430814626 
+           41            42            43            44            45 
+ 0.2504030484  0.1944006517  0.1493366761  0.0722339202  0.1755445009 
+           46            47            48            49            50 
+-0.3050815622  0.0680599606  0.4679821813 -0.1237702197 -0.1813073867 
+           51            52            53            54            55 
+ 0.7866412667  0.1752817499 -0.2574610319 -0.3297019358  0.7261533687 
+           56            57            58            59            60 
+-0.3673612513  0.1072050432  0.1674741681 -0.3804216675 -0.4566966558 
+           61            62            63            64            65 
+ 0.3393630706 -0.3573736699 -0.3180165235  0.2790294956 -0.5627404467 
+           66            67            68            69            70 
+-0.0341234249 -0.1461258139 -0.1818422569 -0.0081458710  0.2495656296 
+           71            72            73            74            75 
+-0.0185080902 -0.2213559745 -0.1880327860 -0.3074930675  0.1524036849 
+           76            77            78            79            80 
+ 0.2149150244  0.5390090629  0.2189979447  0.1247071653 -0.0403651119 
+           81            82            83            84            85 
+ 0.3669511388 -0.1910680092 -0.0632157749  0.1517162693  0.4325108066 
+           86            87            88            89            90 
+ 0.0576333212 -0.3383577759 -0.3244031764  0.4510709818 -0.0662728392 
+           91            92            93            94            95 
+-0.0142682586 -0.0568736475  0.0419512288 -0.3104201273  0.6591412580 
+           96            97            98            99           100 
+-0.5478007090 -0.5127094911  0.1444468629  0.2112562288 -0.3671976041 
+          101           102           103           104           105 
+-0.4426834212 -0.1342658973 -0.0949278630 -0.2974758647  0.2133193434 
+          106           107           108           109           110 
+-0.1170149357  0.1750077421 -0.0402077798  0.0701962024 -0.3127636825 
+          111           112           113           114           115 
+ 0.0182298079 -0.4079105779  0.2197100485 -0.4786556966 -0.0247714002 
+          116           117           118           119           120 
+-0.0951097363 -0.0184151542  0.6135683923 -0.1599509875  0.3325672623 
+          121           122           123           124           125 
+-0.1970500809  0.0716349557 -0.0210492197 -0.1425246422 -0.2873059601 
+          126           127           128           129           130 
+-0.0960403495 -0.1346375388 -0.1440860053 -0.7479239927 -0.1506615934 
+          131           132           133           134           135 
+-0.1956057803  0.0510739999  0.3805787687  0.1866191922 -0.1966587091 
+          136           137           138           139           140 
+-0.0891785431  0.0552185617  0.4936250159 -0.0117973505  0.0573046403 
+          141           142           143           144           145 
+-0.0389192526  0.1820201085  0.0701329572  0.2936441394  0.0788416009 
+          146           147           148           149           150 
+-0.0373175917 -0.3071786752  0.0545198832 -0.2614881281 -0.1463585084 
+          151           152           153           154           155 
+ 0.1705094229 -0.0548453031 -0.1060847082  0.2947064569 -0.2051354742 
+          156           157           158           159           160 
+-0.4970710978 -0.3322114726  0.2936898219 -0.3205767309  0.3227391287 
+          161           162           163           164           165 
+ 0.5185558151  0.3403261930  0.1454954881 -0.1417137760  0.6412174307 
+          166           167           168           169           170 
+ 0.0318200753  0.0116036771 -0.0752140741 -0.4035621113  0.2274471263 
+          171           172           173           174           175 
+-0.5560080031 -0.4422480815 -0.2795070872 -0.1215091719  0.2579855111 
+          176           177           178           179           180 
+-0.2066895413 -0.0594064583 -0.0654992858  0.8091345493 -0.0231549913 
+          181           182           183           184           185 
+ 0.2219285308  0.0345036676 -0.2238240806 -0.3563624969 -0.3850435298 
+          186           187           188           189           190 
+ 0.1359222910 -0.2173760028  0.1637566230 -0.0602696716  0.1565262733 
+          191           192           193           194           195 
+ 0.1924927041 -0.5638602689 -0.0414070102 -0.6330597185 -0.5254981137 
+          196           197           198           199           200 
+-0.5092819370 -0.3284181153 -0.0594598825  0.1591821970  0.4816666421 
+          201           202           203           204           205 
+-0.4245855680  0.0319597098 -0.3007182835 -0.1113367062 -0.1807195812 
+          206           207           208           209           210 
+ 0.3973715690  0.2267608179  0.1985080994 -0.0862455610 -0.1612332265 
+          211           212           213           214           215 
+ 0.0657164130 -0.1366688153  0.1008236479 -0.3375662669 -0.0464398556 
+          216           217           218           219           220 
+ 0.0005246322 -0.2518353422  0.1996317104 -0.5154595335  0.1603333839 
+          221           222           223           224           225 
+ 0.5114148161 -0.1373965315 -0.4257600789  0.1614498389 -0.0248512610 
+          226           227           228           229           230 
+-0.5583607285  0.1851578817  0.1810205842  0.5098026911 -0.2365828872 
+          231           232           233           234           235 
+ 0.2913884775  0.2125496134 -0.1319403444  0.1300271390  0.4627354352 
+          236           237           238           239           240 
+-0.0723162689  0.3158376761 -0.2638210366 -0.3000844003  0.0358479029 
+          241           242           243           244           245 
+ 0.2130580458 -0.2459861634 -0.1030267269  0.1161053902  0.3505936877 
+          246           247           248           249           250 
+-0.1870683693  0.2889852885  0.2746362282 -0.5954346919  0.1279181801 </code></pre>
+<pre class="r"><code>summary(resid(modele1))</code></pre>
+<pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+-0.74792 -0.19640 -0.02011  0.00000  0.19212  0.83302 </code></pre></li>
+<li><p>Vérifiez les hypothèses du modèle. Que peut-on conclure ?</p>
+<pre class="r"><code>## 7. Vérification des hypothèses du modèle
+residus1 &lt;- resid(modele1)
+### Linéarité de la fonction de régression : Résidus en fonction de la variable explicative
+plot(residus1 ~ exercice1$X, 
+     xlab = &quot;Proportion moyenne de lipides dans l&#39;alimentation (%)&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-7-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Normalité des résidus
+# Deux façons possibles :
+qqnorm(residus1)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-7-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(&quot;car&quot;)</code></pre>
+<pre><code>Warning: package &#39;car&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Loading required package: carData</code></pre>
+<pre><code>Warning: package &#39;carData&#39; was built under R version 4.4.3</code></pre>
+<pre class="r"><code>qqPlot(residus1)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-7-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>[1]  17 179</code></pre>
+<pre class="r"><code>hist(residus1)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-7-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Homoscedasticité
+# Deux façons possibles :
+plot(residus1 ~ exercice1$X, 
+     xlab = &quot;Proportion moyenne de lipides dans l&#39;alimentation (%)&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-7-5.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># - Valeurs prédites :
+exercice1$prediction1 &lt;- predict(modele1, newdata = exercice1)
+plot(residus1 ~ exercice1$prediction1, 
+     xlab = &quot;Taux de cholesterol prédit par le modèle&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-7-6.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Alternative :
+plot(modele1)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-7-7.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-7-8.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-7-9.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-7-10.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Quelle est la valeur du coefficient de détermination. Que
+signifie cette valeur ?</p>
+<pre class="r"><code>## 8. Coefficient de détermination
+summary(modele1)</code></pre>
+<pre><code>
+Call:
+lm(formula = Y ~ X, data = exercice1)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.74792 -0.19640 -0.02011  0.19212  0.83302 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 0.473382   0.070066   6.756    1e-10 ***
+X           0.043372   0.001939  22.370   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.2947 on 248 degrees of freedom
+Multiple R-squared:  0.6686,    Adjusted R-squared:  0.6673 
+F-statistic: 500.4 on 1 and 248 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>summary(modele1)$r.squared</code></pre>
+<pre><code>[1] 0.6686403</code></pre>
+<pre class="r"><code>(cor(exercice1$X, exercice1$Y))^2</code></pre>
+<pre><code>[1] 0.6686403</code></pre></li>
+<li><p>Le modèle est-il significatif ? La proportion de lipides dans
+l’alimentation a-t-il un effet sginficatif sur le taux de cholestérol ?
+Comparez ces deux résultats. Que constatez-vous ?</p>
+<pre class="r"><code>## 9. Significativité globale du modèle et effet de la proportion de lipides
+summary(modele1)</code></pre>
+<pre><code>
+Call:
+lm(formula = Y ~ X, data = exercice1)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.74792 -0.19640 -0.02011  0.19212  0.83302 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 0.473382   0.070066   6.756    1e-10 ***
+X           0.043372   0.001939  22.370   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.2947 on 248 degrees of freedom
+Multiple R-squared:  0.6686,    Adjusted R-squared:  0.6673 
+F-statistic: 500.4 on 1 and 248 DF,  p-value: &lt; 2.2e-16</code></pre></li>
+<li><p>Interprétez les résultats du modèle.</p></li>
+<li><p>Quelle est le taux de cholestérol prédit par le modèle pour une
+personne ayant une quantité moyenne de lipides dans son alimentation de
+25 % ? De 75 % ?</p>
+<pre class="r"><code>## 11. Prédiction
+# Deux façons de procéder :
+pred1 &lt;- coef(modele1)[1] + coef(modele1)[2]*25
+pred1</code></pre>
+<pre><code>(Intercept) 
+   1.557678 </code></pre>
+<pre class="r"><code>pred2 &lt;- coef(modele1)[1] + coef(modele1)[2]*75
+pred2</code></pre>
+<pre><code>(Intercept) 
+   3.726268 </code></pre>
+<pre class="r"><code># Ou
+Xpred &lt;- data.frame(X = c(25, 75)) # Il faut que les données soient sous la forme d&#39;un dataframe
+predict(modele1, newdata = Xpred)</code></pre>
+<pre><code>       1        2 
+1.557678 3.726268 </code></pre></li>
+</ol>
+</div>
+<div id="exercice-2---etude-du-volume-expiratoire-forcé"
+class="section level2">
+<h2><strong>Exercice 2 - Etude du volume expiratoire forcé</strong></h2>
+<p>Une étude a été réalisée auprès de 650 enfants/adolescents âgés entre
+4 et 19 ans afin d’étudier le volume expiratoire forcée (VEF), mesuré en
+litres BTPS, un indice d’activité pulmonaire mesurant le volume d’air
+expulsé avec force jusqu’au volume résiduel à partir de la capacité
+pulmonaire totale obte- nue. Cette mesure est obtenue à partir d’une
+spirométrie forcée.</p>
+<p>Outre le VEF et l’âge des enfants (en années), leur taille (en cm) et
+la pratique d’une activité sportive (1 = Oui/0 = Non) ont été
+recueillis. Les données se trouve dans le fichier VEF.csv.</p>
+<p>Dans le cadre de cette exercice, nous souhaiterions évaluer
+<strong>l’effet de la taille sur le VEF.</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données dans R. Puis mettez en forme les
+données si nécessaire.</p>
+<pre class="r"><code>## 1. Importation des données et mise en forme
+exercice2 &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/VEF.csv&quot;, sep = &quot;,&quot;, dec = &quot;.&quot;, header = TRUE)
+
+str(exercice2)</code></pre>
+<pre><code>&#39;data.frame&#39;:   650 obs. of  5 variables:
+ $ X       : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ age     : int  7 6 6 15 11 19 9 17 12 18 ...
+ $ taille  : int  125 125 122 165 144 191 135 177 149 183 ...
+ $ activite: int  1 0 1 0 1 1 1 1 1 1 ...
+ $ VEF     : num  2.74 2.1 2.29 4.09 2.93 ...</code></pre>
+<pre class="r"><code>exercice2 &lt;- exercice2[,-1]
+exercice2$activite &lt;- factor(exercice2$activite,
+                             levels = c(0,1),
+                             labels = c(&quot;Non&quot;, &quot;Oui&quot;))
+str(exercice2)</code></pre>
+<pre><code>&#39;data.frame&#39;:   650 obs. of  4 variables:
+ $ age     : int  7 6 6 15 11 19 9 17 12 18 ...
+ $ taille  : int  125 125 122 165 144 191 135 177 149 183 ...
+ $ activite: Factor w/ 2 levels &quot;Non&quot;,&quot;Oui&quot;: 2 1 2 1 2 2 2 2 2 2 ...
+ $ VEF     : num  2.74 2.1 2.29 4.09 2.93 ...</code></pre></li>
+<li><p>Effectuez des statistiques descriptives de la taille et du VEF.
+Que pouvez-vous dire ?</p>
+<pre class="r"><code>## 2. Statistiques descriptives
+# - VEF
+summary(exercice2$VEF)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.788   2.516   3.273   3.486   4.248   6.822 </code></pre>
+<pre class="r"><code>sd(exercice2$VEF)</code></pre>
+<pre><code>[1] 1.114224</code></pre>
+<pre class="r"><code>hist(exercice2$VEF,
+     xlab = &quot;VEF&quot;,
+     main = &quot;Distribution du VEF&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-13-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>boxplot(exercice2$VEF, 
+        ylab = &quot;VEF&quot;,
+        main = &quot;Distribution du VEF&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-13-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#- Taille
+summary(exercice2$taille)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    112     128     146     149     170     191 </code></pre>
+<pre class="r"><code>sd(exercice2$taille)</code></pre>
+<pre><code>[1] 23.00886</code></pre>
+<pre class="r"><code>hist(exercice2$taille,
+     xlab = &quot;taille (cm)&quot;,
+     main = &quot;Distribution de la taille&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-13-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>boxplot(exercice2$taille, 
+        ylab = &quot;taille (cm)&quot;,
+        main = &quot;Distribution de la taille&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-13-4.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Représentez graphiquement la relation entre la taille et le VEF à
+partir des données recueillies et calculez le coefficient de corrélation
+linéaire. Que constatez-vous ?</p>
+<pre class="r"><code>## 3. Représentation graphique relation VEF vs. taille et coefficient de corrélation
+plot(exercice2$VEF ~ exercice2$taille,
+     xlab = &quot;Taille (cm)&quot;,
+     ylab = &quot;Volume expiratoire forcé&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-14-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cor(exercice2$taille, exercice2$VEF)</code></pre>
+<pre><code>[1] 0.9394317</code></pre></li>
+<li><p>Ecrivez l’équation du modèle, puis estimez-le à l’aide du
+logiciel R.</p>
+<pre class="r"><code>## 4. Estimation du modèle avec R
+modele2 &lt;- lm(VEF ~ taille,
+              data = exercice2)
+summary(modele2)</code></pre>
+<pre><code>
+Call:
+lm(formula = VEF ~ taille, data = exercice2)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.08601 -0.26418 -0.00611  0.22883  1.46914 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.290356   0.098269  -33.48   &lt;2e-16 ***
+taille       0.045493   0.000652   69.77   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.3822 on 648 degrees of freedom
+Multiple R-squared:  0.8825,    Adjusted R-squared:  0.8824 
+F-statistic:  4868 on 1 and 648 DF,  p-value: &lt; 2.2e-16</code></pre></li>
+<li><p>Vérifiez les hypothèses du modèle. Que peut-on conclure ? Quelle
+transformation pourrait-on faire pour que le modèle soit valide ?</p>
+<pre class="r"><code>## 5. Vérification des hypothèses du modèle
+residus2 &lt;- resid(modele2)
+### Linéarité de la fonction de régression : Résidus en fonction de la variable explicative
+plot(residus2 ~ exercice2$taille, 
+     xlab = &quot;Taille (cm)&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Normalité des résidus
+qqPlot(residus2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>[1] 111 262</code></pre>
+<pre class="r"><code>hist(residus2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Homoscedasticité
+# Deux façons possibles :
+plot(residus2 ~ exercice2$taille, 
+     xlab = &quot;Taille (cm)&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># - Valeurs prédites :
+exercice2$prediction2 &lt;- predict(modele2, newdata = exercice2)
+plot(residus2 ~ exercice2$prediction2, 
+     xlab = &quot;VEF prédit par le modèle&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-5.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(modele2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-6.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-16-7.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-16-8.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-16-9.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># - Test de transformation
+hist(exercice2$VEF)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-10.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(log(exercice2$VEF))</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-11.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist((exercice2$VEF)^2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-12.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(sqrt(exercice2$VEF))</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-13.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Estimez un modèle dans lequel vous appliquez cette
+transformation. Vérifiez les hypothèses sous- jacentes.</p>
+<pre class="r"><code>## 6. Modèle avec transformation
+# - Transformation log de la variable réponse
+exercice2$logVEF &lt;- log(exercice2$VEF)
+
+# - Estimation du nouveau modèle
+modele2b &lt;- lm(logVEF ~ taille,
+               data = exercice2)
+summary(modele2b)</code></pre>
+<pre><code>
+Call:
+lm(formula = logVEF ~ taille, data = exercice2)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.26224 -0.07340 -0.00499  0.07062  0.37090 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -0.7467194  0.0259668  -28.76   &lt;2e-16 ***
+taille       0.0130596  0.0001723   75.80   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.101 on 648 degrees of freedom
+Multiple R-squared:  0.8987,    Adjusted R-squared:  0.8985 
+F-statistic:  5746 on 1 and 648 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#- Vérification des hypothèses
+residus2b &lt;- resid(modele2b)
+### Linéarité de la fonction de régression : Résidus en fonction de la variable explicative
+plot(residus2b ~ exercice2$taille, 
+     xlab = &quot;Taille (cm)&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Normalité des résidus
+qqPlot(residus2b)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>[1] 422 460</code></pre>
+<pre class="r"><code>hist(residus2b)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Homoscedasticité
+# Deux façons possibles :
+plot(residus2b ~ exercice2$taille, 
+     xlab = &quot;Taille (cm)&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># - Valeurs prédites :
+exercice2$prediction2b &lt;- predict(modele2b, newdata = exercice2)
+plot(residus2b ~ exercice2$prediction2b, 
+     xlab = &quot;VEF prédit par le modèle&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-5.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(modele2b)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-6.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-17-7.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-17-8.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-17-9.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Interprétez les résultats du modèle.</p>
+<pre class="r"><code>## 7. Résultats du modèle
+summary(modele2b)</code></pre>
+<pre><code>
+Call:
+lm(formula = logVEF ~ taille, data = exercice2)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.26224 -0.07340 -0.00499  0.07062  0.37090 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -0.7467194  0.0259668  -28.76   &lt;2e-16 ***
+taille       0.0130596  0.0001723   75.80   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.101 on 648 degrees of freedom
+Multiple R-squared:  0.8987,    Adjusted R-squared:  0.8985 
+F-statistic:  5746 on 1 and 648 DF,  p-value: &lt; 2.2e-16</code></pre></li>
+</ol>
+</div>
+<div
+id="exercice-3---lien-entre-régression-linéaire-et-analyse-de-la-variance-à-un-facteur"
+class="section level2">
+<h2><strong>Exercice 3 - Lien entre régression linéaire et analyse de la
+variance à un facteur</strong></h2>
+<p>Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une
+étude clinique portant sur la com- paraison de l’effet de deux
+anti-hypertenseurs et d’un placebo sur la pression artérielle. Nous
+disponsons d’un échantillon de 45 patients choisis au hasard, parmi
+lesquels 15 patients ont reçu l’anti-hypertenseur A, 15 patients ont
+reçu l’anti-hypertenseur B et 15 patients ont reçu le placebo. Pour
+chaque patient nous disposons de la pression artérielle systolique (en
+mmHg) 3 mois après l’initiation du traitement.</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données data_aov.csv dans R. Puis mettez en
+forme les données.</p>
+<pre class="r"><code>## 1. Importation et mise en forme du jeu de données
+data_aov &lt;- read.csv(&quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/data_aov.csv&quot;,sep = &quot;,&quot;, dec = &quot;.&quot;)
+
+str(data_aov)</code></pre>
+<pre><code>&#39;data.frame&#39;:   45 obs. of  3 variables:
+ $ X                  : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ Pression_arterielle: int  119 120 123 120 120 123 121 117 119 119 ...
+ $ Traitement         : chr  &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; ...</code></pre>
+<pre class="r"><code>data_aov$Traitement &lt;- as.factor(data_aov$Traitement)
+str(data_aov)</code></pre>
+<pre><code>&#39;data.frame&#39;:   45 obs. of  3 variables:
+ $ X                  : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ Pression_arterielle: int  119 120 123 120 120 123 121 117 119 119 ...
+ $ Traitement         : Factor w/ 3 levels &quot;A&quot;,&quot;B&quot;,&quot;Placebo&quot;: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre class="r"><code>contrasts(data_aov$Traitement)</code></pre>
+<pre><code>        B Placebo
+A       0       0
+B       1       0
+Placebo 0       1</code></pre></li>
+<li><p>Réalisez une analyse de la variance à partir de la fonction
+aov().</p>
+<pre class="r"><code>## 2. ANOVA I
+ANOVA1 &lt;- aov(Pression_arterielle ~ Traitement, 
+              data = data_aov)
+summary(ANOVA1)</code></pre>
+<pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)    
+Traitement   2  10186    5093    1426 &lt;2e-16 ***
+Residuals   42    150       4                   
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>library(tidyverse) # Manipulation et visualisation des données</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;tibble&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;tidyr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;readr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;purrr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;dplyr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;lubridate&#39; was built under R version 4.4.3</code></pre>
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.0     ✔ readr     2.1.6
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.2     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+✖ dplyr::recode() masks car::recode()
+✖ purrr::some()   masks car::some()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(rstatix) # Fonctions pour analyses statistiques</code></pre>
+<pre><code>
+Attaching package: &#39;rstatix&#39;
+
+The following object is masked from &#39;package:stats&#39;:
+
+    filter</code></pre>
+<pre class="r"><code>library(multcomp)</code></pre>
+<pre><code>Loading required package: mvtnorm
+Loading required package: survival</code></pre>
+<pre><code>Warning: package &#39;survival&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Loading required package: TH.data</code></pre>
+<pre><code>Warning: package &#39;TH.data&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Loading required package: MASS
+
+Attaching package: &#39;MASS&#39;
+
+The following object is masked from &#39;package:rstatix&#39;:
+
+    select
+
+The following object is masked from &#39;package:dplyr&#39;:
+
+    select
+
+
+Attaching package: &#39;TH.data&#39;
+
+The following object is masked from &#39;package:MASS&#39;:
+
+    geyser</code></pre>
+<pre class="r"><code># Calcul des différences entre les groupes
+contr &lt;- rbind(&quot;A - B&quot; = c(1, -1, 0),
+               &quot;A - Placebo&quot; = c(1, 0, -1),
+               &quot;B - Placebo&quot; = c(0, 1, -1))
+
+pwc &lt;- glht(ANOVA1, linfct = mcp(Traitement = contr))
+summary(pwc)</code></pre>
+<pre><code>
+     Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: User-defined Contrasts
+
+
+Fit: aov(formula = Pression_arterielle ~ Traitement, data = data_aov)
+
+Linear Hypotheses:
+                 Estimate Std. Error t value Pr(&gt;|t|)    
+A - B == 0        10.6000     0.6901   15.36   &lt;2e-16 ***
+A - Placebo == 0 -25.2667     0.6901  -36.62   &lt;2e-16 ***
+B - Placebo == 0 -35.8667     0.6901  -51.98   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+(Adjusted p values reported -- single-step method)</code></pre>
+<pre class="r"><code># P-valeurs avec ajustement pour tests multiples
+pwc_pvalues &lt;- data_aov %&gt;% pairwise_t_test(Pression_arterielle ~ Traitement,
+                                    p.adjust.method = &quot;BH&quot;)
+pwc_pvalues</code></pre>
+<pre><code># A tibble: 3 × 9
+  .y.          group1 group2    n1    n2        p p.signif    p.adj p.adj.signif
+* &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;       
+1 Pression_ar… A      B         15    15 7.70e-19 ****     7.70e-19 ****        
+2 Pression_ar… A      Place…    15    15 1.69e-33 ****     2.53e-33 ****        
+3 Pression_ar… B      Place…    15    15 9.44e-40 ****     2.83e-39 ****        </code></pre></li>
+<li><p>Nous souhaitons retrouver les résultats obtenus à la question
+suivante en formalisant le problème sous la forme d’une régression
+linéaire. Ecrivez l’équation du modèle puis estimez-la avec R.</p>
+<pre class="r"><code>## 3. Régression linéaire
+contrasts(data_aov$Traitement)</code></pre>
+<pre><code>        B Placebo
+A       0       0
+B       1       0
+Placebo 0       1</code></pre>
+<pre class="r"><code>data_aov$Traitement &lt;- relevel(data_aov$Traitement, ref = &quot;Placebo&quot;)
+contrasts(data_aov$Traitement)</code></pre>
+<pre><code>        A B
+Placebo 0 0
+A       1 0
+B       0 1</code></pre>
+<pre class="r"><code>modele3 &lt;- lm(Pression_arterielle ~ Traitement,
+             data = data_aov)
+
+anova(modele3)</code></pre>
+<pre><code>Analysis of Variance Table
+
+Response: Pression_arterielle
+           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+Traitement  2  10186  5093.0    1426 &lt; 2.2e-16 ***
+Residuals  42    150     3.6                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary(ANOVA1)</code></pre>
+<pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)    
+Traitement   2  10186    5093    1426 &lt;2e-16 ***
+Residuals   42    150       4                   
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary(modele3)</code></pre>
+<pre><code>
+Call:
+lm(formula = Pression_arterielle ~ Traitement, data = data_aov)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.6667 -1.2667 -0.2667  1.3333  4.3333 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 145.5333     0.4880  298.25   &lt;2e-16 ***
+TraitementA -25.2667     0.6901  -36.62   &lt;2e-16 ***
+TraitementB -35.8667     0.6901  -51.98   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.89 on 42 degrees of freedom
+Multiple R-squared:  0.9855,    Adjusted R-squared:  0.9848 
+F-statistic:  1426 on 2 and 42 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>mean(data_aov$Pression_arterielle[data_aov$Traitement == &quot;A&quot;])</code></pre>
+<pre><code>[1] 120.2667</code></pre>
+<pre class="r"><code>mean(data_aov$Pression_arterielle[data_aov$Traitement == &quot;B&quot;])</code></pre>
+<pre><code>[1] 109.6667</code></pre>
+<pre class="r"><code>mean(data_aov$Pression_arterielle[data_aov$Traitement == &quot;Placebo&quot;])</code></pre>
+<pre><code>[1] 145.5333</code></pre>
+<pre class="r"><code># Calcul des différences de moyennes et p-valeurs ajustées avec R
+library(emmeans)</code></pre>
+<pre><code>Warning: package &#39;emmeans&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Welcome to emmeans.
+Caution: You lose important information if you filter this package&#39;s results.
+See &#39;? untidy&#39;</code></pre>
+<pre class="r"><code>emmeans(modele3, pairwise ~ Traitement, adjust = &quot;bonferroni&quot;)</code></pre>
+<pre><code>$emmeans
+ Traitement emmean    SE df lower.CL upper.CL
+ Placebo       146 0.488 42      145      147
+ A             120 0.488 42      119      121
+ B             110 0.488 42      109      111
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast    estimate   SE df t.ratio p.value
+ Placebo - A     25.3 0.69 42  36.615 &lt;0.0001
+ Placebo - B     35.9 0.69 42  51.976 &lt;0.0001
+ A - B           10.6 0.69 42  15.361 &lt;0.0001
+
+P value adjustment: bonferroni method for 3 tests </code></pre>
+<pre class="r"><code>emmeans(modele3, pairwise ~ Traitement, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+ Traitement emmean    SE df lower.CL upper.CL
+ Placebo       146 0.488 42      145      147
+ A             120 0.488 42      119      121
+ B             110 0.488 42      109      111
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast    estimate   SE df t.ratio p.value
+ Placebo - A     25.3 0.69 42  36.615 &lt;0.0001
+ Placebo - B     35.9 0.69 42  51.976 &lt;0.0001
+ A - B           10.6 0.69 42  15.361 &lt;0.0001
+
+P value adjustment: BH method for 3 tests </code></pre>
+<pre class="r"><code>emmeans(modele3, pairwise ~ Traitement, adjust = &quot;holm&quot;)</code></pre>
+<pre><code>$emmeans
+ Traitement emmean    SE df lower.CL upper.CL
+ Placebo       146 0.488 42      145      147
+ A             120 0.488 42      119      121
+ B             110 0.488 42      109      111
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast    estimate   SE df t.ratio p.value
+ Placebo - A     25.3 0.69 42  36.615 &lt;0.0001
+ Placebo - B     35.9 0.69 42  51.976 &lt;0.0001
+ A - B           10.6 0.69 42  15.361 &lt;0.0001
+
+P value adjustment: holm method for 3 tests </code></pre></li>
+<li><p>Retrouvez la moyenne de la pression artérielle de chaque groupe à
+partir de la régression linéaire estimée, puis les différences de
+moyennes, à la main, puis avec R.</p>
+<pre class="r"><code>## 4. Vérification des hypothèseq du modèle
+# Hypothèses de normalité
+residus3 &lt;- resid(modele3)
+
+library(&quot;car&quot;)
+qqPlot(residus3)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-22-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>[1] 16 18</code></pre>
+<pre class="r"><code># Homoscédasticité = égalité des variances
+plot(residus3 ~ data_aov$Pression_arterielle, 
+     xlab = &quot;Pression_arterielle (mmHg)&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-22-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(modele3)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-22-3.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-22-4.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-22-5.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-22-6.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Vérifiez les hypothèses sous-jacentes au modèle à partir des
+résidus.</p></li>
+</ol>
+</div>
+</div>
+<div id="exercices-supplémentaires" class="section level1">
+<h1>Exercices supplémentaires</h1>
+<div id="questions-de-cours" class="section level2">
+<h2>1 - Questions de cours</h2>
+<div id="concepts-généraux" class="section level3">
+<h3>Concepts généraux</h3>
+<ol style="list-style-type: decimal">
+<li>Quel est l’objectif principal de la régression linéaire simple
+?</li>
+<li>Vrai ou Faux : La régression linéaire simple permet d’expliquer une
+variable qualitative par une variable quantitative.</li>
+<li>Quelle est la différence entre corrélation et régression ?</li>
+<li>Donnez un exemple de contexte où la régression linéaire simple est
+appropriée.</li>
+<li>Pourquoi ne pas se contenter du coefficient de corrélation pour
+prédire Y à partir de X ?</li>
+</ol>
+</div>
+<div id="définition-du-modèle" class="section level3">
+<h3>Définition du modèle</h3>
+<ol style="list-style-type: decimal">
+<li>Écrivez l’équation d’un modèle linéaire simple.</li>
+<li>Que représentent les paramètres β0 et β1 ?</li>
+<li>Que signifie le terme d’erreur ε dans le modèle ?</li>
+<li>Sous quelles conditions peut-on utiliser une régression linéaire
+simple ?</li>
+<li>Vrai ou Faux : La variable explicative peut être qualitative dans un
+modèle linéaire simple.</li>
+</ol>
+</div>
+<div id="estimation-et-interprétation" class="section level3">
+<h3>Estimation et interprétation</h3>
+<ol style="list-style-type: decimal">
+<li>Quelle méthode est utilisée pour estimer β0 et β1 ?</li>
+<li>Donnez la formule de l’estimateur de β1.</li>
+<li>Donnez la formule de l’estimateur de β0.</li>
+<li>Que représente un résidu dans le modèle ?</li>
+<li>Pourquoi minimise-t-on la somme des carrés des résidus ?</li>
+</ol>
+</div>
+<div id="qualité-et-tests" class="section level3">
+<h3>Qualité et tests</h3>
+<ol style="list-style-type: decimal">
+<li>Que mesure le coefficient de détermination R2 ?</li>
+<li>Donnez la formule de R2.</li>
+<li>Quelle est la relation entre R2 et le coefficient de corrélation
+dans le cas simple ?</li>
+<li>Quel test permet d’évaluer la significativité globale du modèle
+?</li>
+<li>Écrivez les hypothèses du test F global.</li>
+<li>Que conclure si Fobs &gt; Fcritique ?</li>
+</ol>
+</div>
+<div id="hypothèses-et-diagnostics" class="section level3">
+<h3>Hypothèses et diagnostics</h3>
+<ol style="list-style-type: decimal">
+<li>Citez les hypothèses sur les résidus dans un modèle linéaire
+simple.</li>
+<li>Comment vérifier la normalité des résidus ?</li>
+<li>Comment vérifier l’homoscédasticité ?</li>
+<li>Que faire en cas de non-linéarité ?</li>
+</ol>
+</div>
+<div id="lien-avec-lanova" class="section level3">
+<h3>Lien avec l’ANOVA</h3>
+<ol style="list-style-type: decimal">
+<li>Quelle est la relation entre ANOVA et régression linéaire simple
+?</li>
+<li>Donnez la relation fondamentale entre SCtot, SCexp et SCres.</li>
+<li>Pourquoi le test F est-il identique dans les deux approches ?</li>
+</ol>
+</div>
+</div>
+<div id="exercices-r" class="section level2">
+<h2>2 - Exercices R</h2>
+<div
+id="exercice-1-consommation-de-sel-et-pression-artérielle-systolique"
+class="section level3">
+<h3>Exercice 1 — Consommation de sel et pression artérielle
+systolique</h3>
+<p>Une étude explore la relation entre la consommation quotidienne de
+sel (en grammes par jour) et la pression artérielle systolique (en mmHg)
+chez des adultes. Les données proviennent d’un échantillon de 240
+individus (fichier sel_tension.csv). Questions :</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez les données et vérifiez la structure (noms des
+variables, type des colonnes). Mettez en forme les données si
+nécessaire. Indiquez s’il existe des valeurs manquantes.</p>
+<pre class="r"><code>## 1. Importation et mise en forme des données
+sel_tension &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/Exercices supplémentaires-20260308/sel_tension.csv&quot;,
+                        sep = &quot;,&quot;,
+                        dec= &quot;.&quot;,
+                        header = TRUE)
+str(sel_tension)</code></pre>
+<pre><code>&#39;data.frame&#39;:   240 obs. of  2 variables:
+ $ Sel_g_jour: num  7.8 9.8 4.4 6.3 7.7 13.4 11.5 7.5 9.9 8.5 ...
+ $ PAS_mmHg  : int  115 120 111 107 120 107 111 112 121 116 ...</code></pre></li>
+<li><p>Réalisez des statistiques descriptives (moyenne, écart-type,
+minimum, maximum) pour chaque variable. Commentez ce que ces valeurs
+révèlent sur la population étudiée.</p>
+<pre class="r"><code>## 2. Statistiques descriptives
+### Consommation de sel
+sel_tension %&gt;%
+  summarise(
+    Moyenne_sel = mean(Sel_g_jour),
+    SD_sel = sd(Sel_g_jour),
+    Minimum_sel = min(Sel_g_jour),
+    Maximum_sel = max(Sel_g_jour)
+  )</code></pre>
+<pre><code>  Moyenne_sel   SD_sel Minimum_sel Maximum_sel
+1    7.899167 2.369347           3        13.9</code></pre>
+<pre class="r"><code>### Pression artérielle systolique
+sel_tension %&gt;%
+  summarise(
+    Moyenne_PAS = mean(PAS_mmHg),
+    SD_PAS = sd(PAS_mmHg),
+    Minimum_PAS = min(PAS_mmHg),
+    Maximum_PAS = max(PAS_mmHg)
+  )</code></pre>
+<pre><code>  Moyenne_PAS   SD_PAS Minimum_PAS Maximum_PAS
+1    110.4417 8.369396          90         135</code></pre></li>
+<li><p>Représentez la relation entre les deux variables à l’aide d’un
+graphique adapté. Décrivez la ten- dance observée.</p>
+<pre class="r"><code>## 3. Représentation graphique de la relation entre la consommation de sel et la pression artérielle
+plot(x = sel_tension$Sel_g_jour, y = sel_tension$PAS_mmHg,
+     xlab = &quot;consommation de sel (g/jour)&quot;,
+     ylab = &quot;Pression artérielle systolique (mmHg)&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-25-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Calculez un indicateur numérique qui mesure la force et la
+direction de la relation entre les deux variables. Interprétez sa
+valeur.</p>
+<pre class="r"><code>## 4. Calcul du coefficient de corrélation
+cor(sel_tension$Sel_g_jour, sel_tension$PAS_mmHg)</code></pre>
+<pre><code>[1] 0.379858</code></pre></li>
+<li><p>Estimez un modèle permettant d’expliquer la pression artérielle
+en fonction de la consommation de sel.</p>
+<pre class="r"><code>## 5. Estimation d&#39;une régression linéaire simple
+modele1 &lt;- lm(PAS_mmHg ~ Sel_g_jour,
+              data = sel_tension)</code></pre></li>
+<li><p>Vérifiez si les hypothèses du modèle semblent respectées
+(normalité des résidus, homogénéité de la variance). Indiquez quels
+diagnostics vous utilisez et ce que vous constatez.</p>
+<pre class="r"><code>## 6. Vérification des hypothèses du modèle
+### Homoscédasticité et linéarité de la fonction de régression
+plot(modele1, which = 1)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-28-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Normalité
+plot(modele1, which = 2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-28-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Évaluez la capacité du modèle à expliquer la variabilité
+observée. Commentez la valeur obtenue.</p>
+<pre class="r"><code>## 7. Qualité du modèle : R2
+summary(modele1)$r.squared</code></pre>
+<pre><code>[1] 0.1442921</code></pre></li>
+<li><p>Testez si l’effet de la consommation de sel est statistiquement
+significatif. Expliquez votre conclu- sion, puis interprétez l’effet sur
+sel sur la pression artérielle systolique.</p>
+<pre class="r"><code>##. 8. Evaluation de la significativité de l&#39;effet du sel sur la pression artérielle
+summary(modele1)</code></pre>
+<pre><code>
+Call:
+lm(formula = PAS_mmHg ~ Sel_g_jour, data = sel_tension)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-18.066  -5.433  -0.315   5.105  24.020 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  99.8426     1.7464  57.169  &lt; 2e-16 ***
+Sel_g_jour    1.3418     0.2118   6.335 1.18e-09 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 7.758 on 238 degrees of freedom
+Multiple R-squared:  0.1443,    Adjusted R-squared:  0.1407 
+F-statistic: 40.13 on 1 and 238 DF,  p-value: 1.175e-09</code></pre>
+<pre class="r"><code># p-valeur associé à la variable Sel &lt; 0.05. Rejet de H0 qui stipule que le paramètre
+# de l&#39;effet du sel est égal à 0. Le sel a donc un effet sginficiatif sur la pression artérielle.
+
+# Interprétation : beta = 1.3418, pour toute augmentation d&#39;une gramme de la consommation de sel
+# la pression artérielle systolique augmente de 1.3418 mmHg.</code></pre></li>
+<li><p>Fournissez des prédictions pour une consommation faible (par ex.
+5 g/j) et élevée (par ex. 12 g/j). Interprétez ces résultats.</p>
+<pre class="r"><code>## 9. Prédiction
+Xpred &lt;- data.frame(Sel_g_jour = c(5, 12)) 
+predict(modele1, newdata = Xpred)</code></pre>
+<pre><code>       1        2 
+106.5516 115.9442 </code></pre></li>
+<li><p>Discutez l’effet du sel et les limites éventuelles de
+l’analyse.</p></li>
+</ol>
+</div>
+<div id="exercice-2-âge-et-temps-de-réaction" class="section level3">
+<h3>Exercice 2 — Âge et temps de réaction</h3>
+<p>Une étude examine la relation entre l’âge (en années) et le temps de
+réaction (en millisecondes) lors d’une tâche cognitive. Les données
+concernent 300 participants âgés de 20 à 75 ans (fichier
+age_temps_reaction.csv). Questions :</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données dans R et mettez-le en forme si
+nécessaire.</p>
+<pre class="r"><code>## 1. Importation et mise en forme des données
+age_temps_reaction &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/Exercices supplémentaires-20260308/age_temps_reaction.csv&quot;,
+                        sep = &quot;,&quot;,
+                        dec= &quot;.&quot;,
+                        header = TRUE)
+str(age_temps_reaction)</code></pre>
+<pre><code>&#39;data.frame&#39;:   300 obs. of  2 variables:
+ $ Age_annees      : int  73 31 47 34 71 24 33 26 60 58 ...
+ $ TempsReaction_ms: int  432 272 371 347 493 253 255 339 375 398 ...</code></pre></li>
+<li><p>Calculez la moyenne et l’écart-type pour les deux variables. Que
+suggèrent-ils sur la variabilité des temps de réaction ?</p>
+<pre class="r"><code>## 2. Staistiques descriptives
+age_temps_reaction %&gt;%
+  summarise(
+    Moyenne_age = mean(Age_annees),
+    SD_age = sd(Age_annees)
+  )</code></pre>
+<pre><code>  Moyenne_age  SD_age
+1    48.49333 15.9616</code></pre>
+<pre class="r"><code>age_temps_reaction %&gt;%
+  summarise(
+    Moyenne_age = mean(TempsReaction_ms),
+    SD_age = sd(TempsReaction_ms)
+  )</code></pre>
+<pre><code>  Moyenne_age   SD_age
+1    366.7333 60.78755</code></pre></li>
+<li><p>Représentez la relation entre l’âge et le temps de réaction à
+l’aide d’un graphique pertinent. La tendance semble-t-elle linéaire ?
+Justifiez votre réponse.</p>
+<pre class="r"><code>## 3. Représentztion graphique de la relation entre l&#39;âge et le temps de réaction
+plot(x = age_temps_reaction$Age_annees, y = age_temps_reaction$TempsReaction_ms,
+     xlab = &quot;Âge (années)&quot;,
+     ylab = &quot;Temps de réaction (ms)&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-34-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Calculez un indicateur qui résume la force et la direction de la
+relation. Interprétez sa valeur.</p>
+<pre class="r"><code>## 4. Coefficient de corrélation
+cor(age_temps_reaction$Age_annees, age_temps_reaction$TempsReaction_ms)</code></pre>
+<pre><code>[1] 0.7725096</code></pre></li>
+<li><p>Ajustez un modèle pour étudier l’effet de l’âge sur le temps de
+réaction. Expliquez la signification des paramètres obtenus.</p>
+<pre class="r"><code>## 5. Estimation d&#39;une régression linéaire simple
+modele2 &lt;- lm(TempsReaction_ms ~ Age_annees,
+              data = age_temps_reaction)
+summary(modele2)</code></pre>
+<pre><code>
+Call:
+lm(formula = TempsReaction_ms ~ Age_annees, data = age_temps_reaction)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-115.166  -25.053   -1.123   26.389  116.718 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 224.0661     7.1508   31.33   &lt;2e-16 ***
+Age_annees    2.9420     0.1401   21.00   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 38.66 on 298 degrees of freedom
+Multiple R-squared:  0.5968,    Adjusted R-squared:  0.5954 
+F-statistic:   441 on 1 and 298 DF,  p-value: &lt; 2.2e-16</code></pre></li>
+<li><p>Évaluez la proportion de variabilité expliquée par l’âge. Quelle
+est la portée de ce résultat ?</p>
+<pre class="r"><code>## 6. Coefficient de détermination
+summary(modele2)$r.squared</code></pre>
+<pre><code>[1] 0.5967711</code></pre></li>
+<li><p>Examinez les résidus pour juger de la validité des hypothèses
+(normalité, homogénéité). Si une hypothèse semble non respectée,
+proposez une amélioration possible et justifiez-la.</p>
+<pre class="r"><code>## 7. Vérification des hypothèses du modèle
+### Homoscédasiticité et linéaire de la fonction de régression
+plot(modele2, which = 1)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-38-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Normalité
+plot(modele2, which = 2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-38-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Comparez les prédictions pour un âge jeune (par ex. 30 ans) et un
+âge avancé (par ex. 70 ans). Commentez la différence.</p>
+<pre class="r"><code>## 8. Calcul de prédictions
+Xpred &lt;- data.frame(Age_annees = c(30, 70))
+predict(modele2, newdata = Xpred)</code></pre>
+<pre><code>       1        2 
+312.3260 430.0059 </code></pre></li>
+<li><p>Formulez une conclusion sur la relation âge–temps de
+réaction.</p>
+<pre class="r"><code>## 9. Interprétation de l&#39;effet de l&#39;âge
+summary(modele2)</code></pre>
+<pre><code>
+Call:
+lm(formula = TempsReaction_ms ~ Age_annees, data = age_temps_reaction)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-115.166  -25.053   -1.123   26.389  116.718 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 224.0661     7.1508   31.33   &lt;2e-16 ***
+Age_annees    2.9420     0.1401   21.00   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 38.66 on 298 degrees of freedom
+Multiple R-squared:  0.5968,    Adjusted R-squared:  0.5954 
+F-statistic:   441 on 1 and 298 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># L&#39;effet de l&#39;âge est significativement différent de 0 puisque la p-valeur &lt; 0.05.
+# beta_age = 2.9420, ce qui signifie que pour toute augmentation de l&#39;âge d&#39;une année, le temps 
+# de réaction augemente de 2.9420 ms.</code></pre></li>
+</ol>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.4.2 (2024-10-31)
+Platform: aarch64-apple-darwin20
+Running under: macOS Ventura 13.6.3
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Paris
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] emmeans_2.0.1   multcomp_1.4-29 TH.data_1.1-5   MASS_7.3-65    
+ [5] survival_3.8-6  mvtnorm_1.3-3   rstatix_0.7.3   lubridate_1.9.5
+ [9] forcats_1.0.1   stringr_1.6.0   dplyr_1.2.0     purrr_1.2.1    
+[13] readr_2.1.6     tidyr_1.3.2     tibble_3.3.1    ggplot2_4.0.2  
+[17] tidyverse_2.0.0 car_3.1-5       carData_3.0-6  
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.6       xfun_0.56          bslib_0.10.0       lattice_0.22-9    
+ [5] tzdb_0.5.0         vctrs_0.7.1        tools_4.4.2        generics_0.1.4    
+ [9] sandwich_3.1-1     pkgconfig_2.0.3    Matrix_1.7-4       RColorBrewer_1.1-3
+[13] S7_0.2.1           lifecycle_1.0.5    compiler_4.4.2     farver_2.1.2      
+[17] git2r_0.36.2       codetools_0.2-20   httpuv_1.6.16      htmltools_0.5.9   
+[21] sass_0.4.10        yaml_2.3.12        Formula_1.2-5      later_1.4.6       
+[25] pillar_1.11.1      jquerylib_0.1.4    cachem_1.1.0       abind_1.4-8       
+[29] tidyselect_1.2.1   digest_0.6.39      stringi_1.8.7      splines_4.4.2     
+[33] rprojroot_2.1.1    fastmap_1.2.0      grid_4.4.2         cli_3.6.5         
+[37] magrittr_2.0.4     utf8_1.2.6         broom_1.0.12       withr_3.0.2       
+[41] scales_1.4.0       promises_1.5.0     backports_1.5.0    estimability_1.5.1
+[45] timechange_0.4.0   rmarkdown_2.30     otel_0.2.0         workflowr_1.7.2   
+[49] zoo_1.8-15         hms_1.1.4          coda_0.19-4.1      evaluate_1.0.5    
+[53] knitr_1.51         rlang_1.1.7        Rcpp_1.1.1         glue_1.8.0        
+[57] rstudioapi_0.18.0  jsonlite_2.0.0     R6_2.6.1           fs_1.6.6          </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

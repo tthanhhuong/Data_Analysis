@@ -1,0 +1,824 @@
+---
+title: "TD4 R - Régression linéaire multiple et analyse de covariance"
+author: "PHAM Huong"
+date: "2026-03-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Exercice 1 - Régression linéaire multiple : exemple du cours
+
+Nous souhaitons étudier la relation entre le taux de cholestérol (mmol/L) et plusieurs caractéris- tiques individuelles, telles que la pression artérielle systolique (mmHg), la pression artérielle diastolique (mmHg), l’âge (en années) et l’indice de masse corporelle (IMC - kg/m2).
+
+Nous disposons pour cela d’un échantillon de 200 observations.
+
+1.  Importez le jeu de données coronary.csv dans R. Puis mettez en forme les données si nécessaire.
+
+    ```{r}
+    # 1. Importation et mise en forme du jeu de données
+    setwd("/Users/thanhhuong/R/Data_Analysis")
+    exercice1 <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/coronary.csv", 
+                          sep = ",", 
+                          dec = ".", 
+                          header = TRUE)
+
+    str(exercice1)
+    exercice1$race <- as.factor(exercice1$race)
+    exercice1$cad <- as.factor(exercice1$cad)
+    exercice1$gender <- as.factor(exercice1$gender)
+    str(exercice1)
+    ```
+
+2.  Réalisez quelques statistiques descriptives de chacune des variables, puis représentez graphique- ment la relation de chacune des variables explicatives avec la variable expliquée et calculez les coefficients de corrélation associés. Que constatez-vous ?
+
+    ```{r}
+    # 2. Statistiques descriptives
+    ## A l'aide de la fonction summary() et d'histogrammes
+    summary(exercice1$chol)
+    hist(exercice1$chol)
+
+    summary(exercice1$sbp)
+    hist(exercice1$sbp)
+
+    summary(exercice1$dbp)
+    hist(exercice1$dbp)
+
+    summary(exercice1$age)
+    hist(exercice1$age)
+
+    summary(exercice1$bmi)
+    hist(exercice1$bmi)
+    ```
+
+    ```{r}
+    ## Représentation graphique et coefficients de corrélation
+    plot(x = exercice1$sbp, y = exercice1$chol,
+         xlab = "Pression artérielle systolique (mmHg)", ylab = "Taux de cholestérol (mmol/L)")
+    cor(exercice1$sbp, exercice1$chol)
+    cor(exercice1$sbp, exercice1$chol, use = "complete.obs")
+    cor.test(exercice1$sbp, exercice1$chol, use = "complete.obs")
+
+    plot(x = exercice1$dbp, y = exercice1$chol,
+         xlab = "Pression artérielle diastolique (mmHg)", ylab = "Taux de cholestérol (mmol/L)")
+    cor(exercice1$dbp, exercice1$chol)
+    cor(exercice1$dbp, exercice1$chol, use = "complete.obs")
+    cor.test(exercice1$dbp, exercice1$chol, use = "complete.obs")
+
+    plot(x = exercice1$age, y = exercice1$chol,
+         xlab = "Âge (années)", ylab = "Taux de cholestérol (mmol/L)")
+    cor(exercice1$age, exercice1$chol)
+    cor(exercice1$age, exercice1$chol, use = "complete.obs")
+    cor.test(exercice1$age, exercice1$chol, use = "complete.obs")
+
+    plot(x = exercice1$bmi, y = exercice1$chol,
+         xlab = "Indice de masse corporelle (kg/m2)", ylab = "Taux de cholestérol (mmol/L)")
+    cor(exercice1$bmi, exercice1$chol)
+    cor(exercice1$bmi, exercice1$chol, use = "complete.obs")
+    cor.test(exercice1$bmi, exercice1$chol, use = "complete.obs")
+    ```
+
+    ```{r}
+    ## Dataset avec données complètes 
+    exercice1_bis <- exercice1[complete.cases(exercice1[,c("age","chol", "sbp", "dbp", "bmi")]), ]
+    ```
+
+3.  Estimez une régression linéaire permettant d’expliquer le taux de cholestérol en fonction des pression artérielles systolique et diastolique, de l’âge et de l’IMC. Quelle est la valeur de coefficient de détermination. Que signifie-t-il ?
+
+    ```{r}
+    # 3. Estimation du modèle
+    modele1 <- lm(formula =  chol ~ age + sbp + dbp + bmi,
+                  data = exercice1_bis)
+    summary(modele1)
+
+    ```
+
+4.  Vérifiez les hypothèses sous-jacentes au modèle.
+
+    ```{r}
+    # 4. Vérification des hypothèses du modèle
+    ## Linéarité
+    par(mfrow = c(2,2))
+    exercice1_bis$residus <- resid(modele1)
+    plot(exercice1_bis$residus ~ exercice1_bis$age,
+         xlab = "Age",
+         ylab = "résidus",
+         main = "Vérification linéarité de l'âge")
+
+    plot(exercice1_bis$residus ~ exercice1_bis$sbp,
+         xlab = "Pression artérielle systolique",
+         ylab = "résidus",
+         main = "Vérification linéarité de la pression artérielle systolique")
+
+    plot(exercice1_bis$residus ~ exercice1_bis$dbp,
+         xlab = "Pression artérielle diastolique",
+         ylab = "résidus",
+         main = "Vérification linéarité de la pression artérielle diastolique")
+
+    plot(exercice1_bis$residus ~ exercice1_bis$bmi,
+         xlab = "IMC",
+         ylab = "résidus",
+         main = "Vérification linéarité de l'IMC")
+
+    par(mfrow = c(1,1))
+    ```
+
+    ```{r}
+    ## Normalité 
+    library(car)
+    qqPlot(modele1)
+
+    plot(modele1, which = 2)
+    ```
+
+    ```{r}
+    ## Homoscédasticité
+    exercice1_bis$prediction <- predict(modele1, newdata = exercice1_bis)
+    plot(exercice1_bis$residus ~ exercice1_bis$prediction,
+         xlab = "Valeurs prédites",
+         ylab = "Résidus",
+         main = "Graphique des résidus contre les valeurs prédites")
+
+    plot(modele1, which = 1)
+
+    ```
+
+    ```{r}
+    ## Multicolinéarité
+    ### Variance des paramètres
+    summary(modele1)
+    ```
+
+    ```{r}
+    ### Corrélation entre les variables explicatives
+    cor(exercice1_bis[,c(1,6,7,8)])
+
+    ```
+
+    ```{r}
+    ### Facteur d'inflation de la variance
+    vif(modele1)
+    ```
+
+5.  Y-a-t’il des observations aberrantes et/ou influentes ?
+
+    ```{r}
+    # 5. Observations aberrrantes et influentes
+    ## Observations aberrantes : leviers
+    leviers <- data.frame(obs = seq(1:92),leviers = hatvalues(modele1))
+    leviers[leviers$leviers> 0.1087,]
+
+    exercice1_bis[c(61, 73, 86, 87),]
+
+    ## Observations influentes : distance de Cook
+    summary(cooks.distance(modele1))
+    plot(modele1, which = 4)
+
+    ```
+
+6.  Quelle est la p-valeur du test global de significativité du modèle ? Que concluez-vous ?
+
+    ```{r}
+    ## 6. Test global de significativité
+    summary(modele1)
+    ```
+
+7.  L’effet des différentes variables explicatives est-il significativement différent de 0 ? Concluez puis interprétez les valeurs estimées.
+
+    ```{r}
+    ## 7. Significativité et interprétation des paramètres
+    summary(modele1)
+
+    ```
+
+8.  Nous souhaiterions prédire, à partir du modèle estimé, le taux de cholesterol d’une personne de 65 ans, avec un IMC de 35kg/m2, présentant une pression artérielle systolique de 134 mmHg et une pression artérielle diastolique de 96 mmHg. Donnez également un intervalle de prédiction.
+
+    ```{r}
+    # 8. Prédiction
+    ## Calcul de la prédiction
+    x_h <- data.frame(age = 65, sbp = 134, dbp = 96, bmi = 35)
+    prediction <- predict(modele1, newdata = x_h, 
+                          interval = "prediction", 
+                          type = "response", 
+                          level = 0.95)
+    prediction
+
+    ```
+
+# Exercice 2 - Analyse de covariance
+
+Nous souhaitons évaluer l’efficacité de différentes approches thérapeutiques pour réduire les symp- tômes de dépression chez des patients adultes. Pour cela, nous avons recruté 180 participants présentant des symptômes dépressifs modérés à sévères. Chaque participant a été évalué avant le début du traitement à l’aide du PHQ-9, un questionnaire stan- dardisé qui mesure la sévérité de la dépression (score de 0 à 27, où un score élevé indique une dépression plus sévère). Les participants ont ensuite été répartis aléatoirement en trois groupes :
+
+— **Groupe Activation** : les participants suivent un programme d’activation comportementale, qui vise à augmenter les activités plaisantes et significatives ;
+
+— **Groupe TCC** : les participants suivent une thérapie cognitivo-comportementale, une approche bien établie pour traiter la dépression ;
+
+— **Groupe témoin** : les participants ne reçoivent pas de traitement spécifique, mais bénéficient d’un suivi minimal. Après 8 semaines, chaque participant est réévalué avec le même questionnaire PHQ-9 pour mesurer l’évo- lution des symptômes.
+
+L’objectif est de comparer les scores post-traitement entre les trois groupes, tout en tenant compte du score initial (avant traitement). En effet, il est logique qu’un patient très déprimé au départ ait un score post-traitement différent d’un patient moins déprimé, même avec le même type de thérapie.
+
+1.  Importez le jeu de données psychoclinique.csv dans R. Puis mettez en forme les données si nécessaire.
+
+    ```{r}
+    ## 1. Importation et mise en forme du jeu de données
+    setwd("/Users/thanhhuong/R/Data_Analysis")
+    psychoclinique <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/psychoclinique_interaction.csv",
+                               sep = ",",
+                               dec = ".",
+                               header = TRUE)
+
+    str(psychoclinique)
+    psychoclinique$groupe <- factor(psychoclinique$groupe)
+    str(psychoclinique)
+
+    ```
+
+2.  Réalisez des statistiques descriptives pour les deux variables explicatives et la variable expliquée individuellement, puis faites la même chose pour chacun des deux scores de dépression en fonction du traitement reçu.
+
+    ```{r}
+    ## 2. Statistiques descriptives
+    table(psychoclinique$groupe)
+
+    library(tidyverse)
+    psychoclinique %>%
+      summarise(
+        min = min(phq9_base),
+        median = median(phq9_base),
+        mean = mean(phq9_base),
+        max = max(phq9_base),
+        sd = sd(phq9_base)
+      )
+
+    psychoclinique %>%
+      group_by(groupe) %>%
+      summarise(
+        min = min(phq9_base),
+        median = median(phq9_base),
+        mean = mean(phq9_base),
+        max = max(phq9_base),
+        sd = sd(phq9_base)
+      )
+
+    psychoclinique %>%
+      summarise(
+        min = min(phq9_post),
+        median = median(phq9_post),
+        mean = mean(phq9_post),
+        max = max(phq9_post),
+        sd = sd(phq9_post)
+      )
+
+    psychoclinique %>%
+      group_by(groupe) %>%
+      summarise(
+        min = min(phq9_post),
+        median = median(phq9_post),
+        mean = mean(phq9_post),
+        max = max(phq9_post),
+        sd = sd(phq9_post)
+      )
+
+    ```
+
+3.  Représentation graphiquement la relation entre le traitement, le score de dépression initial et le score de dépression 8 semaines après l’initiation du traitement. Que constatez-vous ?
+
+    ```{r}
+    ## 3. Représentation graphique
+    library(ggplot2)
+    ggplot(psychoclinique, aes(x = phq9_base, y = phq9_post, color = groupe)) +
+      geom_point() +
+      labs(x = "PHQ-9 (pré)", y = "PHQ-9 (post)", color = "Groupe") +
+      theme_minimal()
+
+    ggplot(psychoclinique, aes(x = phq9_base, y = phq9_post, color = groupe)) +
+      geom_point(alpha = 0.6) +
+      geom_smooth(method = "lm", se = FALSE) +
+      labs(x = "PHQ-9 (pré)", y = "PHQ-9 (post)", color = "Groupe") +
+      theme_minimal()
+
+
+    ```
+
+4.  Réalisez une analyse de covariance afin d’évaluer l’effet du traitement après ajustement pour le score de dépression initial.
+
+    ```{r}
+    ## 4. Analyse : ANCOVA
+    ### Modification du codage du facteur
+    contrasts(psychoclinique$groupe)
+    psychoclinique$groupe <- relevel(psychoclinique$groupe, ref = "Temoin")
+    contrasts(psychoclinique$groupe)
+
+    ancova1 <- lm(phq9_post ~ phq9_base + groupe + phq9_base:groupe,
+                  data = psychoclinique)
+    ```
+
+5.  Vérifiez les hypothèses du modèle.
+
+    ```{r}
+    ## 5. Vérification des hypothèses
+    ### Normalité
+    plot(ancova1, which = 2)
+
+
+    ```
+
+    ```{r}
+    ### Homoscédasticité et linéarité
+    plot(ancova1, which = 1)
+
+
+    ```
+
+    ```{r}
+    ### Homogénéité des pentes
+    library(car)
+    Anova(ancova1, type = "III")
+    # L'intéraction n'est pas significative. L'hypothèse est vérifiée.
+
+
+    ```
+
+    ```{r}
+    ### Ré-estimation du modèle sans interaction
+    ancova2 <- lm(phq9_post ~ phq9_base + groupe,
+                  data = psychoclinique)
+
+
+    ```
+
+    ```{r}
+    ### Vérification des hypothèses du nouveau modèle
+    plot(ancova2, which = 2)
+    plot(ancova2, which = 1)
+
+    ```
+
+6.  Le traitement a-t-il un effet significatif sur le score de dépression 8 semaines après l’initiation du traitement ? Qu’en est-il du score de dépression initial ? Que pouvez-vous conclure ?
+
+    ```{r}
+    ## 6. Interprétation du modèle
+    ### Test-F
+    Anova(ancova2, type = "III")
+
+    ```
+
+    ```{r}
+    ### Interprétation du score de dépression initial
+    summary(ancova2)
+    ```
+
+    Intercept : 1.09 =\> phq9_post por le groupe Témoin lorsque phq9_base = 0
+
+    phq9_base : 0.72 =\> effet du phq9_base quelque soit le traitement (pente, identique pour les 3 groupes)
+
+    groupeActivation : -2.48 =\> Différente entre le groupe activation et le groupe témoin après ajustement sur le phq9_base
+
+    groupeTCC : -3.15 =\> Différence entre le groupe TCC et le groupe témoin après ajustement sur le phq9_base
+
+    ```{r}
+    # Autre approche
+    library(emmeans)
+    emmeans(ancova2,
+            pairwise ~ groupe, adjust = "BH")
+    ```
+
+7.  Refaites ces analyses avec la base de données psychoclinique_interaction.csv
+
+    ```{r}
+    ## 7. Analyses avec les données du fichier psychoclinique_interaction.csv
+    ### a. Importation et mise en forme des données
+    psychoclinique_interaction <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/psychoclinique_interaction.csv",
+             sep = ",",
+             dec = ".",
+             header = TRUE)
+
+    str(psychoclinique_interaction)
+    psychoclinique_interaction$groupe <- as.factor(psychoclinique_interaction$groupe)
+    str(psychoclinique_interaction)
+
+    ```
+
+    ```{r}
+    ### b. Statistiques descriptives
+    table(psychoclinique_interaction$groupe)
+
+    library(tidyverse)
+    psychoclinique_interaction %>%
+      summarise(
+        min = min(phq9_base),
+        median = median(phq9_base),
+        mean = mean(phq9_base),
+        max = max(phq9_base),
+        sd = sd(phq9_base)
+      )
+
+    psychoclinique_interaction %>%
+      group_by(groupe) %>%
+      summarise(
+        min = min(phq9_base),
+        median = median(phq9_base),
+        mean = mean(phq9_base),
+        max = max(phq9_base),
+        sd = sd(phq9_base)
+      )
+
+    psychoclinique_interaction %>%
+      summarise(
+        min = min(phq9_post),
+        median = median(phq9_post),
+        mean = mean(phq9_post),
+        max = max(phq9_post),
+        sd = sd(phq9_post)
+      )
+
+    psychoclinique_interaction %>%
+      group_by(groupe) %>%
+      summarise(
+        min = min(phq9_post),
+        median = median(phq9_post),
+        mean = mean(phq9_post),
+        max = max(phq9_post),
+        sd = sd(phq9_post)
+      )
+
+    ```
+
+    ```{r}
+    ### c. Représentation graphique
+    library(ggplot2)
+    ggplot(psychoclinique_interaction, aes(phq9_base, phq9_post, color = groupe)) +
+      geom_point() +
+      labs(x = "PHQ-9 (pré)", y = "PHQ-9 (post)") +
+      theme_minimal()
+
+    ggplot(psychoclinique_interaction, aes(phq9_base, phq9_post, color = groupe)) +
+      geom_point(alpha = 0.6) +
+      geom_smooth(method = "lm", se = FALSE) +
+      labs(x = "PHQ-9 (pré)", y = "PHQ-9 (post)") +
+      theme_minimal()
+
+
+    ```
+
+    ```{r}
+    ### d. Analyse : ANCOVA
+    ### Modification du codage du facteur
+    contrasts(psychoclinique_interaction$groupe)
+    psychoclinique_interaction$groupe <- relevel(psychoclinique_interaction$groupe, ref = "Temoin")
+    contrasts(psychoclinique_interaction$groupe)
+
+    ancova3 <- lm(phq9_post ~ phq9_base + groupe + phq9_base:groupe,
+                  data = psychoclinique_interaction)
+
+    ```
+
+    ```{r}
+    ### e. Vérification des hypothèses
+    ### Normalité
+    plot(ancova3, which = 2)
+
+    ### Homoscédasticité et linéaité
+    plot(ancova3, which = 1)
+
+    ### Homogénéité des pentes
+    library(car)
+    Anova(ancova3, type = "III")
+    # L'intéraction est significative. L'hypothèse d'homogénéité des pentes n'est pas vérifiée.
+
+    ```
+
+    ```{r}
+    ### f. Interprétation des résultats
+    summary(ancova3)
+
+    library(emmeans)
+    emmeans(ancova3,
+            pairwise ~ groupe, asjust = "BH")
+
+    emtrends(ancova3, pairwise ~ groupe, var = "phq9_base", adjust = "BH")
+
+    ```
+
+# Exercices supplémentaires
+
+## 1 - Questions de cours
+
+### Régression linéaire multiple
+
+1.  Quelle est la différence entre une régression linéaire simple et une régression linéaire multiple ?
+2.  Donnez la forme générale de l’équation d’une régression linéaire multiple.
+3.  Que représente le coefficient β0 dans un modèle de régression linéaire multiple ?
+4.  Quelle est la méthode utilisée pour estimer les paramètres d’un modèle de régression linéaire multiple ?
+5.  Écrivez la formule matricielle de l’estimateur des moindres carrés pour β.
+6.  Quelles sont les hypothèses fondamentales d’un modèle de régression linéaire multiple ?
+7.  Comment calcule-t-on le coefficient de détermination R2 et que signifie-t-il ?
+8.  Pourquoi utilise-t-on le coefficient de détermination ajusté Ra2 et comment se calcule-t-il ?
+9.  Quelle est la statistique de test utilisée pour vérifier la significativité globale d’un modèle ?
+10. Quelle est la statistique de test pour évaluer la significativité individuelle d’un paramètre βj ?
+11. Donnez la formule d’un intervalle de prédiction pour une nouvelle observation.
+12. Quelles sont les conséquences de la multicolinéarité sur l’interprétation des paramètres ?
+13. Comment calcule-t-on le facteur d’inflation de la variance (VIF) et que signifie-t-il ?
+14. Quelle règle pratique permet d’identifier une observation influente à partir de la distance de Cook ?
+15. Quelle est la différence entre une valeur aberrante et une valeur influente ?
+
+### Analyse de Covariance (ANCOVA)
+
+1.  Qu’est-ce qu’une analyse de covariance (ANCOVA) et dans quel contexte l’utilise-t-on ?
+2.  Donnez la forme générale du modèle ANCOVA sans interaction.
+3.  Que signifie l’hypothèse d’homogénéité des pentes dans une ANCOVA ?
+4.  Comment tester la significativité d’un terme d’interaction dans une ANCOVA ?
+5.  Dans le cadre d’une ANCOVA, comment interpréter un coefficient associé à une variable qualita- tive (facteur) par rapport au niveau de référence ?
+
+## Exercices R
+
+### Exercice 1
+
+Une étude clinique a été menée sur 250 patients traités par un nouvel antihypertenseur. Pour chaque patient, on a mesuré :
+
+— Concentration plasmatique du médicament (mg/L) ;
+
+— Âge (années) ;
+
+— Poids (kg) ;
+
+— Clairance rénale (mL/min) ;
+
+— Score d’adhérence au traitement (échelle de 0 à 10).
+
+**Objectif** : Étudier la relation entre la concentration plasmatique d’un médicament (mg/L) et plu- sieurs caractéristiques individuelles chez des patients sous traitement antihypertenseur.
+
+1.  Importez le jeu de données pharma_study.csv dans R et mettez-le en forme si nécessaire.
+
+    ```{r}
+    # 1. Importation et mise en forme des données
+    pharma <- read.csv("/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/Exercices supplémentaires-20260308/pharma_study.csv",
+                       sep = ",",
+                       dec = ".",
+                       header = TRUE)
+
+    str(pharma)
+
+    ```
+
+    ```{r}
+    # Aperçu et préparation
+    glimpse(pharma)
+    pharma <- pharma %>%
+      mutate(
+        age = as.numeric(age),
+        poids = as.numeric(poids),
+        clairance = as.numeric(clairance),
+        adherence = as.numeric(adherence),
+        conc = as.numeric(conc)
+      )
+
+    ```
+
+2.  Réalisez des statistiques descriptives pour chaque variable et calculez les corrélations entre la concentration plasmatique et les variables explicatives. Que constatez-vous ?
+
+    ```{r}
+    #2. Statistiques descriptives
+    ## Plusieurs possibilités
+    ### option 1
+    summary(pharma)
+    ```
+
+    ```{r}
+    ### option 2 (où nous pouvons choisir les statistiques présentées)
+    library(tidyverse)
+    pharma %>% summarise(
+      across(everything(), 
+             list(moy=mean, sd=sd)))
+
+    ```
+
+    ```{r}
+    ## Corrélations des variables explicatives avec la concentration plasmatique
+    cor(pharma$conc, pharma$adherence)
+    cor(pharma$conc, pharma$age)
+    cor(pharma$conc, pharma$poids)
+    cor(pharma$conc, pharma$clairance)
+    ```
+
+3.  Estimez un modèle de régression linéaire multiple expliquant la concentration plasmatique en fonction des quatre variables explicatives.
+
+    ```{r}
+    # 3. Estimation d'un modèle de régression linéaire multiple
+    m1 <- lm(conc ~ age + poids + clairance + adherence, 
+             data = pharma)
+
+    ```
+
+4.  Vérifiez les hypothèses du modèle (linéarité, normalité des résidus, homoscédasticité, absence de multicolinéarité).
+
+    ```{r}
+    # 4. Vérification des hypothèses
+    pharma$resid <- resid(m1)
+
+    plot(m1, which = 2) # QQplot
+    plot(m1, which = 1) # résidus vs valeurs ajustés (homoscédasticité)
+
+    par(mfrow=c(2,2))
+    ## Linéarité de la fonction de régression
+    plot(pharma$age,pharma$resid)
+    plot(pharma$clairance,pharma$resid)
+    plot(pharma$poids,pharma$resid)
+    plot(pharma$adherence,pharma$resid)
+
+    par(mfrow=c(1,1))
+
+    ```
+
+    ```{r}
+    ## Multicolinéarité : VIF
+    library(car)
+    vif(m1)
+    ```
+
+5.  Interprétez le coefficient de détermination R2.
+
+    ```{r}
+    # 5. Coefficient de détermination
+    summary(m1)$r.squared 
+    ```
+
+    ```{r}
+    # Valeurs aberrantes et influentes
+    lev <- hatvalues(m1) # Leviers = valeurs aberrantes
+    n <- nrow(pharma) 
+    p <- 4 # Nombre de variables explicatives
+    seuil_levier <- 2*(p+1)/n
+    seuil_levier
+    lev[lev> seuil_levier]
+
+    pharma[c(2,3,4,13,69,106,148,159,199),]
+
+
+    cook <- cooks.distance(m1) # Distance de Cook : valeurs influentes
+    summary(cook) # Valeurs < 1 => Pas de valeurs influentes
+    ```
+
+6.  Identifiez les observations aberrantes et/ou influentes.
+
+7.  Testez la significativité globale du modèle et celle des paramètres individuels. Interprétez les coefficients estimés.
+
+    ```{r}
+    # 7. Significativité globale et paramètres individuels
+    summary(m1)
+
+    ```
+
+    ***p-valeur test global \< 0.05 =\> Le modèle est significatif***
+
+    ***Tous les paramètres ont une p-valeur \< 0.05 =\> Toutes les variables explicatives ont un effet significatif sur la concentration plasmatique du médicament.***
+
+8.  Prédisez la concentration plasmatique pour un patient de 70 ans, pesant 85 kg, avec une clairance rénale de 60 mL/min et un score d’adhérence de 8. Fournissez un intervalle de prédiction.
+
+    ```{r}
+    # 8. Prédiction avec intervalle de prédiction
+    new_pt <- data.frame(age=70, poids=85, clairance=60, adherence=8)
+    predict(m1, 
+            newdata=new_pt, 
+            interval="prediction", 
+            level=0.95)
+    ```
+
+### Exercice 2
+
+Nous souhaitons évaluer l’efficacité de trois régimes alimentaires pour réduire la glycémie (12 semaines après l’introduction du régime) chez des patients diabétiques, en tenant compte de la glycémie initiale. Une étude a ainsi été menée auprès de 150 patients diabétiques répartis aléatoirement en trois groupes : régime méditerranéen, régime pauvre en glucides, régime standard (témoin). Pour chaque patient, la glycémie à jeun (mmol/L) a été mesurée avant le début du régime et après 12 semaines.
+
+1.  Importez le jeu de données diet_diabetes.csv dans R et mettez-le en forme si nécessaire.
+
+    ```{r}
+    # 1. Importation et mise en forme des données
+    diet <- read.csv("/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/Exercices supplémentaires-20260308/diet_diabetes.csv",
+                     sep = ",",
+                     dec = ".",
+                     header = TRUE)
+
+    str(diet)
+    diet$regime <- as.factor(diet$regime)
+    str(diet)
+
+    ```
+
+2.  Réalisez des statistiques descriptives pour la glycémie initiale, la glycémie après 12 semaines et le régime alimentaire.
+
+    ```{r}
+    # 2. Statistiques descriptives
+    ## type de régime
+    table(diet$regime)
+    ```
+
+    ```{r}
+    ## Glycémie initiale
+    summary(diet$gly_base)
+    diet%>%
+      summarise(
+        moy_base = mean(gly_base), sd_base = sd(gly_base)
+      )
+
+    diet %>% group_by(regime) %>%
+      summarise(
+        n = n(),
+        moy_base = mean(gly_base), sd_base = sd(gly_base)
+      )
+
+
+    ```
+
+    ```{r}
+    ## Glycémie post-intervention
+    summary(diet$gly_post)
+    diet%>%
+      summarise(
+        moy_post = mean(gly_post), sd_post = sd(gly_post)
+      )
+
+    diet %>% group_by(regime) %>%
+      summarise(
+        n = n(),
+        moy_post = mean(gly_post), sd_post = sd(gly_post)
+      )
+
+    ```
+
+3.  Représentez graphiquement la relation entre le régime, la glycémie initiale et la glycémie après 12 semaines. Que constatez-vous ?
+
+    ```{r}
+    # 3. Représentation graphique Visualisations
+    boxplot(gly_post ~ regime, data=diet)
+
+    library(ggplot2)
+    ggplot(diet, aes(x = gly_base, y = gly_post, color = regime)) +
+      geom_point() +
+      labs(x = "Glycémie (pré)", y = "Glycémie (post)", color = "Régime") +
+      theme_minimal()
+
+    ggplot(diet, aes(x = gly_base, y = gly_post, color = regime)) +
+      geom_point(alpha = 0.6) +
+      geom_smooth(method = "lm", se = FALSE) +
+      labs(x = "Glycémie (pré)", y = "Glycémie (post)", color = "Régime") +
+      theme_minimal()
+    ```
+
+    ***Il ne semble pas y avoir d'intéraction entre la glycémie initiale et le régime.*** 
+
+4.  Réalisez une ANCOVA pour évaluer l’effet du régime après ajustement pour la glycémie initiale.
+
+    ```{r}
+    # 4. ANCOVA sans interaction
+    m2 <- lm(gly_post ~ gly_base + regime, data=diet)
+    summary(m2)
+    ```
+
+5.  Vérifiez les hypothèses du modèle.
+
+    ```{r}
+    # 5. Vérification des hypothèses
+    plot(m2, which = 2) # QQplot
+    plot(m2, which = 1) # Résidus contre valeurs prédites
+    # Homogéneité des pentes
+    m3 <- lm(gly_post ~ gly_base + regime + gly_base:regime, data=diet)
+    library(car)
+    Anova(m3, type = "III")
+    ```
+
+    ***La pvaleur du terme d'intéraction \> 0.05. Les pentes sont donc homogènes.***
+
+6.  Le régime a-t-il un effet significatif sur la glycémie après 12 semaines ? Qu’en est-il de la glycémie initiale ?
+
+    ```{r}
+    # 6. Interprétation du modèle
+    Anova(m2, type = "III")
+
+    ```
+
+    ***Le régime et la glycémie initiale ont un effet statistiquement significatif sur la glycémie 12 semaines après l'initiation du traitement.***
+
+7.  Interprétez les coefficients estimés et les différences ajustées entre les régimes.
+
+    ```{r}
+    # 7. Interprétation des résultats
+    summary(m2)
+
+
+    ```
+
+    Après ajustement sur la glycémie initiale :
+
+    -   Nous constatons que la glycémie à jeun est supérieure de 0.45 mmol/L pour le régime méditerranéen comparative au régime pauvre en glucide ;
+
+    -   Nous constatons que la glycémie à jeun est supérieur de 1.30 mmol/L pour le régime standard par rapport au régime pauvre en glucides.
+
+    Après ajustement sur le régime alimentaire, lorsque la glycémie a jeun initiale est supérieure 1 mmol/L, la glycémie 12 semaines après l'initiation du régime est supérieure de 0.69 mmol/L.
+
+    ```{r}
+    # Différences ajustées
+    library(emmeans)
+    emmeans(m2,
+            pairwise ~ regime, adjust = "BH")
+
+    ```

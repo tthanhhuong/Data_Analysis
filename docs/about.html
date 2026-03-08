@@ -32,6 +32,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
 
 <link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
@@ -263,7 +265,13 @@ $(document).ready(function () {
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/tthanhhuong/Data_Analysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -281,7 +289,7 @@ $(document).ready(function () {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -292,8 +300,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -302,13 +310,13 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-02-26
+<strong>Last updated:</strong> 2026-03-08
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
@@ -331,33 +339,36 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreecadff5d737cb77983c27777b0ea7c32fa1965557targetblankcadff5da">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/tthanhhuong/Data Analysis/tree/cadff5d737cb77983c27777b0ea7c32fa1965557" target="_blank">cadff5d</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreecadff5d737cb77983c27777b0ea7c32fa1965557targetblankcadff5da"
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -367,7 +378,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/tthanhhuong/Data Analysis/tree/cadff5d737cb77983c27777b0ea7c32fa1965557" target="_blank">cadff5d</a>.
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -382,10 +393,16 @@ were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/.Rhistory
 
-Untracked files:
-    Untracked:  Data_Analysis/
+Unstaged changes:
+    Modified:   analysis/4_Excercice.Rmd
+    Modified:   analysis/Gael_1.Rmd
+    Modified:   analysis/about.Rmd
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -401,14 +418,114 @@ have uncommitted changes.
 </div>
 <div id="versions" class="tab-pane fade">
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/about.Rmd</code>) and HTML
+(<code>docs/about.html</code>) files. If you’ve configured a remote Git
+repository (see <code>?wflow_git_remote</code>), click on the hyperlinks
+in the table below to view the files as they were in that past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/123b9567e7657cb15e321ba77665b573e22d5391/analysis/about.Rmd" target="_blank">123b956</a>
+</td>
+<td>
+tthanhhuong
+</td>
+<td>
+2026-02-26
+</td>
+<td>
+Initial commit
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/tthanhhuong/Data_Analysis/123b9567e7657cb15e321ba77665b573e22d5391/docs/about.html" target="_blank">123b956</a>
+</td>
+<td>
+tthanhhuong
+</td>
+<td>
+2026-02-26
+</td>
+<td>
+Initial commit
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
 </div>
-<p>Describe your project.</p>
+<div id="the-workflow" class="section level1">
+<h1><strong>The workflow</strong></h1>
+<p>This is the general workflow:</p>
+<ol style="list-style-type: decimal">
+<li><p>Open a new or existing R Markdown file
+in <code>analysis/</code> (optionally using <a
+href="https://workflowr.github.io/workflowr/reference/wflow_open.html"><code>wflow_open()</code></a>)</p></li>
+<li><p>Perform your analysis in the R Markdown file (For RStudio users:
+to quickly develop the code I recommend executing the code in the R
+console via Ctrl-Enter to send one line or Ctrl-Alt-C to execute the
+entire code chunk)</p></li>
+<li><p>Run <a
+href="https://workflowr.github.io/workflowr/reference/wflow_build.html"><code>wflow_build()</code></a> to
+view the results as they will appear on the website (alternatively press
+the Knit button in RStudio)</p></li>
+<li><p>Go back to step 2 until you are satisfied with the
+result</p></li>
+<li><p>Run <a
+href="https://workflowr.github.io/workflowr/reference/wflow_publish.html"><code>wflow_publish()</code></a> to
+commit the source files (R Markdown files or other files
+in <code>code/</code>, <code>data/</code>, and <code>output/</code>),
+build the HTML files, and commit the HTML files</p></li>
+<li><p>Push the changes to GitHub or GitLab with <a
+href="https://workflowr.github.io/workflowr/reference/wflow_git_push.html"><code>wflow_git_push()</code></a> (or <code>git push</code> in
+the Terminal)</p></li>
+</ol>
+<p>This ensures that the code version recorded at the top of an HTML
+file corresponds to the state of the Git repository at the time it was
+built.</p>
+<p>The only exception to this workflow is if you are updating the
+aesthetics of your website (e.g. anytime you make edits
+to<code>analysis/_site.yml</code>). In this case you’ll want to update
+all the published HTML files, regardless of whether or not their
+corresponding R Markdown files have been updated. To republish every
+HTML page, run <a
+href="https://workflowr.github.io/workflowr/reference/wflow_publish.html"><code>wflow_publish()</code></a> with<code>republish = TRUE</code>.
+This behavior is only previewed below by
+specifying <code>dry_run = TRUE</code>.</p>
+</div>
 </div>
 </div>
 </div>

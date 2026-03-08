@@ -1,0 +1,594 @@
+---
+title: "TD3 R - Analyse de la variance à deux facteurs"
+author: "PHAM Huong"
+date: "2026-03-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Exercice 1 - Exemple du cours
+
+Une compagnie pharmaceutique américaine souhaite évaluer l’efficacité d’un nouveau médicament permettant de réduire la durée d’un épisode de fièvre selon le sexe (Femme - Homme) et l’ethnie (Cau- casien, Africain Americain, Hispanique). Six groupes ont été formés, correspondant à toutes les com- binaisons possibles de ces deux facteurs. Nous disposons d’un échantillon de 5 individus pour chaque combinaison des deux facteurs, soit 30 observations au total, n’ayant aucun lien entre eux. Nous dispo- sons des informations suivantes : — Le sexe (Femme/Homme) ; — L’ethnie (Africain Amerciain/Caucasien/Hispanique) — La durée nécessaire pour réduire la fièvre (en minutes).
+
+1.  Importez le jeu de données ANOVA_II_exercice1.csv dans R. Puis mettez en forme les données si nécessaire.
+
+    ```{r}
+    ## 1. Importation des données 
+    setwd("/Users/thanhhuong/R/Data_Analysis")
+    exercice1 <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/ANOVA_II_exercice1.csv",
+                       sep = ";",
+                       header = TRUE)
+
+    # Mise en forme
+    str(exercice1)
+    exercice1$Sexe <- as.factor(exercice1$Sexe)
+    exercice1$Ethnie <- as.factor(exercice1$Ethnie)
+    exercice1 <- exercice1[,c(-1)]
+    str(exercice1)
+
+    ```
+
+2.  Effectuez des statistiques descriptives de la durée nécessaire pour réduire la fièvre globalement, pour chaque facteur, puis pour chaque combinaison des deux facteurs. Représentez graphiquement ces derniers éléments. Que pouvez-vous dire ?
+
+    ```{r}
+    ## 2. Statistiques descriptives
+    # Statistiques descriptives
+    mean(exercice1$Duree)
+
+    ## Approche 1 : 
+    library(tidyverse) 
+    library(rstatix)
+    moyenne_sexe <- exercice1 %>%
+      group_by(Sexe) %>%
+      get_summary_stats(Duree, type = "mean_sd")
+    moyenne_sexe
+
+    moyenne_ethnie <- exercice1 %>%
+      group_by(Ethnie) %>%
+      get_summary_stats(Duree, type = "mean_sd")
+    moyenne_ethnie
+
+    moyenne_sexe_ethnie <- exercice1 %>%
+      group_by(Sexe,Ethnie) %>%
+      get_summary_stats(Duree, type = "mean_sd")
+    moyenne_sexe_ethnie
+    ```
+
+    ```{r}
+    ## Approche 2 : 
+    aggregate(Duree ~ Sexe,
+              data = exercice1,
+              FUN = mean)
+
+    aggregate(Duree ~ Ethnie,
+              data = exercice1,
+              FUN = mean)
+
+    aggregate(Duree ~ Sexe + Ethnie,
+              data = exercice1,
+              FUN = mean)
+    ```
+
+    ```{r}
+    # Représentation graphique des données
+    library(ggplot2)
+    ggplot(exercice1,
+           aes(x = Ethnie, y = Duree, fill = Sexe)) +
+      geom_boxplot() +
+      theme(axis.text = element_text(size=12)) 
+
+    ggplot(exercice1,
+           aes(x = Sexe, y = Duree, fill = Ethnie)) +
+      geom_boxplot() +
+      theme(axis.text = element_text(size=12)) 
+    ```
+
+3.  Pourquoi une analyse de la variance à deux facteurs est la méthode statistique appropriée pour analyser l’effet du sexe et de l’ethnie sur la durée de réduction de la fièvre ?
+
+4.  Un terme d’intéraction entre les deux facteurs vous semble-t-il être pertinent ici ?
+
+5.  Posez les hypothèses de cette ANOVA II, puis réalisez-là avec R. Le terme d’intéraction est-il significatif. Qu’est-ce que cela veut dire ?
+
+    ```{r}
+    ## 5. ANOVA II : Approche directe
+    anova2 <- aov(formula = Duree ~ Sexe + Ethnie + Sexe*Ethnie,
+                 data = exercice1) 
+    summary(anova2)
+    ```
+
+6.  Nous souhaitons maintenant réaliser cette analyse à partir de l’approche modélisation. Ecrivez l’équation du modèle, puis estimez-le avec R. Retrouvez les éléments obtenus avec l’approche directe.
+
+    ```{r}
+    ## 6. ANOVA II : Approche modélisation
+    # Modification des contrastes :
+    contrasts(exercice1$Sexe)
+    contrasts(exercice1$Sexe) <- "contr.sum"
+    contrasts(exercice1$Sexe)
+
+    contrasts(exercice1$Ethnie)
+    contrasts(exercice1$Ethnie) <- "contr.sum"
+    contrasts(exercice1$Ethnie) 
+    ```
+
+    ```{r}
+    # Estimation du modèle
+    mod1 <- lm(Duree ~ Sexe + Ethnie + Sexe*Ethnie,
+               data = exercice1)
+
+    anova(mod1)
+    summary(anova2)
+    ```
+
+7.  Vérifiez les hypothèses du modèle, puis interprétez les résultats si cela vous semble pertinent. Que pouvez-vous dire ?
+
+    ```{r}
+    ## 7. Vérification des hypothèses du modèle
+    # Normalité
+    residus1 <- resid(mod1)
+
+    library("car")
+    qqPlot(residus1)
+
+    # Homoscédasticité
+    exercice1$prediction1 <- predict(mod1, newdata = exercice1, type = "response")
+    plot(residus1 ~ exercice1$prediction1, 
+         xlab = "Durée moyenne pour réduire la fièvre - prédictions",
+         ylab = "Résidus")
+
+    plot(mod1)
+
+    # Résultats 
+    ## Tests F
+    anova(mod1)
+    summary(mod1)
+
+    ## Estimation des paramètres
+    summary(mod1)
+    ```
+
+8.  Effectuez des comparaisons deux à deux, puis représenter graphiquement les résultats obtenus. Que pouvez-vous conclure ?
+
+    ```{r}
+    ## 8. Comparaison 2 à 2
+    library(emmeans)
+    emmeans(mod1, specs=pairwise ~ Ethnie|Sexe, adjust = "bonferroni")
+    emmeans(mod1, specs=pairwise ~ Sexe|Ethnie, adjust = "bonferroni")
+    emmeans(mod1, specs=pairwise ~ Sexe, adjust = "bonferroni")
+    emmeans(mod1, specs=pairwise ~ Ethnie, adjust = "bonferroni")
+
+    emmeans(mod1, specs=pairwise ~ Ethnie|Sexe, adjust = "BH")
+
+    emmeans(mod1, specs=pairwise ~ Ethnie|Sexe, adjust = "holm")
+
+    # Représentation graphique
+    with(
+      exercice1,
+      interaction.plot(Ethnie, Sexe, Duree)
+    )
+
+    library(ggpubr)
+    ggline(exercice1, # Dataset
+           x = "Ethnie",
+           y = "Duree",
+           color = "Sexe",
+           add = c("mean_se") # add mean and standard error
+    ) +
+      labs(y = "Durée moyenne (minutes)")
+    ```
+
+9.  Comparez les résultats des ANOVA de type I, II et III. Que constatez-vous ?
+
+    ```{r}
+    ## 9. Comparaison ANOVA TYPE I, II et III
+    anova(mod1) # Type I
+    library(car)
+    Anova(mod1, type = "II") # Type II
+    Anova(mod1, type = "III") # Type III
+    ```
+
+# Exercice 2 - Design non-équilibré
+
+Une compagnie pharmaceutique américaine souhaite évaluer l’efficacité d’un nouveau médicament permettant de réduire la durée d’un épisode de fièvre selon le sexe (Femme - Homme) et l’ethnie (Cauca- sien, Africain Americain, Hispanique). Six groupes ont été formés, correspondant à toutes les combinai- sons possibles de ces deux facteurs. Idéalement, nous aurions souhaité avoir un échantillon de 5 individus pour chaque combinaison des deux facteurs. Cependant, le jeu de données dont nous disposons présente des données manquantes. Notons, par ailleurs, que les observations n’ont aucun lien entre elles. Comme pour l’exercice précédent, nous disposons des informations suivantes :
+
+— Le sexe (Femme/Homme) ; — L’ethnie (Africain Amerciain/Caucasien/Hispanique) — La durée nécessaire pour réduire la fièvre (en minutes).
+
+1.  Importez le jeu de données ANOVA_II_exercice2.csv dans R. Puis mettez en forme les données si nécessaire.
+
+    ```{r}
+    ## 1. Importation et mise en forme des données
+    exercice2 <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/ANOVA_II_exercice2.csv",
+                          sep = ";",
+                          header = TRUE)
+    str(exercice2)
+    exercice2$Duree <- as.numeric(exercice2$Duree)
+    str(exercice2)
+
+    exercice2 <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/ANOVA_II_exercice2.csv",
+                          sep = ";",
+                          header = TRUE,
+                          na.strings = c("NA", "ND", "."))
+    str(exercice2)
+
+    exercice2$Sexe <- as.factor(exercice2$Sexe)
+    exercice2$Ethnie <- as.factor(exercice2$Ethnie)
+    str(exercice2)
+    ```
+
+2.  Effectuez des statistiques descriptives de la durée nécessaire pour réduire la fièvre globalement, pour chaque facteur, puis pour chaque combinaison des deux facteurs. Le design est-il équilibré ? Pourquoi?
+
+    ```{r}
+    ## 2. Statistiques descriptives
+    mean(exercice2$Duree)
+
+    mean(exercice2$Duree, na.rm = TRUE)
+
+
+    aggregate(Duree ~ Sexe,
+              data = exercice2,
+              FUN = mean)
+
+    aggregate(Duree ~ Ethnie,
+              data = exercice2,
+              FUN = mean)
+
+    aggregate(Duree ~ Sexe + Ethnie,
+              data = exercice2,
+              FUN = mean)
+
+    moyenne_sexe_ethnie <- exercice2 %>%
+      group_by(Sexe,Ethnie) %>%
+      get_summary_stats(Duree, type = "mean_sd")
+    moyenne_sexe_ethnie
+
+    ```
+
+3.  Représentez graphiquement les moyennes pour chacune des deux combinaisons de facteur. Que pouvez-vous dire ?
+
+    ```{r}
+    ## 3. Représentation graphique des données
+    library(ggplot2)
+    ggplot(exercice2,
+           aes(x = Ethnie, y = Duree, fill = Sexe)) +
+      geom_boxplot() +
+      theme(axis.text = element_text(size=12)) 
+    ```
+
+4.  En présence d’un design non-équilibré, la fonction aov() n’est pas adaptée pour réaliser une ANOVA. Nous allons donc passer par l’approche modélisation pour effectuer cette analyse. Ecrivez l’équation du modèle, puis estimez-le avec R.
+
+    ```{r}
+    ## 4. ANOVA II : Approche modélisation
+    # Modification des contrastes :
+    contrasts(exercice2$Sexe)
+    contrasts(exercice2$Sexe) <- "contr.sum"
+    contrasts(exercice2$Sexe)
+
+    contrasts(exercice2$Ethnie)
+    contrasts(exercice2$Ethnie) <- "contr.sum"
+    contrasts(exercice2$Ethnie) 
+
+    mod2 <- lm(Duree ~ Sexe + Ethnie + Sexe*Ethnie, 
+               data = exercice2)
+    ```
+
+5.  Vérifiez les hypothèses du modèle, puis interprétez les résultats si cela vous semble pertinent. Que pouvez-vous dire ?
+
+    ```{r}
+    ## 5. Vérification des hypothèses du modèle
+    # En raison de la présence de données manquantes le nombre de résidus, n'est pas le même que le 
+    # nombre de ligne dans le dataset initial. Il est plus simple d'utiliser la ligne de code suivante
+    # pour vérifier les hypothèses du modèle.
+    plot(mod2)
+    shapiro.test(resid(mod2))
+
+    # Résultats
+    Anova(mod2, type = "III") # Design non-équilibré => ANOVA de type III
+
+    # Réestimation du modèle sans interaction
+    mod3 <- lm(Duree ~ Sexe + Ethnie, data = exercice2)
+
+    # Vérification des hypothèses du modèle
+    plot(mod3)
+    shapiro.test(resid(mod3))
+
+    # ANOVA II pour le nouveau modèle
+    Anova(mod3, type = "II")
+    ```
+
+6.  Effectuez des comparaisons deux à deux, puis représenter graphiquement les résultats obtenus. Que pouvez-vous conclure ?
+
+    ```{r}
+    ## 6. Comparaison 2 à 2
+    library(emmeans)
+    emmeans(mod3, specs=pairwise ~ Sexe, adjust = "bonferroni")
+    emmeans(mod3, specs=pairwise ~ Ethnie, adjust = "bonferroni")
+
+    emmeans(mod3, specs=pairwise ~ Sexe, adjust = "BH")
+    emmeans(mod3, specs=pairwise ~ Ethnie, adjust = "BH")
+
+    emmeans(mod3, specs=pairwise ~ Sexe, adjust = "holm")
+    emmeans(mod3, specs=pairwise ~ Ethnie, adjust = "holm")
+    ```
+
+7.  Comparez les résultats des ANOVA de type I, II et III. Que constatez-vous ?
+
+    ```{r}
+    ## 7. Comparaison ANOVA TYPE I, II et III
+    # Types I, II et III
+    anova(mod3) # Type I
+    library(car)
+    Anova(mod3, type = "II") # Type II
+    Anova(mod3, type = "III") # Type III
+    ```
+
+# Exercices supplémentaires
+
+## 1 - Questions de cours
+
+### Concepts généraux
+
+1.  Quelle est la différence entre une ANOVA à un facteur et une ANOVA à deux facteurs ?
+2.  Vrai ou Faux : Une ANOVA II permet d’étudier l’effet de deux variables qualitatives sur une variable quantitative.
+3.  Donnez un exemple de situation où une ANOVA II est appropriée.
+4.  Que signifie ‘design équilibré’ dans le cadre d’une ANOVA II ?
+5.  Pourquoi l’ANOVA II est-elle préférée à deux ANOVA I séparées ?
+
+### Hypothèses et structure
+
+1.  Citez les hypothèses nécessaires pour la validité d’une ANOVA II.
+2.  Vrai ou Faux : L’hypothèse d’indépendance des observations se vérifie par un test statistique.
+3.  Que représente le terme d’interaction dans une ANOVA II ?
+4.  Que se passe-t-il si l’interaction est significative ?
+
+### Calculs et décomposition
+
+1.  Complétez : SCtot = + .
+2.  Définissez SC1, SC2 et SC12.
+3.  Quelle est la formule du carré moyen pour le facteur 1 ?
+4.  Écrivez la statistique F pour tester l’effet du facteur 2.
+5.  Comment calcule-t-on les degrés de liberté pour l’interaction ? 6. Pourquoi compare-t-on CM inter-groupe à CM intra-groupe ?
+
+### Interprétation et tests
+
+1.  Quelles sont les trois hypothèses testées dans une ANOVA II lorsque le modèle contient une intéraction ?
+2.  Vrai ou Faux : Si l’interaction n’est pas significative, on peut interpréter les effets principaux.
+3.  Que conclure si Fobs \> Fcritique pour le facteur 1 ?
+4.  Que signifie un p-value \< 0,05 pour l’interaction ?
+5.  Pourquoi utiliser des comparaisons deux à deux après une ANOVA II ?
+
+### Approche modélisation
+
+1.  Écrivez la forme générale du modèle linéaire pour une ANOVA II.
+2.  Pourquoi impose-t-on des contraintes sur les paramètres du modèle ?
+3.  Vrai ou Faux : Une ANOVA II peut être exprimée comme une régression linéaire.
+4.  Quelle méthode est utilisée pour estimer les paramètres du modèle ?
+
+### Design non-équilibré et types d’ANOVA
+
+1.  Quelle est la différence entre les sommes des carrés de type I, II et III ?
+2.  Dans quel cas privilégie-t-on l’approche de type III ?
+3.  Pourquoi les résultats diffèrent-ils entre les types I, II et III en design non-équilibré ?
+
+## 2 - Exercices R
+
+### Exercice 1 — Performance sportive : effet de l’entraînement et du régime alimentaire
+
+Contexte. On étudie la performance (temps moyen sur 100 m en secondes) selon deux facteurs : Entrainement (Endurance, Sprint) et Régime alimentaire (Standard, Hyperprotéiné, Végétarien). Les données se trouvent dans le fichier performance_sportive_anova2.csv. Questions :
+
+1.  Importez le fichier et mettez en forme les données si nécessaire.
+
+    ```{r}
+    ## 1. Importation et mise en forme du jeu de données 
+    performance_sportive <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/Exercices supplémentaires-20260308/performance_sportive_anova2.csv",
+                                     sep = ",",
+                                     dec = ".",
+                                     header = TRUE)
+
+    str(performance_sportive)
+    performance_sportive$Entrainement <- as.factor(performance_sportive$Entrainement)
+    performance_sportive$Regime <- as.factor(performance_sportive$Regime)
+    str(performance_sportive)
+
+
+    ```
+
+2.  Décrivez la structure des données et les effectifs par combinaison de facteurs. Calculez le temps moyen sur 100m globale par facteur et par combinaison de facteurs, puis commentez.
+
+    ```{r}
+    ## 2. Statistiques descriptives
+    table(performance_sportive$Entrainement, performance_sportive$Regime)
+    # => Design équilibré
+
+    mean(performance_sportive$Temps_100m_s)
+
+    aggregate(Temps_100m_s ~ Entrainement,
+              data = performance_sportive,
+              FUN = mean)
+
+    aggregate(Temps_100m_s ~ Regime,
+              data = performance_sportive,
+              FUN = mean)
+
+    aggregate(Temps_100m_s ~ Regime + Entrainement,
+              data = performance_sportive,
+              FUN = mean)
+
+    ```
+
+3.  Représentez visuellement les moyennes par combinaison de facteurs et discutez une éventuelle interaction.
+
+    ```{r}
+    ## 3. Représentation graphique des moyennes par combinaison de facteurs
+    ggplot(performance_sportive,
+           aes(x = Regime, y = Temps_100m_s, fill = Entrainement)) +
+      geom_boxplot() +
+      theme(axis.text = element_text(size=12)) 
+    ```
+
+4.  Réalisez une ANOVA à deux facteurs avec interaction.
+
+    ```{r}
+    ## 4. ANOVA II avec interaction
+    contrasts(performance_sportive$Regime)
+    contrasts(performance_sportive$Regime) <- "contr.sum"
+    contrasts(performance_sportive$Regime)
+
+    contrasts(performance_sportive$Entrainement)
+    contrasts(performance_sportive$Entrainement) <- "contr.sum"
+    contrasts(performance_sportive$Entrainement)
+
+    aov_1 <- lm(Temps_100m_s ~ Regime + Entrainement + Regime*Entrainement,
+                data = performance_sportive)
+    ```
+
+5.  Vérifiez les hypothèses (normalité des résidus, homogénéité des variances). Discutez la robustesse des conclusions.
+
+    ```{r}
+    ## 5. Vérification des hypothèses
+    plot(aov_1, which = 1) # Homoscedasticité
+    plot(aov_1, which = 2) # Normalité
+    ```
+
+6.  Testez l’interaction et, si elle n’est pas significative, ré-estimez le mdoèle sans intéraction inter- prétez les effets principaux.
+
+    ```{r}
+    ## 6. Evaluation de l'effet d'interaction
+    anova(aov_1)
+
+    aov_2 <- lm(Temps_100m_s ~ Regime + Entrainement,
+                data = performance_sportive)
+    plot(aov_2, which = 1)
+    plot(aov_2, which = 2)
+
+    anova(aov_2)
+
+    ```
+
+7.  Si pertinent, effectuez des comparaisons deux à deux tout en controlant pour l’erreur de type I.
+
+    ```{r}
+    ## 7. Comparaison 2 à 2
+    emmeans(aov_2, specs=pairwise ~ Regime, adjust = "BH")
+    emmeans(aov_2, specs=pairwise ~ Entrainement, adjust = "BH")
+    ```
+
+8.  Concluez sur l’effet des facteurs et l’éventuelle interaction.
+
+### Exercice 2 — Douleur postopératoire : effet du type de traitement et du moment
+
+Contexte. On évalue le score de douleur EVA (0–10) 2h après chirurgie selon deux facteurs : le Trai- tement (Morphinique, Non-morphinique) et le Moment d’administration du traitement (Avant, Pendant, Après l’intervention). Les données se trouvent dans le fichier douleur_postop_anova2.csv. Questions.
+
+1.  Importez le fichier et mettez en forme les données si nécessaire.
+
+    ```{r}
+    ## 1. Importation et mise en forme des données
+    douleur_postop <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD ANOVA II-20260121/Exercices supplémentaires-20260308/douleur_postop_anova2.csv",
+                                     sep = ",",
+                                     dec = ".",
+                                     header = TRUE)
+
+    str(douleur_postop)
+    douleur_postop$Traitement <- as.factor(douleur_postop$Traitement)
+    douleur_postop$Moment <- as.factor(douleur_postop$Moment)
+    str(douleur_postop)
+
+    ```
+
+2.  Dressez la table des effectifs par combinaison de facteurs. Le design est-il équilibré ?
+
+    ```{r}
+    ## 2. Tableau des effectifs par combinaison de facteurs
+    table(douleur_postop$Traitement, douleur_postop$Moment)
+    # => Design non-équilibré
+    ```
+
+3.  Réalisez des statistiques descriptives (globales, par facteur, par combinaison de facteurs) et représentez les moyennes par combinaison de facteurs. Formulez une hypothèse sur l’interaction.
+
+    ```{r}
+    ## 3. Statistiques descriptives
+    mean(douleur_postop$Douleur_EVA_2h)
+
+    aggregate(Douleur_EVA_2h ~ Traitement,
+              data = douleur_postop,
+              FUN = mean)
+
+    aggregate(Douleur_EVA_2h ~ Moment,
+              data = douleur_postop,
+              FUN = mean)
+
+    aggregate(Douleur_EVA_2h ~ Traitement + Moment,
+              data = douleur_postop,
+              FUN = mean)
+
+    ```
+
+    ```{r}
+    ## Représentation graphique
+    ggplot(douleur_postop,
+           aes(x = Moment, y = Douleur_EVA_2h, fill = Traitement)) +
+      geom_boxplot() +
+      theme(axis.text = element_text(size=12)) 
+    ```
+
+4.  Réalisez une ANOVA à deux facteurs via l’approche modélisation (modèle linéaire).
+
+    ```{r}
+    ## 4. Estimation modèle ANOVA 2
+    contrasts(douleur_postop$Traitement)
+    contrasts(douleur_postop$Traitement) <- "contr.sum"
+    contrasts(douleur_postop$Traitement)
+
+    contrasts(douleur_postop$Moment)
+    contrasts(douleur_postop$Moment) <- 'contr.sum'
+    contrasts(douleur_postop$Moment)
+
+
+    aov_3 <- lm(Douleur_EVA_2h ~ Traitement + Moment + Traitement*Moment,
+                data = douleur_postop)
+    ```
+
+5.  Vérifiez les hypothèses (normalité, homogénéité). Discutez la robustesse des conclusions.
+
+    ```{r}
+    ## 5. Vérification des hypothèses
+    plot(aov_3, which = 1) # Homoscedasticité
+    plot(aov_3, which = 2) # Normalité
+    ```
+
+6.  Comparez les résultats obtenus à l’aide des ANOVA de type I, II et III. Laquelle faut-il choisir pour conclure ? Pourquoi ?
+
+    ```{r}
+    ## 6. Comparaisons des anova de type I, II et III
+    anova(aov_3) # Type I
+    Anova(aov_3, type = "II")
+    Anova(aov_3, type = "III")
+    ```
+
+7.  L’interaction est-elle significative? Si non, re-estimez le modèle sans interaction puis concluez quant aux effets des deux facteurs.
+
+    ```{r}
+    ## 7. Evaluation de l'effet d'interaction
+    Anova(aov_3, type = "III")
+    # => Intéraction non-significative.
+
+    aov_4 <- lm(Douleur_EVA_2h ~ Traitement + Moment,
+                data = douleur_postop)
+    plot(aov_4, which = 1)
+    plot(aov_4, which = 2)
+
+    Anova(aov_4, type = "II")
+
+    ```
+
+8.  Effectuez des comparaisons deux à deux si cela vous semble pertinent, et synthétisez les résultats.
+
+    ```{r}
+    ## 8. Comparaison 2 à 2
+    emmeans(aov_4, specs=pairwise ~ Traitement, adjust = "BH")
+    emmeans(aov_4, specs=pairwise ~ Moment, adjust = "BH")
+
+    ```
+
+9.  Concluez et proposez une recommandation clinique.

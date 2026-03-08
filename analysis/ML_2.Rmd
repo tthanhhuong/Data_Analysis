@@ -1,0 +1,693 @@
+---
+title: "ML_2"
+author: "PHAM Huong"
+date: "2026-03-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# **TD2 R - Régression linéaire simple**
+
+## **Exercice 1 - Exemple du cours**
+
+Dans le cadre d’une étude de santé publique, nous cherchons à évaluer le lien qui pourrait exister entre la proportion de lipides contenue dans l’alimentation et le taux de cholestérol chez les adultes âgés de 45 à 65 ans.
+
+Nous disposons pour cela d’un échantillon de 250 observations pour lesquelles nous disposons des infor- mations suivantes :
+
+— Le taux de cholestérol en g/L (Y ) ; — La proportion moyenne de lipides (en pourcentage) contenue dans l’alimentation évaluée sur 1 mois (X). L’objectif de l’étude est de quantifier l’effet de la quantité de lipides sur le taux de choles- térol.
+
+1.  Importez le jeu de données data_reg_lineaire_simple.csv dans R. Puis mettez en forme les données si nécessaire.
+
+    ```{r}
+    ## 1. Importation du jeu de données et mise en forme
+    setwd("/Users/thanhhuong/R/Data_Analysis")
+    exercice1 <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/data_reg_lineaire_simple.csv", sep = ",", dec = ".", header = TRUE)
+
+    str(exercice1)
+
+    exercice1 <- exercice1[,c(2,3)] # Retrait de la première colonne
+    # exercice1 <- exercice1[,c(-1)] # Méthode alternative
+
+    str(exercice1)
+
+    ```
+
+2.  Effectuez des statistiques descriptives de chacune des variables. Que pouvez-vous dire ?
+
+    ```{r}
+    ## 2. Statistiques descriptives
+    #- Proportion de lipides dans l'alimentation
+    summary(exercice1$X)
+    var(exercice1$X)
+    sd(exercice1$X)
+    boxplot(exercice1$X, 
+            ylab = "Proportion de lipides dans l'alimentation (%)",
+            main = "Distribution de la proportion de lipides dans l'alimentation")
+
+    hist(exercice1$X, 
+         xlab = "Proportion de lipides (%)", 
+         main = "Distribution de la proportion de lipides dans l'alimentation ")
+    ```
+
+    ```{r}
+    #- Taux de cholesterol
+    summary(exercice1$Y)
+    var(exercice1$Y)
+    sd(exercice1$Y)
+    boxplot(exercice1$Y, 
+            ylab = "Taux de cholesterol (g/L)",
+            main = "Distribution du taux de cholestérol")
+
+    hist(exercice1$Y, 
+         xlab = "Taux de cholestérol (g/L)", 
+         main = "Distribution du taux de cholesterol")
+    ```
+
+3.  Représentez graphiquement la relation qu’il existe entre le taux de cholesterol et la proportion moyenne de lipides contenue dans l’alimentation des 250 personnes constituant l’échantillon. Quel graphique avez-vous utilisé ? Pourquoi ? Que constatez-vous ? Calculez le coefficient de corrélation linéaire.
+
+    ```{r}
+    ## 3. Relation entre X et Y
+    plot(exercice1$Y ~ exercice1$X, 
+         xlab = "Pourcentage de lipides dans l'alimentation",
+         ylab = "Taux de cholesterol")
+
+    cor(x = exercice1$X, y = exercice1$Y)
+    ```
+
+4.  Pourquoi un modèle linéaire simple est la méthode statistique appropriée pour analyser l’effet de la proportion moyenne de lipides dans l’alimentation sur le taux de cholestérol ? Ecrivez l’équation du modèle.
+
+5.  Calculer la moyenne de X, de Y , la variance de X et la covariance entre X et Y à l’aide du logiciel R, puis calculer à la main la valeur des estimateurs βˆ0 et βˆ1 que l’on obtient avec la méthode des moindres carrés ordinaires.
+
+    ```{r}
+    ## 5. Moyennes de X et Y, variance de X et covariance entre X et Y
+    meanX <- mean(exercice1$X)
+    meanX
+    meanY <- mean(exercice1$Y)
+    meanY
+    varX <- var(exercice1$X)
+    varX
+    covXY <- cov(x = exercice1$X, y = exercice1$Y)
+    covXY
+
+    ### Estimateur des moindres carrés
+    beta1 <- covXY/varX
+    beta1
+    beta0 <- meanY - beta1*meanX
+    beta0  
+    ```
+
+6.  Estimez le modèle avec R. Que constatez-vous ?
+
+    ```{r}
+    ## 6. Estimation du modèle avec R
+    modele1 <- lm(formula = Y ~ X,
+                  data = exercice1)
+    summary(modele1)
+
+    # - Extraction des paramètres du modèle
+    coef(modele1)
+    coef(modele1)[1] # Estimation de beta0
+    coef(modele1)[2] # Estimation de beta1
+
+    # - Extraction des résidus d'un modèle
+    resid(modele1)
+    summary(resid(modele1))
+    ```
+
+7.  Vérifiez les hypothèses du modèle. Que peut-on conclure ?
+
+    ```{r}
+    ## 7. Vérification des hypothèses du modèle
+    residus1 <- resid(modele1)
+    ### Linéarité de la fonction de régression : Résidus en fonction de la variable explicative
+    plot(residus1 ~ exercice1$X, 
+         xlab = "Proportion moyenne de lipides dans l'alimentation (%)",
+         ylab = "Résidus")
+
+    ### Normalité des résidus
+    # Deux façons possibles :
+    qqnorm(residus1)
+
+    library("car")
+    qqPlot(residus1)
+
+    hist(residus1)
+
+    ### Homoscedasticité
+    # Deux façons possibles :
+    plot(residus1 ~ exercice1$X, 
+         xlab = "Proportion moyenne de lipides dans l'alimentation (%)",
+         ylab = "Résidus")
+
+    # - Valeurs prédites :
+    exercice1$prediction1 <- predict(modele1, newdata = exercice1)
+    plot(residus1 ~ exercice1$prediction1, 
+         xlab = "Taux de cholesterol prédit par le modèle",
+         ylab = "Résidus")
+
+    # Alternative :
+    plot(modele1)
+    ```
+
+8.  Quelle est la valeur du coefficient de détermination. Que signifie cette valeur ?
+
+    ```{r}
+
+    ## 8. Coefficient de détermination
+    summary(modele1)
+
+    summary(modele1)$r.squared
+    (cor(exercice1$X, exercice1$Y))^2
+    ```
+
+9.  Le modèle est-il significatif ? La proportion de lipides dans l’alimentation a-t-il un effet sginficatif sur le taux de cholestérol ? Comparez ces deux résultats. Que constatez-vous ?
+
+    ```{r}
+
+    ## 9. Significativité globale du modèle et effet de la proportion de lipides
+    summary(modele1)
+    ```
+
+10. Interprétez les résultats du modèle.
+
+    ```{r}
+
+    ```
+
+11. Quelle est le taux de cholestérol prédit par le modèle pour une personne ayant une quantité moyenne de lipides dans son alimentation de 25 % ? De 75 % ?
+
+    ```{r}
+    ## 11. Prédiction
+    # Deux façons de procéder :
+    pred1 <- coef(modele1)[1] + coef(modele1)[2]*25
+    pred1
+    pred2 <- coef(modele1)[1] + coef(modele1)[2]*75
+    pred2
+
+    # Ou
+    Xpred <- data.frame(X = c(25, 75)) # Il faut que les données soient sous la forme d'un dataframe
+    predict(modele1, newdata = Xpred)
+    ```
+
+## **Exercice 2 - Etude du volume expiratoire forcé**
+
+Une étude a été réalisée auprès de 650 enfants/adolescents âgés entre 4 et 19 ans afin d’étudier le volume expiratoire forcée (VEF), mesuré en litres BTPS, un indice d’activité pulmonaire mesurant le volume d’air expulsé avec force jusqu’au volume résiduel à partir de la capacité pulmonaire totale obte- nue. Cette mesure est obtenue à partir d’une spirométrie forcée.
+
+Outre le VEF et l’âge des enfants (en années), leur taille (en cm) et la pratique d’une activité sportive (1 = Oui/0 = Non) ont été recueillis. Les données se trouve dans le fichier VEF.csv.
+
+Dans le cadre de cette exercice, nous souhaiterions évaluer **l’effet de la taille sur le VEF.**
+
+1.  Importez le jeu de données dans R. Puis mettez en forme les données si nécessaire.
+
+    ```{r}
+    ## 1. Importation des données et mise en forme
+    exercice2 <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/VEF.csv", sep = ",", dec = ".", header = TRUE)
+
+    str(exercice2)
+
+    exercice2 <- exercice2[,-1]
+    exercice2$activite <- factor(exercice2$activite,
+                                 levels = c(0,1),
+                                 labels = c("Non", "Oui"))
+    str(exercice2)
+
+    ```
+
+2.  Effectuez des statistiques descriptives de la taille et du VEF. Que pouvez-vous dire ?
+
+    ```{r}
+    ## 2. Statistiques descriptives
+    # - VEF
+    summary(exercice2$VEF)
+    sd(exercice2$VEF)
+
+    hist(exercice2$VEF,
+         xlab = "VEF",
+         main = "Distribution du VEF")
+
+    boxplot(exercice2$VEF, 
+            ylab = "VEF",
+            main = "Distribution du VEF")
+
+    #- Taille
+    summary(exercice2$taille)
+    sd(exercice2$taille)
+
+    hist(exercice2$taille,
+         xlab = "taille (cm)",
+         main = "Distribution de la taille")
+
+    boxplot(exercice2$taille, 
+            ylab = "taille (cm)",
+            main = "Distribution de la taille")
+
+    ```
+
+3.  Représentez graphiquement la relation entre la taille et le VEF à partir des données recueillies et calculez le coefficient de corrélation linéaire. Que constatez-vous ?
+
+    ```{r}
+    ## 3. Représentation graphique relation VEF vs. taille et coefficient de corrélation
+    plot(exercice2$VEF ~ exercice2$taille,
+         xlab = "Taille (cm)",
+         ylab = "Volume expiratoire forcé")
+
+    cor(exercice2$taille, exercice2$VEF)
+    ```
+
+4.  Ecrivez l’équation du modèle, puis estimez-le à l’aide du logiciel R.
+
+    ```{r}
+    ## 4. Estimation du modèle avec R
+    modele2 <- lm(VEF ~ taille,
+                  data = exercice2)
+    summary(modele2)
+    ```
+
+5.  Vérifiez les hypothèses du modèle. Que peut-on conclure ? Quelle transformation pourrait-on faire pour que le modèle soit valide ?
+
+    ```{r}
+    ## 5. Vérification des hypothèses du modèle
+    residus2 <- resid(modele2)
+    ### Linéarité de la fonction de régression : Résidus en fonction de la variable explicative
+    plot(residus2 ~ exercice2$taille, 
+         xlab = "Taille (cm)",
+         ylab = "Résidus")
+
+    ### Normalité des résidus
+    qqPlot(residus2)
+    hist(residus2)
+
+    ### Homoscedasticité
+    # Deux façons possibles :
+    plot(residus2 ~ exercice2$taille, 
+         xlab = "Taille (cm)",
+         ylab = "Résidus")
+
+    # - Valeurs prédites :
+    exercice2$prediction2 <- predict(modele2, newdata = exercice2)
+    plot(residus2 ~ exercice2$prediction2, 
+         xlab = "VEF prédit par le modèle",
+         ylab = "Résidus")
+
+    plot(modele2)
+
+    # - Test de transformation
+    hist(exercice2$VEF)
+    hist(log(exercice2$VEF))
+    hist((exercice2$VEF)^2)
+    hist(sqrt(exercice2$VEF))
+    ```
+
+6.  Estimez un modèle dans lequel vous appliquez cette transformation. Vérifiez les hypothèses sous- jacentes.
+
+    ```{r}
+    ## 6. Modèle avec transformation
+    # - Transformation log de la variable réponse
+    exercice2$logVEF <- log(exercice2$VEF)
+
+    # - Estimation du nouveau modèle
+    modele2b <- lm(logVEF ~ taille,
+                   data = exercice2)
+    summary(modele2b)
+
+    #- Vérification des hypothèses
+    residus2b <- resid(modele2b)
+    ### Linéarité de la fonction de régression : Résidus en fonction de la variable explicative
+    plot(residus2b ~ exercice2$taille, 
+         xlab = "Taille (cm)",
+         ylab = "Résidus")
+
+    ### Normalité des résidus
+    qqPlot(residus2b)
+    hist(residus2b)
+
+    ### Homoscedasticité
+    # Deux façons possibles :
+    plot(residus2b ~ exercice2$taille, 
+         xlab = "Taille (cm)",
+         ylab = "Résidus")
+
+    # - Valeurs prédites :
+    exercice2$prediction2b <- predict(modele2b, newdata = exercice2)
+    plot(residus2b ~ exercice2$prediction2b, 
+         xlab = "VEF prédit par le modèle",
+         ylab = "Résidus")
+
+    plot(modele2b)
+
+    ```
+
+7.  Interprétez les résultats du modèle.
+
+    ```{r}
+    ## 7. Résultats du modèle
+    summary(modele2b)
+    ```
+
+## **Exercice 3 - Lien entre régression linéaire et analyse de la variance à un facteur**
+
+Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude clinique portant sur la com- paraison de l’effet de deux anti-hypertenseurs et d’un placebo sur la pression artérielle. Nous disponsons d’un échantillon de 45 patients choisis au hasard, parmi lesquels 15 patients ont reçu l’anti-hypertenseur A, 15 patients ont reçu l’anti-hypertenseur B et 15 patients ont reçu le placebo. Pour chaque patient nous disposons de la pression artérielle systolique (en mmHg) 3 mois après l’initiation du traitement.
+
+1.  Importez le jeu de données data_aov.csv dans R. Puis mettez en forme les données.
+
+    ```{r}
+    ## 1. Importation et mise en forme du jeu de données
+    data_aov <- read.csv("/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/data_aov.csv",sep = ",", dec = ".")
+
+    str(data_aov)
+    data_aov$Traitement <- as.factor(data_aov$Traitement)
+    str(data_aov)
+
+    contrasts(data_aov$Traitement)
+    ```
+
+2.  Réalisez une analyse de la variance à partir de la fonction aov().
+
+    ```{r}
+    ## 2. ANOVA I
+    ANOVA1 <- aov(Pression_arterielle ~ Traitement, 
+                  data = data_aov)
+    summary(ANOVA1)
+
+    library(tidyverse) # Manipulation et visualisation des données
+    library(rstatix) # Fonctions pour analyses statistiques
+    library(multcomp)
+
+    # Calcul des différences entre les groupes
+    contr <- rbind("A - B" = c(1, -1, 0),
+                   "A - Placebo" = c(1, 0, -1),
+                   "B - Placebo" = c(0, 1, -1))
+
+    pwc <- glht(ANOVA1, linfct = mcp(Traitement = contr))
+    summary(pwc)
+
+
+    # P-valeurs avec ajustement pour tests multiples
+    pwc_pvalues <- data_aov %>% pairwise_t_test(Pression_arterielle ~ Traitement,
+                                        p.adjust.method = "BH")
+    pwc_pvalues
+
+    ```
+
+3.  Nous souhaitons retrouver les résultats obtenus à la question suivante en formalisant le problème sous la forme d’une régression linéaire. Ecrivez l’équation du modèle puis estimez-la avec R.
+
+    ```{r}
+    ## 3. Régression linéaire
+    contrasts(data_aov$Traitement)
+    data_aov$Traitement <- relevel(data_aov$Traitement, ref = "Placebo")
+    contrasts(data_aov$Traitement)
+
+    modele3 <- lm(Pression_arterielle ~ Traitement,
+                 data = data_aov)
+
+    anova(modele3)
+    summary(ANOVA1)
+
+    summary(modele3)
+    mean(data_aov$Pression_arterielle[data_aov$Traitement == "A"])
+    mean(data_aov$Pression_arterielle[data_aov$Traitement == "B"])
+    mean(data_aov$Pression_arterielle[data_aov$Traitement == "Placebo"])
+
+    # Calcul des différences de moyennes et p-valeurs ajustées avec R
+    library(emmeans)
+    emmeans(modele3, pairwise ~ Traitement, adjust = "bonferroni")
+    emmeans(modele3, pairwise ~ Traitement, adjust = "BH")
+    emmeans(modele3, pairwise ~ Traitement, adjust = "holm")
+
+    ```
+
+4.  Retrouvez la moyenne de la pression artérielle de chaque groupe à partir de la régression linéaire estimée, puis les différences de moyennes, à la main, puis avec R.
+
+    ```{r}
+    ## 4. Vérification des hypothèseq du modèle
+    # Hypothèses de normalité
+    residus3 <- resid(modele3)
+
+    library("car")
+    qqPlot(residus3)
+
+    # Homoscédasticité = égalité des variances
+    plot(residus3 ~ data_aov$Pression_arterielle, 
+         xlab = "Pression_arterielle (mmHg)",
+         ylab = "Résidus")
+
+    plot(modele3)
+
+    ```
+
+5.  Vérifiez les hypothèses sous-jacentes au modèle à partir des résidus.
+
+# Exercices supplémentaires
+
+## 1 - Questions de cours
+
+### Concepts généraux
+
+1.  Quel est l’objectif principal de la régression linéaire simple ?
+2.  Vrai ou Faux : La régression linéaire simple permet d’expliquer une variable qualitative par une variable quantitative.
+3.  Quelle est la différence entre corrélation et régression ?
+4.  Donnez un exemple de contexte où la régression linéaire simple est appropriée.
+5.  Pourquoi ne pas se contenter du coefficient de corrélation pour prédire Y à partir de X ?
+
+### Définition du modèle
+
+1.  Écrivez l’équation d’un modèle linéaire simple.
+2.  Que représentent les paramètres β0 et β1 ?
+3.  Que signifie le terme d’erreur ε dans le modèle ?
+4.  Sous quelles conditions peut-on utiliser une régression linéaire simple ?
+5.  Vrai ou Faux : La variable explicative peut être qualitative dans un modèle linéaire simple.
+
+### Estimation et interprétation
+
+1.  Quelle méthode est utilisée pour estimer β0 et β1 ?
+2.  Donnez la formule de l’estimateur de β1.
+3.  Donnez la formule de l’estimateur de β0.
+4.  Que représente un résidu dans le modèle ?
+5.  Pourquoi minimise-t-on la somme des carrés des résidus ?
+
+### Qualité et tests
+
+1.  Que mesure le coefficient de détermination R2 ?
+2.  Donnez la formule de R2.
+3.  Quelle est la relation entre R2 et le coefficient de corrélation dans le cas simple ?
+4.  Quel test permet d’évaluer la significativité globale du modèle ?
+5.  Écrivez les hypothèses du test F global.
+6.  Que conclure si Fobs \> Fcritique ?
+
+### Hypothèses et diagnostics
+
+1.  Citez les hypothèses sur les résidus dans un modèle linéaire simple.
+2.  Comment vérifier la normalité des résidus ?
+3.  Comment vérifier l’homoscédasticité ?
+4.  Que faire en cas de non-linéarité ?
+
+### Lien avec l’ANOVA
+
+1.  Quelle est la relation entre ANOVA et régression linéaire simple ?
+2.  Donnez la relation fondamentale entre SCtot, SCexp et SCres.
+3.  Pourquoi le test F est-il identique dans les deux approches ?
+
+## 2 - Exercices R
+
+### Exercice 1 — Consommation de sel et pression artérielle systolique
+
+Une étude explore la relation entre la consommation quotidienne de sel (en grammes par jour) et la pression artérielle systolique (en mmHg) chez des adultes. Les données proviennent d’un échantillon de 240 individus (fichier sel_tension.csv). Questions :
+
+1.  Importez les données et vérifiez la structure (noms des variables, type des colonnes). Mettez en forme les données si nécessaire. Indiquez s’il existe des valeurs manquantes.
+
+    ```{r}
+    ## 1. Importation et mise en forme des données
+    sel_tension <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/Exercices supplémentaires-20260308/sel_tension.csv",
+                            sep = ",",
+                            dec= ".",
+                            header = TRUE)
+    str(sel_tension)
+    ```
+
+2.  Réalisez des statistiques descriptives (moyenne, écart-type, minimum, maximum) pour chaque variable. Commentez ce que ces valeurs révèlent sur la population étudiée.
+
+    ```{r}
+    ## 2. Statistiques descriptives
+    ### Consommation de sel
+    sel_tension %>%
+      summarise(
+        Moyenne_sel = mean(Sel_g_jour),
+        SD_sel = sd(Sel_g_jour),
+        Minimum_sel = min(Sel_g_jour),
+        Maximum_sel = max(Sel_g_jour)
+      )
+
+    ### Pression artérielle systolique
+    sel_tension %>%
+      summarise(
+        Moyenne_PAS = mean(PAS_mmHg),
+        SD_PAS = sd(PAS_mmHg),
+        Minimum_PAS = min(PAS_mmHg),
+        Maximum_PAS = max(PAS_mmHg)
+      )
+
+    ```
+
+3.  Représentez la relation entre les deux variables à l’aide d’un graphique adapté. Décrivez la ten- dance observée.
+
+    ```{r}
+    ## 3. Représentation graphique de la relation entre la consommation de sel et la pression artérielle
+    plot(x = sel_tension$Sel_g_jour, y = sel_tension$PAS_mmHg,
+         xlab = "consommation de sel (g/jour)",
+         ylab = "Pression artérielle systolique (mmHg)")
+    ```
+
+4.  Calculez un indicateur numérique qui mesure la force et la direction de la relation entre les deux variables. Interprétez sa valeur.
+
+    ```{r}
+    ## 4. Calcul du coefficient de corrélation
+    cor(sel_tension$Sel_g_jour, sel_tension$PAS_mmHg)
+    ```
+
+5.  Estimez un modèle permettant d’expliquer la pression artérielle en fonction de la consommation de sel.
+
+    ```{r}
+    ## 5. Estimation d'une régression linéaire simple
+    modele1 <- lm(PAS_mmHg ~ Sel_g_jour,
+                  data = sel_tension)
+    ```
+
+6.  Vérifiez si les hypothèses du modèle semblent respectées (normalité des résidus, homogénéité de la variance). Indiquez quels diagnostics vous utilisez et ce que vous constatez.
+
+    ```{r}
+    ## 6. Vérification des hypothèses du modèle
+    ### Homoscédasticité et linéarité de la fonction de régression
+    plot(modele1, which = 1)
+
+    ### Normalité
+    plot(modele1, which = 2)
+    ```
+
+7.  Évaluez la capacité du modèle à expliquer la variabilité observée. Commentez la valeur obtenue.
+
+    ```{r}
+    ## 7. Qualité du modèle : R2
+    summary(modele1)$r.squared
+    ```
+
+8.  Testez si l’effet de la consommation de sel est statistiquement significatif. Expliquez votre conclu- sion, puis interprétez l’effet sur sel sur la pression artérielle systolique.
+
+    ```{r}
+    ##. 8. Evaluation de la significativité de l'effet du sel sur la pression artérielle
+    summary(modele1)
+    # p-valeur associé à la variable Sel < 0.05. Rejet de H0 qui stipule que le paramètre
+    # de l'effet du sel est égal à 0. Le sel a donc un effet sginficiatif sur la pression artérielle.
+
+    # Interprétation : beta = 1.3418, pour toute augmentation d'une gramme de la consommation de sel
+    # la pression artérielle systolique augmente de 1.3418 mmHg.
+    ```
+
+9.  Fournissez des prédictions pour une consommation faible (par ex. 5 g/j) et élevée (par ex. 12 g/j). Interprétez ces résultats.
+
+    ```{r}
+    ## 9. Prédiction
+    Xpred <- data.frame(Sel_g_jour = c(5, 12)) 
+    predict(modele1, newdata = Xpred)
+    ```
+
+10. Discutez l’effet du sel et les limites éventuelles de l’analyse.
+
+### Exercice 2 — Âge et temps de réaction
+
+Une étude examine la relation entre l’âge (en années) et le temps de réaction (en millisecondes) lors d’une tâche cognitive. Les données concernent 300 participants âgés de 20 à 75 ans (fichier age_temps_reaction.csv). Questions :
+
+1.  Importez le jeu de données dans R et mettez-le en forme si nécessaire.
+
+    ```{r}
+    ## 1. Importation et mise en forme des données
+    age_temps_reaction <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD régression linéaire simple-20260121/Exercices supplémentaires-20260308/age_temps_reaction.csv",
+                            sep = ",",
+                            dec= ".",
+                            header = TRUE)
+    str(age_temps_reaction)
+
+    ```
+
+2.  Calculez la moyenne et l’écart-type pour les deux variables. Que suggèrent-ils sur la variabilité des temps de réaction ?
+
+    ```{r}
+    ## 2. Staistiques descriptives
+    age_temps_reaction %>%
+      summarise(
+        Moyenne_age = mean(Age_annees),
+        SD_age = sd(Age_annees)
+      )
+
+    age_temps_reaction %>%
+      summarise(
+        Moyenne_age = mean(TempsReaction_ms),
+        SD_age = sd(TempsReaction_ms)
+      )
+
+    ```
+
+3.  Représentez la relation entre l’âge et le temps de réaction à l’aide d’un graphique pertinent. La tendance semble-t-elle linéaire ? Justifiez votre réponse.
+
+    ```{r}
+    ## 3. Représentztion graphique de la relation entre l'âge et le temps de réaction
+    plot(x = age_temps_reaction$Age_annees, y = age_temps_reaction$TempsReaction_ms,
+         xlab = "Âge (années)",
+         ylab = "Temps de réaction (ms)")
+    ```
+
+4.  Calculez un indicateur qui résume la force et la direction de la relation. Interprétez sa valeur.
+
+    ```{r}
+    ## 4. Coefficient de corrélation
+    cor(age_temps_reaction$Age_annees, age_temps_reaction$TempsReaction_ms)
+
+    ```
+
+5.  Ajustez un modèle pour étudier l’effet de l’âge sur le temps de réaction. Expliquez la signification des paramètres obtenus.
+
+    ```{r}
+    ## 5. Estimation d'une régression linéaire simple
+    modele2 <- lm(TempsReaction_ms ~ Age_annees,
+                  data = age_temps_reaction)
+    summary(modele2)
+    ```
+
+6.  Évaluez la proportion de variabilité expliquée par l’âge. Quelle est la portée de ce résultat ?
+
+    ```{r}
+    ## 6. Coefficient de détermination
+    summary(modele2)$r.squared
+
+    ```
+
+7.  Examinez les résidus pour juger de la validité des hypothèses (normalité, homogénéité). Si une hypothèse semble non respectée, proposez une amélioration possible et justifiez-la.
+
+    ```{r}
+    ## 7. Vérification des hypothèses du modèle
+    ### Homoscédasiticité et linéaire de la fonction de régression
+    plot(modele2, which = 1)
+
+    ### Normalité
+    plot(modele2, which = 2)
+    ```
+
+8.  Comparez les prédictions pour un âge jeune (par ex. 30 ans) et un âge avancé (par ex. 70 ans). Commentez la différence.
+
+    ```{r}
+    ## 8. Calcul de prédictions
+    Xpred <- data.frame(Age_annees = c(30, 70))
+    predict(modele2, newdata = Xpred)
+    ```
+
+9.  Formulez une conclusion sur la relation âge–temps de réaction.
+
+    ```{r}
+    ## 9. Interprétation de l'effet de l'âge
+    summary(modele2)
+    # L'effet de l'âge est significativement différent de 0 puisque la p-valeur < 0.05.
+    # beta_age = 2.9420, ce qui signifie que pour toute augmentation de l'âge d'une année, le temps 
+    # de réaction augemente de 2.9420 ms.
+    ```

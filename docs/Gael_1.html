@@ -344,7 +344,7 @@ div.tocify {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/tthanhhuong/Data Analysis">
+  <a href="https://github.com/tthanhhuong/Data_Analysis">
     <span class="fab fa-github"></span>
      
     Source code
@@ -369,7 +369,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -380,8 +380,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -390,13 +390,13 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-02-26
+<strong>Last updated:</strong> 2026-03-08
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
@@ -419,18 +419,21 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
@@ -521,15 +524,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreedf9ee4a1d16e33745fd75990fc607fa607148566targetblankdf9ee4aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/tthanhhuong/Data Analysis/tree/df9ee4a1d16e33745fd75990fc607fa607148566" target="_blank">df9ee4a</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreedf9ee4a1d16e33745fd75990fc607fa607148566targetblankdf9ee4aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -539,7 +542,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/tthanhhuong/Data Analysis/tree/df9ee4a1d16e33745fd75990fc607fa607148566" target="_blank">df9ee4a</a>.
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -555,26 +558,15 @@ were generated:
 <pre><code>
 Ignored files:
     Ignored:    .DS_Store
+    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-
-Untracked files:
-    Untracked:  Data_Analysis/.Rprofile
-    Untracked:  Data_Analysis/.gitattributes
-    Untracked:  Data_Analysis/.gitignore
-    Untracked:  Data_Analysis/Data_Analysis.Rproj
-    Untracked:  Data_Analysis/README.md
-    Untracked:  Data_Analysis/_workflowr.yml
-    Untracked:  Data_Analysis/analysis/4_Excercice.Rmd
-    Untracked:  Data_Analysis/analysis/about.Rmd
-    Untracked:  Data_Analysis/analysis/index.Rmd
-    Untracked:  Data_Analysis/analysis/license.Rmd
-    Untracked:  Data_Analysis/code/
-    Untracked:  Data_Analysis/data/
-    Untracked:  Data_Analysis/output/
+    Ignored:    analysis/.Rhistory
 
 Unstaged changes:
+    Modified:   analysis/4_Excercice.Rmd
+    Modified:   analysis/Gael_1.Rmd
+    Modified:   analysis/about.Rmd
     Modified:   analysis/index.Rmd
-    Modified:   docs/index.html
 
 </code></pre>
 <p>
@@ -591,11 +583,10 @@ have uncommitted changes.
 <div id="versions" class="tab-pane fade">
 <p>
 These are the previous versions of the repository in which changes were
-made to the R Markdown (<code>Data_Analysis/analysis/Gael_1.Rmd</code>)
-and HTML (<code>Data_Analysis/docs/Gael_1.html</code>) files. If you’ve
-configured a remote Git repository (see <code>?wflow_git_remote</code>),
-click on the hyperlinks in the table below to view the files as they
-were in that past version.
+made to the R Markdown (<code>analysis/Gael_1.Rmd</code>) and HTML
+(<code>docs/Gael_1.html</code>) files. If you’ve configured a remote Git
+repository (see <code>?wflow_git_remote</code>), click on the hyperlinks
+in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -624,16 +615,33 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/tthanhhuong/Data Analysis/blob/df9ee4a1d16e33745fd75990fc607fa607148566/Data_Analysis/analysis/Gael_1.Rmd" target="_blank">df9ee4a</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/123b9567e7657cb15e321ba77665b573e22d5391/analysis/Gael_1.Rmd" target="_blank">123b956</a>
 </td>
 <td>
-Huong PHAM
+tthanhhuong
 </td>
 <td>
 2026-02-26
 </td>
 <td>
-wflow_publish(files = "analysis/Gael_1.Rmd")
+Initial commit
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/tthanhhuong/Data_Analysis/123b9567e7657cb15e321ba77665b573e22d5391/docs/Gael_1.html" target="_blank">123b956</a>
+</td>
+<td>
+tthanhhuong
+</td>
+<td>
+2026-02-26
+</td>
+<td>
+Initial commit
 </td>
 </tr>
 </tbody>
@@ -643,20 +651,24 @@ wflow_publish(files = "analysis/Gael_1.Rmd")
 </div>
 </div>
 </div>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
-</div>
 <div id="manipulation-des-objets-de-données" class="section level1">
-<h1>Manipulation des objets de données</h1>
-<div id="création-dobjets-de-données" class="section level3">
-<h3>Création d’objets de données</h3>
-<div id="création-par-écriture" class="section level4">
-<h4>Création par écriture</h4>
-<pre class="r"><code># vecteur numérique 
-x &lt;- 4
+<h1><strong>Manipulation des objets de données</strong></h1>
+<div id="création-dobjets-de-données" class="section level2">
+<h2><strong>Création d’objets de données</strong></h2>
+<div id="création-par-écriture" class="section level3">
+<h3><strong>Création par écriture</strong></h3>
+<div id="objet-simple" class="section level4">
+<h4><strong>Objet simple</strong></h4>
+<p>= un objet simple ne contrient qu’un élément.</p>
+<pre class="r"><code>x &lt;- 4
 x</code></pre>
 <pre><code>[1] 4</code></pre>
-<pre class="r"><code>hauteur &lt;- c(130,300,170) 
+<div id="vecteur" class="section level5">
+<h5><strong>Vecteur</strong></h5>
+<p>= série de valeurs à une dimension.</p>
+<pre class="r"><code># vecteur numérique 
+
+hauteur &lt;- c(130,300,170) 
 hauteur</code></pre>
 <pre><code>[1] 130 300 170</code></pre>
 <pre class="r"><code># Pour nommer les éléments : hauteur&lt;-c(a = 130, b = 300, c = 170).
@@ -668,6 +680,8 @@ hauteur</code></pre>
 couleur &lt;- c(&quot;Rouge&quot;,&quot;Jaune&quot;,&quot;Jaune&quot;) 
 couleur</code></pre>
 <pre><code>[1] &quot;Rouge&quot; &quot;Jaune&quot; &quot;Jaune&quot;</code></pre>
+<div id="la-fonction-rep" class="section level6">
+<h6><strong>La fonction rep</strong></h6>
 <pre class="r"><code>enracinement &lt;- rep(c(&quot;Faible&quot;, &quot;Moyen&quot;, &quot;Fort&quot;), c(1,3,2)) 
 # la fonction rep() réplique les éléments du premier vecteur le nombre de fois indiqué dans le deuxième vecteur
 enracinement</code></pre>
@@ -677,10 +691,10 @@ logique.1 &lt;- c(TRUE,FALSE,TRUE)
 logique.1 </code></pre>
 <pre><code>[1]  TRUE FALSE  TRUE</code></pre>
 <pre class="r"><code># remarquer que les valeurs ne sont pas données entre guillemets ce qui les distingue des caractères</code></pre>
-<pre class="r"><code># vecteur de caractères. 
-vec.vide &lt;- vector(&quot;character&quot;, 5) 
+<p>Création d’un veteur vide taille non nulle</p>
+<pre class="r"><code>vec.vide &lt;- vector(&quot;character&quot;, 5)  
+# vecteur de caractères. # La valeur 5 indique 5 guillemets vides à introduire. Pour un vecteur numérique, mettre &quot;numeric&quot;. Les éléments affichés sont alors des zéros. Pour un vecteur logique, mettre &quot;logical&quot;. Les éléments affichés sont alors des FALSE. Cette fonction est pratique pour générer un vecteur que l&#39;on peut ensuite remplir petit à petit
 vec.vide = vector(mode = &quot;numeric&quot;, 3)
-# La valeur 5 indique 5 guillemets vides à introduire. Pour un vecteur numérique, mettre &quot;numeric&quot;. Les éléments affichés sont alors des zéros. Pour un vecteur logique, mettre &quot;logical&quot;. Les éléments affichés sont alors des FALSE. Cette fonction est pratique pour générer un vecteur que l&#39;on peut ensuite remplir petit à petit
 vec.vide</code></pre>
 <pre><code>[1] 0 0 0</code></pre>
 <pre class="r"><code>objet.nul &lt;- c() # il est préférable d&#39;employer objet.nul &lt;- NULL
@@ -689,12 +703,20 @@ objet.nul</code></pre>
 <pre class="r"><code>objet.vide &lt;- vector()
 objet.vide</code></pre>
 <pre><code>logical(0)</code></pre>
+</div>
+</div>
+</div>
+<div id="matrices" class="section level4">
+<h4><strong>Matrices</strong></h4>
+<p>= série de valeurs à deux dimensions</p>
+<p>Chiffres entre crochet: avant la virgule = ligne, après la virgule =
+colonne</p>
+<p><u>Création d’une matrice:</u></p>
 <pre class="r"><code>nombre &lt;- c(1:15)
 nombre = 1:15 # peut également s&#39;écrire nombre&lt;-1:15
 nombre</code></pre>
 <pre><code> [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15</code></pre>
 <pre class="r"><code>matrice.1 &lt;- matrix(nombre,ncol=3) 
-# l&#39;argument ncol précise que la matrice possède 3 colonnes. La matrice est remplie par défaut en suivant les colonnes. Attention : si le nombre d&#39;éléments de &quot;nombre&quot; divisé par le nombre de colonnes ne produit pas un nombre entier, la fonction matrix() recycle les éléments de &quot;nombre&quot; pour terminer le remplissage de matrice.1. Tester avec nombre&lt;-1:13
 matrice.1 # matrice numérique</code></pre>
 <pre><code>     [,1] [,2] [,3]
 [1,]    1    6   11
@@ -702,8 +724,19 @@ matrice.1 # matrice numérique</code></pre>
 [3,]    3    8   13
 [4,]    4    9   14
 [5,]    5   10   15</code></pre>
+<p>L’argument <strong>ncol</strong> précise que la matrice possède 3
+colonnes (de le vecteur nombre). La matrice est remplie par défaut en
+suivant les colonnes.</p>
+<p>Attention : si le nombre d’éléments de “nombre” divisé par le nombre
+de colonnes ne produit pas un nombre entier, la fonction matrix()
+recycle les éléments de “nombre” pour terminer le remplissage de
+matrice.1. Tester avec nombre &lt;- 1:13</p>
+<div id="autre-façon-de-créer-une-matrice---la-fonction-dim"
+class="section level5">
+<h5><strong>Autre façon de créer une matrice - La fonction
+dim()</strong></h5>
 <pre class="r"><code>matrice.1 &lt;- 1:15 # la matrice est d&#39;abord un vecteur
-dim(matrice.1) &lt;- c(5, 3) # dim() transforme le vecteur matrice.1 en matrice à 5 lignes et 3 colonnes (précisé par le vecteur c(5, 3)). Si la dimension choisie (ici 5 lignes x 3 colonnes = 15 cases) ne correspond pas exactement au nombre d&#39;éléments de matrice.1, la fonction dim() ne recycle pas. Elle produit un message d&#39;erreur
+dim(matrice.1) &lt;- c(5, 3) 
 matrice.1</code></pre>
 <pre><code>     [,1] [,2] [,3]
 [1,]    1    6   11
@@ -711,21 +744,35 @@ matrice.1</code></pre>
 [3,]    3    8   13
 [4,]    4    9   14
 [5,]    5   10   15</code></pre>
-<pre class="r"><code>matrice.2 &lt;- matrix((1:15)*100,nrow=3, byrow=TRUE) # le vecteur (1:15)*100 est introduit directement dans la fonction matrix()
+<p>La matrice est d’abord un vecteur</p>
+<p><code>dim()</code> transforme le vecteur <em>matrice.1</em> en
+matrice à 5 lignes et 3 colonnes (précisé par <em>le vecteur c(5,
+3)</em>). Si la dimension choisie (ici 5 lignes x 3 colonnes = 15 cases)
+ne correspond pas exactement au nombre d’éléments de <em>matrice.1</em>,
+la fonction dim() ne recycle pas. Elle produit un message d’erreur</p>
+<p><u>Creation d’une matrice à trois lignes et remplissage en commençant
+par les lignes :</u></p>
+<pre class="r"><code>matrice.2 &lt;- matrix((1:15)*100,nrow=3, byrow=TRUE) 
+# le vecteur (1:15)*100 est introduit directement dans la fonction matrix()
 matrice.2</code></pre>
 <pre><code>     [,1] [,2] [,3] [,4] [,5]
 [1,]  100  200  300  400  500
 [2,]  600  700  800  900 1000
 [3,] 1100 1200 1300 1400 1500</code></pre>
+<p><u>Créatrion d’une matrice vide de taille non nulle:</u></p>
 <pre class="r"><code>mat.vide &lt;- matrix(nrow=2, ncol=4)
 # cette procédure permet de générer une matrice que l&#39;on peut ensuite remplir petit à petit. Pour information : matrix() crée une matrice vide à une ligne et une colonne
 mat.vide</code></pre>
 <pre><code>     [,1] [,2] [,3] [,4]
 [1,]   NA   NA   NA   NA
 [2,]   NA   NA   NA   NA</code></pre>
+</div>
+</div>
+<div id="arrays" class="section level4">
+<h4>Arrays</h4>
+<p>= série de valeurs à n dimensions</p>
 <pre class="r"><code>array.1 &lt;- array(letters, dim=c(3,5,2)) 
-# letters donne l&#39;alphabet et dim=c(3,5,2) indique que l&#39;array possède 3 lignes, 5 colonnes et 2 niveaux de 3ème dimension. Tout comme matrix(), la fonction array() recycle les élements de letters pour terminer le remplissage du tableau
-#ligne -&gt; colonne -&gt; 3eme dimension 
+#  l&#39;array possède 3 lignes, 5 colonnes et 2 niveaux de 3ème dimension.
 array.1 </code></pre>
 <pre><code>, , 1
 
@@ -741,6 +788,11 @@ array.1 </code></pre>
 [2,] &quot;q&quot;  &quot;t&quot;  &quot;w&quot;  &quot;z&quot;  &quot;c&quot; 
 [3,] &quot;r&quot;  &quot;u&quot;  &quot;x&quot;  &quot;a&quot;  &quot;d&quot; </code></pre>
 <pre class="r"><code># array de mode caractère : les caractères sont toujours présentés entre guillemets, c&#39;est un moyen de connaître le mode de l&#39;objet. En ne mettant que l&#39;argument dim=c(3,5,2), on crée un array vide rempli de NA</code></pre>
+</div>
+<div id="data-frame" class="section level4">
+<h4><strong>Data frame</strong></h4>
+<p>= série de valeurs en colonnes, sont créées à partir des vecteurs ou
+des matrices.</p>
 <pre class="r"><code>dataframe.1 &lt;- data.frame(matrice.2)
 dataframe.1</code></pre>
 <pre><code>    X1   X2   X3   X4   X5
@@ -766,6 +818,12 @@ dataframe.vide</code></pre>
 <pre><code>  V1 V2 V3 V4
 1 NA NA NA NA
 2 NA NA NA NA</code></pre>
+</div>
+<div id="liste" class="section level4">
+<h4>Liste</h4>
+<p>= série de données, sont crées à partit d’objets de tout type:
+simples. vecteurs, matrices, arrays, data frames, listes, facteurs et
+tables.</p>
 <pre class="r"><code>liste.1 &lt;- list(x, hauteur, matrice.1, dataframe.2) # Pour nommer les compartiments : liste.1&lt;-list(a = x, b = hauteur, c = matrice.1, d = dataframe.2)
 liste.1</code></pre>
 <pre><code>[[1]]
@@ -1494,6 +1552,7 @@ dataframe.1 &lt;- data.frame(matrice.2)
 dataframe.4 &lt;- edit(dataframe.1)</code></pre>
 </div>
 </div>
+</div>
 <div id="description-dun-objet-de-données" class="section level1">
 <h1>Description d’un objet de données</h1>
 <div id="la-fonction-length" class="section level4">
@@ -1802,7 +1861,7 @@ vecteur.faux[10] &lt;- 1000 # aucun message d&#39;erreur n&#39;est produit. Pour
 vecteur.faux # la valeur 1000 est assignée à la dixième position de vecteur.faux, les positions entre 4 et 9 devenant des NA</code></pre>
 <pre><code> [1]  130  300  170   NA   NA   NA   NA   NA   NA 1000</code></pre>
 </div>
-<div id="matrices" class="section level4">
+<div id="matrices-1" class="section level4">
 <h4>Matrices</h4>
 <pre class="r"><code>matrice.1 &lt;- matrix(1:15,ncol=3)
 matrice.1</code></pre>
@@ -1935,7 +1994,7 @@ matrice.fausse # la valeur 1000 est assignée à la vingtième position de matri
 for (i in 1:ncol(matrice.3)){matrice.3[,i] &lt;- rev(matrice.3 [,i])} # la fonction rev() inverse les éléments
 matrice.3 &lt;- t(matrice.3) # la fonction t() est la transposée d&#39;une matrice
 image(1:nrow(matrice.3), 1:ncol(matrice.3), matrice.3, main=&quot;Matrice.2&quot;, col = grey.colors(length(unique(matrice.2))), xlab=&quot;&quot;, ylab=&quot;&quot;, xaxt=&quot;n&quot;, yaxt=&quot;n&quot;, bty=&quot;n&quot;) # length(unique(matrice.2)) fournit le nombre de valeurs différentes de la matrice soit 15 pour matrice.2. Voir le paragraphe 1.10.4 pour l&#39;explication des arguments graphiques de la fonction image() comme xaxt par exemple. Le code permettant d&#39;afficher les numéros de ligne et de colonne est le suivant : image(1:nrow(matrice.3), 1:ncol(matrice.3), matrice.3, main=&quot;Matrice.2&quot;, col = grey.colors(length(unique(matrice.2))), xlab=&quot;Numéro de colonne&quot;, ylab=&quot; Numéro de ligne&quot;, yaxt=&quot;n&quot;, bty=&quot;o&quot;, cex.lab=1.5, cex.axis=1.5) ; axis(side=2, at =nrow(matrice.2):1, labels =1:nrow(matrice.2), cex.axis=1.5). Employer l&#39;argument useRaster = TRUE en cas de matrice de grande taille (passe du vectoriel au matriciel bitmap, un format moins lourd à gérer). Pour la couleur, remplacer la fonction grey.colors(length(unique(matrice.2))) par heat.colors(length(unique(matrice.2))) par exemple</code></pre>
-<p><img src="figure/Gael_1.Rmd/unnamed-chunk-36-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Gael_1.Rmd/unnamed-chunk-37-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="data-frames" class="section level4">
 <h4>Data frames</h4>
@@ -2501,21 +2560,17 @@ tzcode source: internal
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
-other attached packages:
-[1] workflowr_1.7.2
-
 loaded via a namespace (and not attached):
- [1] vctrs_0.7.1       httr_1.4.8        cli_3.6.5         knitr_1.51       
- [5] rlang_1.1.7       xfun_0.56         stringi_1.8.7     otel_0.2.0       
- [9] processx_3.8.6    promises_1.5.0    jsonlite_2.0.0    glue_1.8.0       
-[13] rprojroot_2.1.1   git2r_0.36.2      htmltools_0.5.9   httpuv_1.6.16    
-[17] ps_1.9.1          sass_0.4.10       rmarkdown_2.30    jquerylib_0.1.4  
-[21] tibble_3.3.1      evaluate_1.0.5    fastmap_1.2.0     yaml_2.3.12      
-[25] lifecycle_1.0.5   whisker_0.4.1     stringr_1.6.0     compiler_4.4.2   
-[29] fs_1.6.6          pkgconfig_2.0.3   Rcpp_1.1.1        rstudioapi_0.18.0
-[33] later_1.4.6       digest_0.6.39     R6_2.6.1          pillar_1.11.1    
-[37] callr_3.7.6       magrittr_2.0.4    bslib_0.10.0      tools_4.4.2      
-[41] cachem_1.1.0      getPass_0.2-4    </code></pre>
+ [1] vctrs_0.7.1       cli_3.6.5         knitr_1.51        rlang_1.1.7      
+ [5] xfun_0.56         stringi_1.8.7     otel_0.2.0        promises_1.5.0   
+ [9] jsonlite_2.0.0    workflowr_1.7.2   glue_1.8.0        rprojroot_2.1.1  
+[13] git2r_0.36.2      htmltools_0.5.9   httpuv_1.6.16     sass_0.4.10      
+[17] rmarkdown_2.30    jquerylib_0.1.4   evaluate_1.0.5    tibble_3.3.1     
+[21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   whisker_0.4.1    
+[25] stringr_1.6.0     compiler_4.4.2    fs_1.6.6          Rcpp_1.1.1       
+[29] pkgconfig_2.0.3   rstudioapi_0.18.0 later_1.4.6       digest_0.6.39    
+[33] R6_2.6.1          pillar_1.11.1     magrittr_2.0.4    bslib_0.10.0     
+[37] tools_4.4.2       cachem_1.1.0     </code></pre>
 </div>
 </div>
 </div>

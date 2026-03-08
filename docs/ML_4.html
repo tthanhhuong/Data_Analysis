@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="PHAM Huong" />
+
+<meta name="date" content="2026-03-08" />
+
+<title>TD4 R - Régression linéaire multiple et analyse de covariance</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data_Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/tthanhhuong/Data_Analysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">TD4 R - Régression linéaire multiple et
+analyse de covariance</h1>
+<h4 class="author">PHAM Huong</h4>
+<h4 class="date">2026-03-08</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-03-08
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 2
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20260226code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20260226)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20260226code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20260226)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it
+difficult for you and others to run your code on a different machine.
+Change the absolute path(s) below to the suggested relative path(s) to
+make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/Users/thanhhuong/R/Data_Analysis
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.Rhistory
+
+Untracked files:
+    Untracked:  analysis/ML_1.Rmd
+    Untracked:  analysis/ML_2.Rmd
+    Untracked:  analysis/ML_3.Rmd
+    Untracked:  analysis/ML_4.Rmd
+
+Unstaged changes:
+    Modified:   analysis/4_Excercice.Rmd
+    Modified:   analysis/Gael_1.Rmd
+    Modified:   analysis/about.Rmd
+    Modified:   analysis/index.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="exercice-1---régression-linéaire-multiple-exemple-du-cours"
+class="section level1">
+<h1>Exercice 1 - Régression linéaire multiple : exemple du cours</h1>
+<p>Nous souhaitons étudier la relation entre le taux de cholestérol
+(mmol/L) et plusieurs caractéris- tiques individuelles, telles que la
+pression artérielle systolique (mmHg), la pression artérielle
+diastolique (mmHg), l’âge (en années) et l’indice de masse corporelle
+(IMC - kg/m2).</p>
+<p>Nous disposons pour cela d’un échantillon de 200 observations.</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données coronary.csv dans R. Puis mettez en
+forme les données si nécessaire.</p>
+<pre class="r"><code># 1. Importation et mise en forme du jeu de données
+setwd(&quot;/Users/thanhhuong/R/Data_Analysis&quot;)
+exercice1 &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/coronary.csv&quot;, 
+                      sep = &quot;,&quot;, 
+                      dec = &quot;.&quot;, 
+                      header = TRUE)
+
+str(exercice1)</code></pre>
+<pre><code>&#39;data.frame&#39;:   200 obs. of  9 variables:
+ $ age   : int  60 34 36 NA NA 43 NA 50 43 48 ...
+ $ race  : chr  &quot;indian&quot; &quot;malay&quot; &quot;malay&quot; &quot;malay&quot; ...
+ $ chol  : num  6.57 6.33 5.97 7.04 6.66 ...
+ $ id    : int  1 14 56 61 62 64 69 108 112 134 ...
+ $ cad   : chr  &quot;no cad&quot; &quot;no cad&quot; &quot;no cad&quot; &quot;no cad&quot; ...
+ $ sbp   : int  106 130 136 138 115 124 110 112 138 104 ...
+ $ dbp   : int  68 78 84 100 85 72 80 70 85 70 ...
+ $ bmi   : num  38.9 37.8 40.5 37.6 40.3 ...
+ $ gender: chr  &quot;woman&quot; &quot;woman&quot; &quot;woman&quot; &quot;woman&quot; ...</code></pre>
+<pre class="r"><code>exercice1$race &lt;- as.factor(exercice1$race)
+exercice1$cad &lt;- as.factor(exercice1$cad)
+exercice1$gender &lt;- as.factor(exercice1$gender)
+str(exercice1)</code></pre>
+<pre><code>&#39;data.frame&#39;:   200 obs. of  9 variables:
+ $ age   : int  60 34 36 NA NA 43 NA 50 43 48 ...
+ $ race  : Factor w/ 3 levels &quot;chinese&quot;,&quot;indian&quot;,..: 2 3 3 3 2 3 3 1 NA NA ...
+ $ chol  : num  6.57 6.33 5.97 7.04 6.66 ...
+ $ id    : int  1 14 56 61 62 64 69 108 112 134 ...
+ $ cad   : Factor w/ 2 levels &quot;cad&quot;,&quot;no cad&quot;: 2 2 2 2 2 2 1 2 2 2 ...
+ $ sbp   : int  106 130 136 138 115 124 110 112 138 104 ...
+ $ dbp   : int  68 78 84 100 85 72 80 70 85 70 ...
+ $ bmi   : num  38.9 37.8 40.5 37.6 40.3 ...
+ $ gender: Factor w/ 2 levels &quot;man&quot;,&quot;woman&quot;: 2 2 2 2 1 1 1 2 2 1 ...</code></pre></li>
+<li><p>Réalisez quelques statistiques descriptives de chacune des
+variables, puis représentez graphique- ment la relation de chacune des
+variables explicatives avec la variable expliquée et calculez les
+coefficients de corrélation associés. Que constatez-vous ?</p>
+<pre class="r"><code># 2. Statistiques descriptives
+## A l&#39;aide de la fonction summary() et d&#39;histogrammes
+summary(exercice1$chol)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+  4.000   5.362   6.050   6.114   6.875   9.350      33 </code></pre>
+<pre class="r"><code>hist(exercice1$chol)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-2-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>summary(exercice1$sbp)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   88.0   115.0   126.0   130.2   144.0   187.0 </code></pre>
+<pre class="r"><code>hist(exercice1$sbp)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-2-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>summary(exercice1$dbp)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  56.00   72.00   80.00   82.31   92.00  120.00 </code></pre>
+<pre class="r"><code>hist(exercice1$dbp)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-2-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>summary(exercice1$age)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+  33.00   43.00   48.00   48.02   53.00   62.00      85 </code></pre>
+<pre class="r"><code>hist(exercice1$age)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-2-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>summary(exercice1$bmi)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  28.99   36.10   37.80   37.45   39.20   45.03 </code></pre>
+<pre class="r"><code>hist(exercice1$bmi)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-2-5.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## Représentation graphique et coefficients de corrélation
+plot(x = exercice1$sbp, y = exercice1$chol,
+     xlab = &quot;Pression artérielle systolique (mmHg)&quot;, ylab = &quot;Taux de cholestérol (mmol/L)&quot;)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-3-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cor(exercice1$sbp, exercice1$chol)</code></pre>
+<pre><code>[1] NA</code></pre>
+<pre class="r"><code>cor(exercice1$sbp, exercice1$chol, use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>[1] 0.3775908</code></pre>
+<pre class="r"><code>cor.test(exercice1$sbp, exercice1$chol, use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>
+    Pearson&#39;s product-moment correlation
+
+data:  exercice1$sbp and exercice1$chol
+t = 5.238, df = 165, p-value = 4.895e-07
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.2394583 0.5007408
+sample estimates:
+      cor 
+0.3775908 </code></pre>
+<pre class="r"><code>plot(x = exercice1$dbp, y = exercice1$chol,
+     xlab = &quot;Pression artérielle diastolique (mmHg)&quot;, ylab = &quot;Taux de cholestérol (mmol/L)&quot;)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-3-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cor(exercice1$dbp, exercice1$chol)</code></pre>
+<pre><code>[1] NA</code></pre>
+<pre class="r"><code>cor(exercice1$dbp, exercice1$chol, use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>[1] 0.3994832</code></pre>
+<pre class="r"><code>cor.test(exercice1$dbp, exercice1$chol, use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>
+    Pearson&#39;s product-moment correlation
+
+data:  exercice1$dbp and exercice1$chol
+t = 5.5975, df = 165, p-value = 8.891e-08
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.2636122 0.5198114
+sample estimates:
+      cor 
+0.3994832 </code></pre>
+<pre class="r"><code>plot(x = exercice1$age, y = exercice1$chol,
+     xlab = &quot;Âge (années)&quot;, ylab = &quot;Taux de cholestérol (mmol/L)&quot;)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-3-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cor(exercice1$age, exercice1$chol)</code></pre>
+<pre><code>[1] NA</code></pre>
+<pre class="r"><code>cor(exercice1$age, exercice1$chol, use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>[1] 0.3332335</code></pre>
+<pre class="r"><code>cor.test(exercice1$age, exercice1$chol, use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>
+    Pearson&#39;s product-moment correlation
+
+data:  exercice1$age and exercice1$chol
+t = 3.353, df = 90, p-value = 0.001171
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.1378228 0.5036741
+sample estimates:
+      cor 
+0.3332335 </code></pre>
+<pre class="r"><code>plot(x = exercice1$bmi, y = exercice1$chol,
+     xlab = &quot;Indice de masse corporelle (kg/m2)&quot;, ylab = &quot;Taux de cholestérol (mmol/L)&quot;)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-3-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cor(exercice1$bmi, exercice1$chol)</code></pre>
+<pre><code>[1] NA</code></pre>
+<pre class="r"><code>cor(exercice1$bmi, exercice1$chol, use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>[1] -0.02016888</code></pre>
+<pre class="r"><code>cor.test(exercice1$bmi, exercice1$chol, use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>
+    Pearson&#39;s product-moment correlation
+
+data:  exercice1$bmi and exercice1$chol
+t = -0.25913, df = 165, p-value = 0.7959
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.1715072  0.1320993
+sample estimates:
+        cor 
+-0.02016888 </code></pre>
+<pre class="r"><code>## Dataset avec données complètes 
+exercice1_bis &lt;- exercice1[complete.cases(exercice1[,c(&quot;age&quot;,&quot;chol&quot;, &quot;sbp&quot;, &quot;dbp&quot;, &quot;bmi&quot;)]), ]</code></pre></li>
+<li><p>Estimez une régression linéaire permettant d’expliquer le taux de
+cholestérol en fonction des pression artérielles systolique et
+diastolique, de l’âge et de l’IMC. Quelle est la valeur de coefficient
+de détermination. Que signifie-t-il ?</p>
+<pre class="r"><code># 3. Estimation du modèle
+modele1 &lt;- lm(formula =  chol ~ age + sbp + dbp + bmi,
+              data = exercice1_bis)
+summary(modele1)</code></pre>
+<pre><code>
+Call:
+lm(formula = chol ~ age + sbp + dbp + bmi, data = exercice1_bis)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.09118 -0.75423 -0.04517  0.53822  2.60315 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept) -0.479776   2.400319  -0.200   0.8420  
+age          0.040095   0.015592   2.572   0.0118 *
+sbp         -0.004689   0.012010  -0.390   0.6972  
+dbp          0.031495   0.018150   1.735   0.0862 .
+bmi          0.073868   0.057611   1.282   0.2032  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.056 on 87 degrees of freedom
+Multiple R-squared:  0.1998,    Adjusted R-squared:  0.163 
+F-statistic: 5.431 on 4 and 87 DF,  p-value: 0.0005958</code></pre></li>
+<li><p>Vérifiez les hypothèses sous-jacentes au modèle.</p>
+<pre class="r"><code># 4. Vérification des hypothèses du modèle
+## Linéarité
+par(mfrow = c(2,2))
+exercice1_bis$residus &lt;- resid(modele1)
+plot(exercice1_bis$residus ~ exercice1_bis$age,
+     xlab = &quot;Age&quot;,
+     ylab = &quot;résidus&quot;,
+     main = &quot;Vérification linéarité de l&#39;âge&quot;)
+
+plot(exercice1_bis$residus ~ exercice1_bis$sbp,
+     xlab = &quot;Pression artérielle systolique&quot;,
+     ylab = &quot;résidus&quot;,
+     main = &quot;Vérification linéarité de la pression artérielle systolique&quot;)
+
+plot(exercice1_bis$residus ~ exercice1_bis$dbp,
+     xlab = &quot;Pression artérielle diastolique&quot;,
+     ylab = &quot;résidus&quot;,
+     main = &quot;Vérification linéarité de la pression artérielle diastolique&quot;)
+
+plot(exercice1_bis$residus ~ exercice1_bis$bmi,
+     xlab = &quot;IMC&quot;,
+     ylab = &quot;résidus&quot;,
+     main = &quot;Vérification linéarité de l&#39;IMC&quot;)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-6-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1,1))</code></pre>
+<pre class="r"><code>## Normalité 
+library(car)</code></pre>
+<pre><code>Warning: package &#39;car&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Loading required package: carData</code></pre>
+<pre><code>Warning: package &#39;carData&#39; was built under R version 4.4.3</code></pre>
+<pre class="r"><code>qqPlot(modele1)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-7-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>144 147 
+ 67  69 </code></pre>
+<pre class="r"><code>plot(modele1, which = 2)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-7-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## Homoscédasticité
+exercice1_bis$prediction &lt;- predict(modele1, newdata = exercice1_bis)
+plot(exercice1_bis$residus ~ exercice1_bis$prediction,
+     xlab = &quot;Valeurs prédites&quot;,
+     ylab = &quot;Résidus&quot;,
+     main = &quot;Graphique des résidus contre les valeurs prédites&quot;)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-8-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(modele1, which = 1)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-8-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## Multicolinéarité
+### Variance des paramètres
+summary(modele1)</code></pre>
+<pre><code>
+Call:
+lm(formula = chol ~ age + sbp + dbp + bmi, data = exercice1_bis)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.09118 -0.75423 -0.04517  0.53822  2.60315 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept) -0.479776   2.400319  -0.200   0.8420  
+age          0.040095   0.015592   2.572   0.0118 *
+sbp         -0.004689   0.012010  -0.390   0.6972  
+dbp          0.031495   0.018150   1.735   0.0862 .
+bmi          0.073868   0.057611   1.282   0.2032  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.056 on 87 degrees of freedom
+Multiple R-squared:  0.1998,    Adjusted R-squared:  0.163 
+F-statistic: 5.431 on 4 and 87 DF,  p-value: 0.0005958</code></pre>
+<pre class="r"><code>### Corrélation entre les variables explicatives
+cor(exercice1_bis[,c(1,6,7,8)])</code></pre>
+<pre><code>            age        sbp         dbp         bmi
+age  1.00000000 0.34358418  0.30301219 -0.07838923
+sbp  0.34358418 1.00000000  0.87861274  0.05805031
+dbp  0.30301219 0.87861274  1.00000000 -0.01672517
+bmi -0.07838923 0.05805031 -0.01672517  1.00000000</code></pre>
+<pre class="r"><code>### Facteur d&#39;inflation de la variance
+vif(modele1)</code></pre>
+<pre><code>     age      sbp      dbp      bmi 
+1.146645 4.647430 4.476243 1.035598 </code></pre></li>
+<li><p>Y-a-t’il des observations aberrantes et/ou influentes ?</p>
+<pre class="r"><code># 5. Observations aberrrantes et influentes
+## Observations aberrantes : leviers
+leviers &lt;- data.frame(obs = seq(1:92),leviers = hatvalues(modele1))
+leviers[leviers$leviers&gt; 0.1087,]</code></pre>
+<pre><code>    obs   leviers
+132  61 0.1145250
+161  73 0.1642284
+186  86 0.1631888
+187  87 0.1175825</code></pre>
+<pre class="r"><code>exercice1_bis[c(61, 73, 86, 87),]</code></pre>
+<pre><code>    age   race   chol   id    cad sbp dbp      bmi gender    residus prediction
+132  58   &lt;NA&gt; 7.0400 2918 no cad 187 120 38.10000    man -0.5225786   7.562579
+161  55 indian 6.8750 3600    cad 154  92 45.02692    man -0.3518695   7.226870
+186  61 indian 6.1325 4404    cad 158  80 36.60995    man -0.3164991   6.448999
+187  44  malay 6.8750 4424    cad 148 108 35.50429  woman  0.2605461   6.614454</code></pre>
+<pre class="r"><code>## Observations influentes : distance de Cook
+summary(cooks.distance(modele1))</code></pre>
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+2.200e-07 9.963e-04 3.866e-03 1.179e-02 1.046e-02 1.085e-01 </code></pre>
+<pre class="r"><code>plot(modele1, which = 4)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-12-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Quelle est la p-valeur du test global de significativité du
+modèle ? Que concluez-vous ?</p>
+<pre class="r"><code>## 6. Test global de significativité
+summary(modele1)</code></pre>
+<pre><code>
+Call:
+lm(formula = chol ~ age + sbp + dbp + bmi, data = exercice1_bis)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.09118 -0.75423 -0.04517  0.53822  2.60315 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept) -0.479776   2.400319  -0.200   0.8420  
+age          0.040095   0.015592   2.572   0.0118 *
+sbp         -0.004689   0.012010  -0.390   0.6972  
+dbp          0.031495   0.018150   1.735   0.0862 .
+bmi          0.073868   0.057611   1.282   0.2032  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.056 on 87 degrees of freedom
+Multiple R-squared:  0.1998,    Adjusted R-squared:  0.163 
+F-statistic: 5.431 on 4 and 87 DF,  p-value: 0.0005958</code></pre></li>
+<li><p>L’effet des différentes variables explicatives est-il
+significativement différent de 0 ? Concluez puis interprétez les valeurs
+estimées.</p>
+<pre class="r"><code>## 7. Significativité et interprétation des paramètres
+summary(modele1)</code></pre>
+<pre><code>
+Call:
+lm(formula = chol ~ age + sbp + dbp + bmi, data = exercice1_bis)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.09118 -0.75423 -0.04517  0.53822  2.60315 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept) -0.479776   2.400319  -0.200   0.8420  
+age          0.040095   0.015592   2.572   0.0118 *
+sbp         -0.004689   0.012010  -0.390   0.6972  
+dbp          0.031495   0.018150   1.735   0.0862 .
+bmi          0.073868   0.057611   1.282   0.2032  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.056 on 87 degrees of freedom
+Multiple R-squared:  0.1998,    Adjusted R-squared:  0.163 
+F-statistic: 5.431 on 4 and 87 DF,  p-value: 0.0005958</code></pre></li>
+<li><p>Nous souhaiterions prédire, à partir du modèle estimé, le taux de
+cholesterol d’une personne de 65 ans, avec un IMC de 35kg/m2, présentant
+une pression artérielle systolique de 134 mmHg et une pression
+artérielle diastolique de 96 mmHg. Donnez également un intervalle de
+prédiction.</p>
+<pre class="r"><code># 8. Prédiction
+## Calcul de la prédiction
+x_h &lt;- data.frame(age = 65, sbp = 134, dbp = 96, bmi = 35)
+prediction &lt;- predict(modele1, newdata = x_h, 
+                      interval = &quot;prediction&quot;, 
+                      type = &quot;response&quot;, 
+                      level = 0.95)
+prediction</code></pre>
+<pre><code>       fit      lwr      upr
+1 7.106913 4.881493 9.332332</code></pre></li>
+</ol>
+</div>
+<div id="exercice-2---analyse-de-covariance" class="section level1">
+<h1>Exercice 2 - Analyse de covariance</h1>
+<p>Nous souhaitons évaluer l’efficacité de différentes approches
+thérapeutiques pour réduire les symp- tômes de dépression chez des
+patients adultes. Pour cela, nous avons recruté 180 participants
+présentant des symptômes dépressifs modérés à sévères. Chaque
+participant a été évalué avant le début du traitement à l’aide du PHQ-9,
+un questionnaire stan- dardisé qui mesure la sévérité de la dépression
+(score de 0 à 27, où un score élevé indique une dépression plus sévère).
+Les participants ont ensuite été répartis aléatoirement en trois groupes
+:</p>
+<p>— <strong>Groupe Activation</strong> : les participants suivent un
+programme d’activation comportementale, qui vise à augmenter les
+activités plaisantes et significatives ;</p>
+<p>— <strong>Groupe TCC</strong> : les participants suivent une thérapie
+cognitivo-comportementale, une approche bien établie pour traiter la
+dépression ;</p>
+<p>— <strong>Groupe témoin</strong> : les participants ne reçoivent pas
+de traitement spécifique, mais bénéficient d’un suivi minimal. Après 8
+semaines, chaque participant est réévalué avec le même questionnaire
+PHQ-9 pour mesurer l’évo- lution des symptômes.</p>
+<p>L’objectif est de comparer les scores post-traitement entre les trois
+groupes, tout en tenant compte du score initial (avant traitement). En
+effet, il est logique qu’un patient très déprimé au départ ait un score
+post-traitement différent d’un patient moins déprimé, même avec le même
+type de thérapie.</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données psychoclinique.csv dans R. Puis mettez
+en forme les données si nécessaire.</p>
+<pre class="r"><code>## 1. Importation et mise en forme du jeu de données
+setwd(&quot;/Users/thanhhuong/R/Data_Analysis&quot;)
+psychoclinique &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/psychoclinique_interaction.csv&quot;,
+                           sep = &quot;,&quot;,
+                           dec = &quot;.&quot;,
+                           header = TRUE)
+
+str(psychoclinique)</code></pre>
+<pre><code>&#39;data.frame&#39;:   180 obs. of  5 variables:
+ $ groupe         : chr  &quot;Activation&quot; &quot;TCC&quot; &quot;Temoin&quot; &quot;Activation&quot; ...
+ $ phq9_base      : num  13.05 15.05 14.12 8.39 18.12 ...
+ $ phq9_post      : num  6.34 6.34 7.86 2.86 6.59 ...
+ $ phq9_changement: num  -6.72 -8.71 -6.26 -5.53 -11.54 ...
+ $ age            : num  36.6 19.8 42 34.7 48.9 ...</code></pre>
+<pre class="r"><code>psychoclinique$groupe &lt;- factor(psychoclinique$groupe)
+str(psychoclinique)</code></pre>
+<pre><code>&#39;data.frame&#39;:   180 obs. of  5 variables:
+ $ groupe         : Factor w/ 3 levels &quot;Activation&quot;,&quot;TCC&quot;,..: 1 2 3 1 2 1 2 1 2 1 ...
+ $ phq9_base      : num  13.05 15.05 14.12 8.39 18.12 ...
+ $ phq9_post      : num  6.34 6.34 7.86 2.86 6.59 ...
+ $ phq9_changement: num  -6.72 -8.71 -6.26 -5.53 -11.54 ...
+ $ age            : num  36.6 19.8 42 34.7 48.9 ...</code></pre></li>
+<li><p>Réalisez des statistiques descriptives pour les deux variables
+explicatives et la variable expliquée individuellement, puis faites la
+même chose pour chacun des deux scores de dépression en fonction du
+traitement reçu.</p>
+<pre class="r"><code>## 2. Statistiques descriptives
+table(psychoclinique$groupe)</code></pre>
+<pre><code>
+Activation        TCC     Temoin 
+        60         60         60 </code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;tibble&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;tidyr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;readr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;purrr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;dplyr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Warning: package &#39;lubridate&#39; was built under R version 4.4.3</code></pre>
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.0     ✔ readr     2.1.6
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.2     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+✖ dplyr::recode() masks car::recode()
+✖ purrr::some()   masks car::some()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>psychoclinique %&gt;%
+  summarise(
+    min = min(phq9_base),
+    median = median(phq9_base),
+    mean = mean(phq9_base),
+    max = max(phq9_base),
+    sd = sd(phq9_base)
+  )</code></pre>
+<pre><code>       min   median     mean max       sd
+1 5.862916 14.96422 14.90242  27 3.929892</code></pre>
+<pre class="r"><code>psychoclinique %&gt;%
+  group_by(groupe) %&gt;%
+  summarise(
+    min = min(phq9_base),
+    median = median(phq9_base),
+    mean = mean(phq9_base),
+    max = max(phq9_base),
+    sd = sd(phq9_base)
+  )</code></pre>
+<pre><code># A tibble: 3 × 6
+  groupe       min median  mean   max    sd
+  &lt;fct&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Activation  8.12   13.9  14.9  27    4.17
+2 TCC         8.65   16.0  15.6  24.3  3.48
+3 Temoin      5.86   14.2  14.1  22.8  4.02</code></pre>
+<pre class="r"><code>psychoclinique %&gt;%
+  summarise(
+    min = min(phq9_post),
+    median = median(phq9_post),
+    mean = mean(phq9_post),
+    max = max(phq9_post),
+    sd = sd(phq9_post)
+  )</code></pre>
+<pre><code>  min   median     mean      max       sd
+1   0 10.69157 10.62256 24.11844 4.377838</code></pre>
+<pre class="r"><code>psychoclinique %&gt;%
+  group_by(groupe) %&gt;%
+  summarise(
+    min = min(phq9_post),
+    median = median(phq9_post),
+    mean = mean(phq9_post),
+    max = max(phq9_post),
+    sd = sd(phq9_post)
+  )</code></pre>
+<pre><code># A tibble: 3 × 6
+  groupe       min median  mean   max    sd
+  &lt;fct&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Activation  0     11.3  11.0   19.2  3.72
+2 TCC         1.69   6.73  7.64  14.5  3.16
+3 Temoin      3.79  13.5  13.2   24.1  4.27</code></pre></li>
+<li><p>Représentation graphiquement la relation entre le traitement, le
+score de dépression initial et le score de dépression 8 semaines après
+l’initiation du traitement. Que constatez-vous ?</p>
+<pre class="r"><code>## 3. Représentation graphique
+library(ggplot2)
+ggplot(psychoclinique, aes(x = phq9_base, y = phq9_post, color = groupe)) +
+  geom_point() +
+  labs(x = &quot;PHQ-9 (pré)&quot;, y = &quot;PHQ-9 (post)&quot;, color = &quot;Groupe&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-18-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(psychoclinique, aes(x = phq9_base, y = phq9_post, color = groupe)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  labs(x = &quot;PHQ-9 (pré)&quot;, y = &quot;PHQ-9 (post)&quot;, color = &quot;Groupe&quot;) +
+  theme_minimal()</code></pre>
+<pre><code>`geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-18-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Réalisez une analyse de covariance afin d’évaluer l’effet du
+traitement après ajustement pour le score de dépression initial.</p>
+<pre class="r"><code>## 4. Analyse : ANCOVA
+### Modification du codage du facteur
+contrasts(psychoclinique$groupe)</code></pre>
+<pre><code>           TCC Temoin
+Activation   0      0
+TCC          1      0
+Temoin       0      1</code></pre>
+<pre class="r"><code>psychoclinique$groupe &lt;- relevel(psychoclinique$groupe, ref = &quot;Temoin&quot;)
+contrasts(psychoclinique$groupe)</code></pre>
+<pre><code>           Activation TCC
+Temoin              0   0
+Activation          1   0
+TCC                 0   1</code></pre>
+<pre class="r"><code>ancova1 &lt;- lm(phq9_post ~ phq9_base + groupe + phq9_base:groupe,
+              data = psychoclinique)</code></pre></li>
+<li><p>Vérifiez les hypothèses du modèle.</p>
+<pre class="r"><code>## 5. Vérification des hypothèses
+### Normalité
+plot(ancova1, which = 2)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-20-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Homoscédasticité et linéarité
+plot(ancova1, which = 1)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-21-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Homogénéité des pentes
+library(car)
+Anova(ancova1, type = &quot;III&quot;)</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: phq9_post
+                  Sum Sq  Df F value    Pr(&gt;F)    
+(Intercept)        21.02   1  2.4686  0.117958    
+phq9_base         583.95   1 68.5856 3.118e-14 ***
+groupe              5.73   2  0.3363  0.714896    
+phq9_base:groupe  117.42   2  6.8956  0.001312 ** 
+Residuals        1481.47 174                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># L&#39;intéraction n&#39;est pas significative. L&#39;hypothèse est vérifiée.</code></pre>
+<pre class="r"><code>### Ré-estimation du modèle sans interaction
+ancova2 &lt;- lm(phq9_post ~ phq9_base + groupe,
+              data = psychoclinique)</code></pre>
+<pre class="r"><code>### Vérification des hypothèses du nouveau modèle
+plot(ancova2, which = 2)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-24-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(ancova2, which = 1)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-24-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Le traitement a-t-il un effet significatif sur le score de
+dépression 8 semaines après l’initiation du traitement ? Qu’en est-il du
+score de dépression initial ? Que pouvez-vous conclure ?</p>
+<pre class="r"><code>## 6. Interprétation du modèle
+### Test-F
+Anova(ancova2, type = &quot;III&quot;)</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: phq9_post
+             Sum Sq  Df F value    Pr(&gt;F)    
+(Intercept)  292.88   1  32.239 5.531e-08 ***
+phq9_base    881.39   1  97.020 &lt; 2.2e-16 ***
+groupe      1231.34   2  67.771 &lt; 2.2e-16 ***
+Residuals   1598.89 176                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>### Interprétation du score de dépression initial
+summary(ancova2)</code></pre>
+<pre><code>
+Call:
+lm(formula = phq9_post ~ phq9_base + groupe, data = psychoclinique)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.1789 -2.0497  0.0885  2.1161  7.4638 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)       5.15522    0.90793   5.678 5.53e-08 ***
+phq9_base         0.57181    0.05805   9.850  &lt; 2e-16 ***
+groupeActivation -2.70399    0.55225  -4.896 2.20e-06 ***
+groupeTCC        -6.45819    0.55727 -11.589  &lt; 2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 3.014 on 176 degrees of freedom
+Multiple R-squared:  0.5339,    Adjusted R-squared:  0.526 
+F-statistic: 67.21 on 3 and 176 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Intercept : 1.09 =&gt; phq9_post por le groupe Témoin lorsque
+phq9_base = 0</p>
+<p>phq9_base : 0.72 =&gt; effet du phq9_base quelque soit le traitement
+(pente, identique pour les 3 groupes)</p>
+<p>groupeActivation : -2.48 =&gt; Différente entre le groupe activation
+et le groupe témoin après ajustement sur le phq9_base</p>
+<p>groupeTCC : -3.15 =&gt; Différence entre le groupe TCC et le groupe
+témoin après ajustement sur le phq9_base</p>
+<pre class="r"><code># Autre approche
+library(emmeans)</code></pre>
+<pre><code>Warning: package &#39;emmeans&#39; was built under R version 4.4.3</code></pre>
+<pre><code>Welcome to emmeans.
+Caution: You lose important information if you filter this package&#39;s results.
+See &#39;? untidy&#39;</code></pre>
+<pre class="r"><code>emmeans(ancova2,
+        pairwise ~ groupe, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+ groupe     emmean    SE  df lower.CL upper.CL
+ Temoin      13.68 0.392 176    12.90    14.45
+ Activation  10.97 0.389 176    10.20    11.74
+ TCC          7.22 0.391 176     6.45     7.99
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast            estimate    SE  df t.ratio p.value
+ Temoin - Activation     2.70 0.552 176   4.896 &lt;0.0001
+ Temoin - TCC            6.46 0.557 176  11.589 &lt;0.0001
+ Activation - TCC        3.75 0.552 176   6.803 &lt;0.0001
+
+P value adjustment: BH method for 3 tests </code></pre></li>
+<li><p>Refaites ces analyses avec la base de données
+psychoclinique_interaction.csv</p>
+<pre class="r"><code>## 7. Analyses avec les données du fichier psychoclinique_interaction.csv
+### a. Importation et mise en forme des données
+psychoclinique_interaction &lt;- read.csv(file = &quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/psychoclinique_interaction.csv&quot;,
+         sep = &quot;,&quot;,
+         dec = &quot;.&quot;,
+         header = TRUE)
+
+str(psychoclinique_interaction)</code></pre>
+<pre><code>&#39;data.frame&#39;:   180 obs. of  5 variables:
+ $ groupe         : chr  &quot;Activation&quot; &quot;TCC&quot; &quot;Temoin&quot; &quot;Activation&quot; ...
+ $ phq9_base      : num  13.05 15.05 14.12 8.39 18.12 ...
+ $ phq9_post      : num  6.34 6.34 7.86 2.86 6.59 ...
+ $ phq9_changement: num  -6.72 -8.71 -6.26 -5.53 -11.54 ...
+ $ age            : num  36.6 19.8 42 34.7 48.9 ...</code></pre>
+<pre class="r"><code>psychoclinique_interaction$groupe &lt;- as.factor(psychoclinique_interaction$groupe)
+str(psychoclinique_interaction)</code></pre>
+<pre><code>&#39;data.frame&#39;:   180 obs. of  5 variables:
+ $ groupe         : Factor w/ 3 levels &quot;Activation&quot;,&quot;TCC&quot;,..: 1 2 3 1 2 1 2 1 2 1 ...
+ $ phq9_base      : num  13.05 15.05 14.12 8.39 18.12 ...
+ $ phq9_post      : num  6.34 6.34 7.86 2.86 6.59 ...
+ $ phq9_changement: num  -6.72 -8.71 -6.26 -5.53 -11.54 ...
+ $ age            : num  36.6 19.8 42 34.7 48.9 ...</code></pre>
+<pre class="r"><code>### b. Statistiques descriptives
+table(psychoclinique_interaction$groupe)</code></pre>
+<pre><code>
+Activation        TCC     Temoin 
+        60         60         60 </code></pre>
+<pre class="r"><code>library(tidyverse)
+psychoclinique_interaction %&gt;%
+  summarise(
+    min = min(phq9_base),
+    median = median(phq9_base),
+    mean = mean(phq9_base),
+    max = max(phq9_base),
+    sd = sd(phq9_base)
+  )</code></pre>
+<pre><code>       min   median     mean max       sd
+1 5.862916 14.96422 14.90242  27 3.929892</code></pre>
+<pre class="r"><code>psychoclinique_interaction %&gt;%
+  group_by(groupe) %&gt;%
+  summarise(
+    min = min(phq9_base),
+    median = median(phq9_base),
+    mean = mean(phq9_base),
+    max = max(phq9_base),
+    sd = sd(phq9_base)
+  )</code></pre>
+<pre><code># A tibble: 3 × 6
+  groupe       min median  mean   max    sd
+  &lt;fct&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Activation  8.12   13.9  14.9  27    4.17
+2 TCC         8.65   16.0  15.6  24.3  3.48
+3 Temoin      5.86   14.2  14.1  22.8  4.02</code></pre>
+<pre class="r"><code>psychoclinique_interaction %&gt;%
+  summarise(
+    min = min(phq9_post),
+    median = median(phq9_post),
+    mean = mean(phq9_post),
+    max = max(phq9_post),
+    sd = sd(phq9_post)
+  )</code></pre>
+<pre><code>  min   median     mean      max       sd
+1   0 10.69157 10.62256 24.11844 4.377838</code></pre>
+<pre class="r"><code>psychoclinique_interaction %&gt;%
+  group_by(groupe) %&gt;%
+  summarise(
+    min = min(phq9_post),
+    median = median(phq9_post),
+    mean = mean(phq9_post),
+    max = max(phq9_post),
+    sd = sd(phq9_post)
+  )</code></pre>
+<pre><code># A tibble: 3 × 6
+  groupe       min median  mean   max    sd
+  &lt;fct&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Activation  0     11.3  11.0   19.2  3.72
+2 TCC         1.69   6.73  7.64  14.5  3.16
+3 Temoin      3.79  13.5  13.2   24.1  4.27</code></pre>
+<pre class="r"><code>### c. Représentation graphique
+library(ggplot2)
+ggplot(psychoclinique_interaction, aes(phq9_base, phq9_post, color = groupe)) +
+  geom_point() +
+  labs(x = &quot;PHQ-9 (pré)&quot;, y = &quot;PHQ-9 (post)&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-30-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(psychoclinique_interaction, aes(phq9_base, phq9_post, color = groupe)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  labs(x = &quot;PHQ-9 (pré)&quot;, y = &quot;PHQ-9 (post)&quot;) +
+  theme_minimal()</code></pre>
+<pre><code>`geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-30-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### d. Analyse : ANCOVA
+### Modification du codage du facteur
+contrasts(psychoclinique_interaction$groupe)</code></pre>
+<pre><code>           TCC Temoin
+Activation   0      0
+TCC          1      0
+Temoin       0      1</code></pre>
+<pre class="r"><code>psychoclinique_interaction$groupe &lt;- relevel(psychoclinique_interaction$groupe, ref = &quot;Temoin&quot;)
+contrasts(psychoclinique_interaction$groupe)</code></pre>
+<pre><code>           Activation TCC
+Temoin              0   0
+Activation          1   0
+TCC                 0   1</code></pre>
+<pre class="r"><code>ancova3 &lt;- lm(phq9_post ~ phq9_base + groupe + phq9_base:groupe,
+              data = psychoclinique_interaction)</code></pre>
+<pre class="r"><code>### e. Vérification des hypothèses
+### Normalité
+plot(ancova3, which = 2)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-32-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Homoscédasticité et linéaité
+plot(ancova3, which = 1)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-32-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Homogénéité des pentes
+library(car)
+Anova(ancova3, type = &quot;III&quot;)</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: phq9_post
+                  Sum Sq  Df F value    Pr(&gt;F)    
+(Intercept)        21.02   1  2.4686  0.117958    
+phq9_base         583.95   1 68.5856 3.118e-14 ***
+groupe              5.73   2  0.3363  0.714896    
+phq9_base:groupe  117.42   2  6.8956  0.001312 ** 
+Residuals        1481.47 174                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># L&#39;intéraction est significative. L&#39;hypothèse d&#39;homogénéité des pentes n&#39;est pas vérifiée.</code></pre>
+<pre class="r"><code>### f. Interprétation des résultats
+summary(ancova3)</code></pre>
+<pre><code>
+Call:
+lm(formula = phq9_post ~ phq9_base + groupe + phq9_base:groupe, 
+    data = psychoclinique_interaction)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.0386 -1.8757 -0.0407  2.1904  7.0992 
+
+Coefficients:
+                           Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                 2.17941    1.38712   1.571 0.117958    
+phq9_base                   0.78241    0.09447   8.282 3.12e-14 ***
+groupeActivation           -0.15448    1.97801  -0.078 0.937839    
+groupeTCC                   1.56484    2.23295   0.701 0.484366    
+phq9_base:groupeActivation -0.18204    0.13118  -1.388 0.166987    
+phq9_base:groupeTCC        -0.53320    0.14441  -3.692 0.000297 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.918 on 174 degrees of freedom
+Multiple R-squared:  0.5682,    Adjusted R-squared:  0.5558 
+F-statistic: 45.79 on 5 and 174 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>library(emmeans)
+emmeans(ancova3,
+        pairwise ~ groupe, asjust = &quot;BH&quot;)</code></pre>
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+<pre><code>$emmeans
+ groupe     emmean    SE  df lower.CL upper.CL
+ Temoin      13.84 0.384 174     13.1    14.60
+ Activation  10.97 0.377 174     10.2    11.72
+ TCC          7.46 0.385 174      6.7     8.22
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast            estimate    SE  df t.ratio p.value
+ Temoin - Activation     2.87 0.538 174   5.333 &lt;0.0001
+ Temoin - TCC            6.38 0.544 174  11.735 &lt;0.0001
+ Activation - TCC        3.51 0.539 174   6.521 &lt;0.0001
+
+P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
+<pre class="r"><code>emtrends(ancova3, pairwise ~ groupe, var = &quot;phq9_base&quot;, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emtrends
+ groupe     phq9_base.trend     SE  df lower.CL upper.CL
+ Temoin               0.782 0.0945 174   0.5959    0.969
+ Activation           0.600 0.0910 174   0.4207    0.780
+ TCC                  0.249 0.1090 174   0.0336    0.465
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast            estimate    SE  df t.ratio p.value
+ Temoin - Activation    0.182 0.131 174   1.388  0.1670
+ Temoin - TCC           0.533 0.144 174   3.692  0.0009
+ Activation - TCC       0.351 0.142 174   2.470  0.0217
+
+P value adjustment: BH method for 3 tests </code></pre></li>
+</ol>
+</div>
+<div id="exercices-supplémentaires" class="section level1">
+<h1>Exercices supplémentaires</h1>
+<div id="questions-de-cours" class="section level2">
+<h2>1 - Questions de cours</h2>
+<div id="régression-linéaire-multiple" class="section level3">
+<h3>Régression linéaire multiple</h3>
+<ol style="list-style-type: decimal">
+<li>Quelle est la différence entre une régression linéaire simple et une
+régression linéaire multiple ?</li>
+<li>Donnez la forme générale de l’équation d’une régression linéaire
+multiple.</li>
+<li>Que représente le coefficient β0 dans un modèle de régression
+linéaire multiple ?</li>
+<li>Quelle est la méthode utilisée pour estimer les paramètres d’un
+modèle de régression linéaire multiple ?</li>
+<li>Écrivez la formule matricielle de l’estimateur des moindres carrés
+pour β.</li>
+<li>Quelles sont les hypothèses fondamentales d’un modèle de régression
+linéaire multiple ?</li>
+<li>Comment calcule-t-on le coefficient de détermination R2 et que
+signifie-t-il ?</li>
+<li>Pourquoi utilise-t-on le coefficient de détermination ajusté Ra2 et
+comment se calcule-t-il ?</li>
+<li>Quelle est la statistique de test utilisée pour vérifier la
+significativité globale d’un modèle ?</li>
+<li>Quelle est la statistique de test pour évaluer la significativité
+individuelle d’un paramètre βj ?</li>
+<li>Donnez la formule d’un intervalle de prédiction pour une nouvelle
+observation.</li>
+<li>Quelles sont les conséquences de la multicolinéarité sur
+l’interprétation des paramètres ?</li>
+<li>Comment calcule-t-on le facteur d’inflation de la variance (VIF) et
+que signifie-t-il ?</li>
+<li>Quelle règle pratique permet d’identifier une observation influente
+à partir de la distance de Cook ?</li>
+<li>Quelle est la différence entre une valeur aberrante et une valeur
+influente ?</li>
+</ol>
+</div>
+<div id="analyse-de-covariance-ancova" class="section level3">
+<h3>Analyse de Covariance (ANCOVA)</h3>
+<ol style="list-style-type: decimal">
+<li>Qu’est-ce qu’une analyse de covariance (ANCOVA) et dans quel
+contexte l’utilise-t-on ?</li>
+<li>Donnez la forme générale du modèle ANCOVA sans interaction.</li>
+<li>Que signifie l’hypothèse d’homogénéité des pentes dans une ANCOVA
+?</li>
+<li>Comment tester la significativité d’un terme d’interaction dans une
+ANCOVA ?</li>
+<li>Dans le cadre d’une ANCOVA, comment interpréter un coefficient
+associé à une variable qualita- tive (facteur) par rapport au niveau de
+référence ?</li>
+</ol>
+</div>
+</div>
+<div id="exercices-r" class="section level2">
+<h2>Exercices R</h2>
+<div id="exercice-1" class="section level3">
+<h3>Exercice 1</h3>
+<p>Une étude clinique a été menée sur 250 patients traités par un nouvel
+antihypertenseur. Pour chaque patient, on a mesuré :</p>
+<p>— Concentration plasmatique du médicament (mg/L) ;</p>
+<p>— Âge (années) ;</p>
+<p>— Poids (kg) ;</p>
+<p>— Clairance rénale (mL/min) ;</p>
+<p>— Score d’adhérence au traitement (échelle de 0 à 10).</p>
+<p><strong>Objectif</strong> : Étudier la relation entre la
+concentration plasmatique d’un médicament (mg/L) et plu- sieurs
+caractéristiques individuelles chez des patients sous traitement
+antihypertenseur.</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données pharma_study.csv dans R et mettez-le
+en forme si nécessaire.</p>
+<pre class="r"><code># 1. Importation et mise en forme des données
+pharma &lt;- read.csv(&quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/Exercices supplémentaires-20260308/pharma_study.csv&quot;,
+                   sep = &quot;,&quot;,
+                   dec = &quot;.&quot;,
+                   header = TRUE)
+
+str(pharma)</code></pre>
+<pre><code>&#39;data.frame&#39;:   250 obs. of  5 variables:
+ $ age      : int  56 35 70 85 38 52 46 79 43 64 ...
+ $ poids    : num  69.4 46 45 55.7 73.5 87.1 87.6 77.6 59.5 68.7 ...
+ $ clairance: num  116.2 85.6 118.8 93.9 129.5 ...
+ $ adherence: num  8.8 8.5 5.3 3.3 7.8 8 9.3 8.8 4.7 6.7 ...
+ $ conc     : num  3.46 3.83 4.32 3.24 4.35 ...</code></pre>
+<pre class="r"><code># Aperçu et préparation
+glimpse(pharma)</code></pre>
+<pre><code>Rows: 250
+Columns: 5
+$ age       &lt;int&gt; 56, 35, 70, 85, 38, 52, 46, 79, 43, 64, 32, 63, 75, 32, 50, …
+$ poids     &lt;dbl&gt; 69.4, 46.0, 45.0, 55.7, 73.5, 87.1, 87.6, 77.6, 59.5, 68.7, …
+$ clairance &lt;dbl&gt; 116.2, 85.6, 118.8, 93.9, 129.5, 102.0, 104.1, 84.7, 121.5, …
+$ adherence &lt;dbl&gt; 8.8, 8.5, 5.3, 3.3, 7.8, 8.0, 9.3, 8.8, 4.7, 6.7, 9.9, 9.3, …
+$ conc      &lt;dbl&gt; 3.457, 3.833, 4.321, 3.242, 4.352, 3.296, 4.625, 4.947, 3.21…</code></pre>
+<pre class="r"><code>pharma &lt;- pharma %&gt;%
+  mutate(
+    age = as.numeric(age),
+    poids = as.numeric(poids),
+    clairance = as.numeric(clairance),
+    adherence = as.numeric(adherence),
+    conc = as.numeric(conc)
+  )</code></pre></li>
+<li><p>Réalisez des statistiques descriptives pour chaque variable et
+calculez les corrélations entre la concentration plasmatique et les
+variables explicatives. Que constatez-vous ?</p>
+<pre class="r"><code>#2. Statistiques descriptives
+## Plusieurs possibilités
+### option 1
+summary(pharma)</code></pre>
+<pre><code>      age            poids          clairance        adherence    
+ Min.   :30.00   Min.   : 45.00   Min.   : 73.20   Min.   :2.700  
+ 1st Qu.:46.00   1st Qu.: 67.85   1st Qu.: 94.58   1st Qu.:6.400  
+ Median :61.00   Median : 77.20   Median :104.80   Median :7.500  
+ Mean   :58.92   Mean   : 77.15   Mean   :104.84   Mean   :7.329  
+ 3rd Qu.:72.00   3rd Qu.: 86.67   3rd Qu.:115.72   3rd Qu.:8.675  
+ Max.   :85.00   Max.   :113.20   Max.   :150.00   Max.   :9.900  
+      conc      
+ Min.   :1.636  
+ 1st Qu.:3.120  
+ Median :3.608  
+ Mean   :3.557  
+ 3rd Qu.:4.064  
+ Max.   :5.197  </code></pre>
+<pre class="r"><code>### option 2 (où nous pouvons choisir les statistiques présentées)
+library(tidyverse)
+pharma %&gt;% summarise(
+  across(everything(), 
+         list(moy=mean, sd=sd)))</code></pre>
+<pre><code>  age_moy   age_sd poids_moy poids_sd clairance_moy clairance_sd adherence_moy
+1  58.924 15.68945   77.1504 14.40612      104.8408     14.50148        7.3292
+  adherence_sd conc_moy  conc_sd
+1     1.560837 3.556752 0.721237</code></pre>
+<pre class="r"><code>## Corrélations des variables explicatives avec la concentration plasmatique
+cor(pharma$conc, pharma$adherence)</code></pre>
+<pre><code>[1] 0.4956683</code></pre>
+<pre class="r"><code>cor(pharma$conc, pharma$age)</code></pre>
+<pre><code>[1] 0.2797217</code></pre>
+<pre class="r"><code>cor(pharma$conc, pharma$poids)</code></pre>
+<pre><code>[1] -0.1410113</code></pre>
+<pre class="r"><code>cor(pharma$conc, pharma$clairance)</code></pre>
+<pre><code>[1] -0.3042902</code></pre></li>
+<li><p>Estimez un modèle de régression linéaire multiple expliquant la
+concentration plasmatique en fonction des quatre variables
+explicatives.</p>
+<pre class="r"><code># 3. Estimation d&#39;un modèle de régression linéaire multiple
+m1 &lt;- lm(conc ~ age + poids + clairance + adherence, 
+         data = pharma)</code></pre></li>
+<li><p>Vérifiez les hypothèses du modèle (linéarité, normalité des
+résidus, homoscédasticité, absence de multicolinéarité).</p>
+<pre class="r"><code># 4. Vérification des hypothèses
+pharma$resid &lt;- resid(m1)
+
+plot(m1, which = 2) # QQplot</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-40-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(m1, which = 1) # résidus vs valeurs ajustés (homoscédasticité)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-40-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow=c(2,2))
+## Linéarité de la fonction de régression
+plot(pharma$age,pharma$resid)
+plot(pharma$clairance,pharma$resid)
+plot(pharma$poids,pharma$resid)
+plot(pharma$adherence,pharma$resid)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-40-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow=c(1,1))</code></pre>
+<pre class="r"><code>## Multicolinéarité : VIF
+library(car)
+vif(m1)</code></pre>
+<pre><code>      age     poids clairance adherence 
+ 1.621135  1.004179  1.620119  1.004784 </code></pre></li>
+<li><p>Interprétez le coefficient de détermination R2.</p>
+<pre class="r"><code># 5. Coefficient de détermination
+summary(m1)$r.squared </code></pre>
+<pre><code>[1] 0.3720899</code></pre>
+<pre class="r"><code># Valeurs aberrantes et influentes
+lev &lt;- hatvalues(m1) # Leviers = valeurs aberrantes
+n &lt;- nrow(pharma) 
+p &lt;- 4 # Nombre de variables explicatives
+seuil_levier &lt;- 2*(p+1)/n
+seuil_levier</code></pre>
+<pre><code>[1] 0.04</code></pre>
+<pre class="r"><code>lev[lev&gt; seuil_levier]</code></pre>
+<pre><code>         2          3          4         13         69        106        148 
+0.06525819 0.04494048 0.05174815 0.04700965 0.04258694 0.04633633 0.05191947 
+       159        199 
+0.05740694 0.04935146 </code></pre>
+<pre class="r"><code>pharma[c(2,3,4,13,69,106,148,159,199),]</code></pre>
+<pre><code>    age poids clairance adherence  conc         resid
+2    35  46.0      85.6       8.5 3.833 -0.1907706069
+3    70  45.0     118.8       5.3 4.321  0.9912986945
+4    85  55.7      93.9       3.3 3.242  0.1049525723
+13   75  69.2     130.5       7.1 4.336  0.8463345358
+69   80  85.1     121.9       5.4 1.691 -1.4045219525
+106  77  76.5     105.0       2.7 3.195  0.5253338883
+148  38  77.7      91.0       4.1 2.753 -0.0004997424
+159  37 107.7      98.5       4.5 1.992 -0.5407070181
+199  32  91.0     150.0       8.0 3.722  0.7485411028</code></pre>
+<pre class="r"><code>cook &lt;- cooks.distance(m1) # Distance de Cook : valeurs influentes
+summary(cook) # Valeurs &lt; 1 =&gt; Pas de valeurs influentes</code></pre>
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+1.000e-08 4.106e-04 1.857e-03 4.327e-03 4.772e-03 5.522e-02 </code></pre></li>
+<li><p>Identifiez les observations aberrantes et/ou influentes.</p></li>
+<li><p>Testez la significativité globale du modèle et celle des
+paramètres individuels. Interprétez les coefficients estimés.</p>
+<pre class="r"><code># 7. Significativité globale et paramètres individuels
+summary(m1)</code></pre>
+<pre><code>
+Call:
+lm(formula = conc ~ age + poids + clairance + adherence, data = pharma)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.46683 -0.40590 -0.00541  0.41738  1.52768 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  2.885811   0.542320   5.321 2.33e-07 ***
+age          0.008834   0.002963   2.981  0.00316 ** 
+poids       -0.007945   0.002540  -3.128  0.00197 ** 
+clairance   -0.008584   0.003205  -2.678  0.00790 ** 
+adherence    0.226944   0.023449   9.678  &lt; 2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.5762 on 245 degrees of freedom
+Multiple R-squared:  0.3721,    Adjusted R-squared:  0.3618 
+F-statistic:  36.3 on 4 and 245 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><strong><em>p-valeur test global &lt; 0.05 =&gt; Le modèle est
+significatif</em></strong></p>
+<p><strong><em>Tous les paramètres ont une p-valeur &lt; 0.05 =&gt;
+Toutes les variables explicatives ont un effet significatif sur la
+concentration plasmatique du médicament.</em></strong></p></li>
+<li><p>Prédisez la concentration plasmatique pour un patient de 70 ans,
+pesant 85 kg, avec une clairance rénale de 60 mL/min et un score
+d’adhérence de 8. Fournissez un intervalle de prédiction.</p>
+<pre class="r"><code># 8. Prédiction avec intervalle de prédiction
+new_pt &lt;- data.frame(age=70, poids=85, clairance=60, adherence=8)
+predict(m1, 
+        newdata=new_pt, 
+        interval=&quot;prediction&quot;, 
+        level=0.95)</code></pre>
+<pre><code>       fit      lwr      upr
+1 4.129373 2.964919 5.293827</code></pre></li>
+</ol>
+</div>
+<div id="exercice-2" class="section level3">
+<h3>Exercice 2</h3>
+<p>Nous souhaitons évaluer l’efficacité de trois régimes alimentaires
+pour réduire la glycémie (12 semaines après l’introduction du régime)
+chez des patients diabétiques, en tenant compte de la glycémie initiale.
+Une étude a ainsi été menée auprès de 150 patients diabétiques répartis
+aléatoirement en trois groupes : régime méditerranéen, régime pauvre en
+glucides, régime standard (témoin). Pour chaque patient, la glycémie à
+jeun (mmol/L) a été mesurée avant le début du régime et après 12
+semaines.</p>
+<ol style="list-style-type: decimal">
+<li><p>Importez le jeu de données diet_diabetes.csv dans R et mettez-le
+en forme si nécessaire.</p>
+<pre class="r"><code># 1. Importation et mise en forme des données
+diet &lt;- read.csv(&quot;/Volumes/ORICO/Modèle Linaire/TD régression linéaire multiple et ANCOVA-20260121/Exercices supplémentaires-20260308/diet_diabetes.csv&quot;,
+                 sep = &quot;,&quot;,
+                 dec = &quot;.&quot;,
+                 header = TRUE)
+
+str(diet)</code></pre>
+<pre><code>&#39;data.frame&#39;:   150 obs. of  3 variables:
+ $ regime  : chr  &quot;LowCarb&quot; &quot;Standard&quot; &quot;LowCarb&quot; &quot;LowCarb&quot; ...
+ $ gly_base: num  5.43 7.17 7.59 10.25 7.28 ...
+ $ gly_post: num  5.19 6.81 4.92 8.35 5.44 5.38 6.06 5.05 6.55 3.78 ...</code></pre>
+<pre class="r"><code>diet$regime &lt;- as.factor(diet$regime)
+str(diet)</code></pre>
+<pre><code>&#39;data.frame&#39;:   150 obs. of  3 variables:
+ $ regime  : Factor w/ 3 levels &quot;LowCarb&quot;,&quot;Mediterraneen&quot;,..: 1 3 1 1 2 1 2 3 1 1 ...
+ $ gly_base: num  5.43 7.17 7.59 10.25 7.28 ...
+ $ gly_post: num  5.19 6.81 4.92 8.35 5.44 5.38 6.06 5.05 6.55 3.78 ...</code></pre></li>
+<li><p>Réalisez des statistiques descriptives pour la glycémie initiale,
+la glycémie après 12 semaines et le régime alimentaire.</p>
+<pre class="r"><code># 2. Statistiques descriptives
+## type de régime
+table(diet$regime)</code></pre>
+<pre><code>
+      LowCarb Mediterraneen      Standard 
+           50            50            50 </code></pre>
+<pre class="r"><code>## Glycémie initiale
+summary(diet$gly_base)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  4.500   7.090   7.800   7.881   8.705  11.590 </code></pre>
+<pre class="r"><code>diet%&gt;%
+  summarise(
+    moy_base = mean(gly_base), sd_base = sd(gly_base)
+  )</code></pre>
+<pre><code>  moy_base  sd_base
+1   7.8808 1.321642</code></pre>
+<pre class="r"><code>diet %&gt;% group_by(regime) %&gt;%
+  summarise(
+    n = n(),
+    moy_base = mean(gly_base), sd_base = sd(gly_base)
+  )</code></pre>
+<pre><code># A tibble: 3 × 4
+  regime            n moy_base sd_base
+  &lt;fct&gt;         &lt;int&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+1 LowCarb          50     7.85    1.46
+2 Mediterraneen    50     7.92    1.21
+3 Standard         50     7.87    1.31</code></pre>
+<pre class="r"><code>## Glycémie post-intervention
+summary(diet$gly_post)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  3.500   5.242   6.010   6.152   6.840   9.490 </code></pre>
+<pre class="r"><code>diet%&gt;%
+  summarise(
+    moy_post = mean(gly_post), sd_post = sd(gly_post)
+  )</code></pre>
+<pre><code>  moy_post  sd_post
+1 6.151733 1.385686</code></pre>
+<pre class="r"><code>diet %&gt;% group_by(regime) %&gt;%
+  summarise(
+    n = n(),
+    moy_post = mean(gly_post), sd_post = sd(gly_post)
+  )</code></pre>
+<pre><code># A tibble: 3 × 4
+  regime            n moy_post sd_post
+  &lt;fct&gt;         &lt;int&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+1 LowCarb          50     5.55    1.32
+2 Mediterraneen    50     6.05    1.23
+3 Standard         50     6.86    1.30</code></pre></li>
+<li><p>Représentez graphiquement la relation entre le régime, la
+glycémie initiale et la glycémie après 12 semaines. Que constatez-vous
+?</p>
+<pre class="r"><code># 3. Représentation graphique Visualisations
+boxplot(gly_post ~ regime, data=diet)</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-50-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+ggplot(diet, aes(x = gly_base, y = gly_post, color = regime)) +
+  geom_point() +
+  labs(x = &quot;Glycémie (pré)&quot;, y = &quot;Glycémie (post)&quot;, color = &quot;Régime&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-50-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(diet, aes(x = gly_base, y = gly_post, color = regime)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  labs(x = &quot;Glycémie (pré)&quot;, y = &quot;Glycémie (post)&quot;, color = &quot;Régime&quot;) +
+  theme_minimal()</code></pre>
+<pre><code>`geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-50-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p><strong><em>Il ne semble pas y avoir d’intéraction entre la glycémie
+initiale et le régime.</em></strong> </p></li>
+<li><p>Réalisez une ANCOVA pour évaluer l’effet du régime après
+ajustement pour la glycémie initiale.</p>
+<pre class="r"><code># 4. ANCOVA sans interaction
+m2 &lt;- lm(gly_post ~ gly_base + regime, data=diet)
+summary(m2)</code></pre>
+<pre><code>
+Call:
+lm(formula = gly_post ~ gly_base + regime, data = diet)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.1361 -0.6126 -0.1185  0.5139  2.1989 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          0.11733    0.45550   0.258   0.7971    
+gly_base             0.69149    0.05571  12.412  &lt; 2e-16 ***
+regimeMediterraneen  0.45460    0.17975   2.529   0.0125 *  
+regimeStandard       1.30023    0.17971   7.235 2.43e-11 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.8985 on 146 degrees of freedom
+Multiple R-squared:  0.588, Adjusted R-squared:  0.5795 
+F-statistic: 69.45 on 3 and 146 DF,  p-value: &lt; 2.2e-16</code></pre></li>
+<li><p>Vérifiez les hypothèses du modèle.</p>
+<pre class="r"><code># 5. Vérification des hypothèses
+plot(m2, which = 2) # QQplot</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-52-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(m2, which = 1) # Résidus contre valeurs prédites</code></pre>
+<p><img src="figure/ML_4.Rmd/unnamed-chunk-52-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Homogéneité des pentes
+m3 &lt;- lm(gly_post ~ gly_base + regime + gly_base:regime, data=diet)
+library(car)
+Anova(m3, type = &quot;III&quot;)</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: gly_post
+                 Sum Sq  Df F value    Pr(&gt;F)    
+(Intercept)       0.009   1  0.0112    0.9157    
+gly_base         50.735   1 62.0131 7.546e-13 ***
+regime            1.752   2  1.0706    0.3455    
+gly_base:regime   0.063   2  0.0382    0.9625    
+Residuals       117.812 144                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p><strong><em>La pvaleur du terme d’intéraction &gt; 0.05. Les pentes
+sont donc homogènes.</em></strong></p></li>
+<li><p>Le régime a-t-il un effet significatif sur la glycémie après 12
+semaines ? Qu’en est-il de la glycémie initiale ?</p>
+<pre class="r"><code># 6. Interprétation du modèle
+Anova(m2, type = &quot;III&quot;)</code></pre>
+<pre><code>Anova Table (Type III tests)
+
+Response: gly_post
+             Sum Sq  Df  F value    Pr(&gt;F)    
+(Intercept)   0.054   1   0.0664    0.7971    
+gly_base    124.382   1 154.0611 &lt; 2.2e-16 ***
+regime       43.539   2  26.9639 1.081e-10 ***
+Residuals   117.874 146                       
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p><strong><em>Le régime et la glycémie initiale ont un effet
+statistiquement significatif sur la glycémie 12 semaines après
+l’initiation du traitement.</em></strong></p></li>
+<li><p>Interprétez les coefficients estimés et les différences ajustées
+entre les régimes.</p>
+<pre class="r"><code># 7. Interprétation des résultats
+summary(m2)</code></pre>
+<pre><code>
+Call:
+lm(formula = gly_post ~ gly_base + regime, data = diet)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.1361 -0.6126 -0.1185  0.5139  2.1989 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          0.11733    0.45550   0.258   0.7971    
+gly_base             0.69149    0.05571  12.412  &lt; 2e-16 ***
+regimeMediterraneen  0.45460    0.17975   2.529   0.0125 *  
+regimeStandard       1.30023    0.17971   7.235 2.43e-11 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.8985 on 146 degrees of freedom
+Multiple R-squared:  0.588, Adjusted R-squared:  0.5795 
+F-statistic: 69.45 on 3 and 146 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Après ajustement sur la glycémie initiale :</p>
+<ul>
+<li><p>Nous constatons que la glycémie à jeun est supérieure de 0.45
+mmol/L pour le régime méditerranéen comparative au régime pauvre en
+glucide ;</p></li>
+<li><p>Nous constatons que la glycémie à jeun est supérieur de 1.30
+mmol/L pour le régime standard par rapport au régime pauvre en
+glucides.</p></li>
+</ul>
+<p>Après ajustement sur le régime alimentaire, lorsque la glycémie a
+jeun initiale est supérieure 1 mmol/L, la glycémie 12 semaines après
+l’initiation du régime est supérieure de 0.69 mmol/L.</p>
+<pre class="r"><code># Différences ajustées
+library(emmeans)
+emmeans(m2,
+        pairwise ~ regime, adjust = &quot;BH&quot;)</code></pre>
+<pre><code>$emmeans
+ regime        emmean    SE  df lower.CL upper.CL
+ LowCarb         5.57 0.127 146     5.32     5.82
+ Mediterraneen   6.02 0.127 146     5.77     6.27
+ Standard        6.87 0.127 146     6.62     7.12
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                 estimate   SE  df t.ratio p.value
+ LowCarb - Mediterraneen    -0.455 0.18 146  -2.529  0.0125
+ LowCarb - Standard         -1.300 0.18 146  -7.235 &lt;0.0001
+ Mediterraneen - Standard   -0.846 0.18 146  -4.705 &lt;0.0001
+
+P value adjustment: BH method for 3 tests </code></pre></li>
+</ol>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.4.2 (2024-10-31)
+Platform: aarch64-apple-darwin20
+Running under: macOS Ventura 13.6.3
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Paris
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] emmeans_2.0.1   lubridate_1.9.5 forcats_1.0.1   stringr_1.6.0  
+ [5] dplyr_1.2.0     purrr_1.2.1     readr_2.1.6     tidyr_1.3.2    
+ [9] tibble_3.3.1    ggplot2_4.0.2   tidyverse_2.0.0 car_3.1-5      
+[13] carData_3.0-6  
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.6       xfun_0.56          bslib_0.10.0       lattice_0.22-9    
+ [5] tzdb_0.5.0         vctrs_0.7.1        tools_4.4.2        generics_0.1.4    
+ [9] sandwich_3.1-1     pkgconfig_2.0.3    Matrix_1.7-4       RColorBrewer_1.1-3
+[13] S7_0.2.1           lifecycle_1.0.5    compiler_4.4.2     farver_2.1.2      
+[17] git2r_0.36.2       codetools_0.2-20   httpuv_1.6.16      htmltools_0.5.9   
+[21] sass_0.4.10        yaml_2.3.12        Formula_1.2-5      later_1.4.6       
+[25] pillar_1.11.1      jquerylib_0.1.4    MASS_7.3-65        cachem_1.1.0      
+[29] multcomp_1.4-29    abind_1.4-8        nlme_3.1-168       tidyselect_1.2.1  
+[33] digest_0.6.39      mvtnorm_1.3-3      stringi_1.8.7      labeling_0.4.3    
+[37] splines_4.4.2      rprojroot_2.1.1    fastmap_1.2.0      grid_4.4.2        
+[41] cli_3.6.5          magrittr_2.0.4     survival_3.8-6     utf8_1.2.6        
+[45] TH.data_1.1-5      withr_3.0.2        scales_1.4.0       promises_1.5.0    
+[49] timechange_0.4.0   estimability_1.5.1 rmarkdown_2.30     otel_0.2.0        
+[53] workflowr_1.7.2    zoo_1.8-15         hms_1.1.4          coda_0.19-4.1     
+[57] evaluate_1.0.5     knitr_1.51         mgcv_1.9-4         rlang_1.1.7       
+[61] Rcpp_1.1.1         glue_1.8.0         rstudioapi_0.18.0  jsonlite_2.0.0    
+[65] R6_2.6.1           fs_1.6.6          </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

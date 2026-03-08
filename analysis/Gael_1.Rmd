@@ -7,18 +7,28 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Introduction
+# **Manipulation des objets de données**
 
-# Manipulation des objets de données
+## **Création d'objets de données**
 
-### Création d'objets de données
+### **Création par écriture**
 
-#### Création par écriture
+#### **Objet simple** 
+
+= un objet simple ne contrient qu'un élément.
+
+```{r}
+x <- 4
+x
+```
+
+##### **Vecteur** 
+
+= série de valeurs à une dimension.
 
 ```{r}
 # vecteur numérique 
-x <- 4
-x
+
 hauteur <- c(130,300,170) 
 hauteur
 # Pour nommer les éléments : hauteur<-c(a = 130, b = 300, c = 170).
@@ -35,6 +45,8 @@ couleur <- c("Rouge","Jaune","Jaune")
 couleur
 ```
 
+###### **La fonction rep**
+
 ```{r}
 enracinement <- rep(c("Faible", "Moyen", "Fort"), c(1,3,2)) 
 # la fonction rep() réplique les éléments du premier vecteur le nombre de fois indiqué dans le deuxième vecteur
@@ -48,11 +60,13 @@ logique.1
 # remarquer que les valeurs ne sont pas données entre guillemets ce qui les distingue des caractères
 ```
 
+Création d'un veteur vide taille non nulle
+
 ```{r}
-# vecteur de caractères. 
-vec.vide <- vector("character", 5) 
+
+vec.vide <- vector("character", 5)  
+# vecteur de caractères. # La valeur 5 indique 5 guillemets vides à introduire. Pour un vecteur numérique, mettre "numeric". Les éléments affichés sont alors des zéros. Pour un vecteur logique, mettre "logical". Les éléments affichés sont alors des FALSE. Cette fonction est pratique pour générer un vecteur que l'on peut ensuite remplir petit à petit
 vec.vide = vector(mode = "numeric", 3)
-# La valeur 5 indique 5 guillemets vides à introduire. Pour un vecteur numérique, mettre "numeric". Les éléments affichés sont alors des zéros. Pour un vecteur logique, mettre "logical". Les éléments affichés sont alors des FALSE. Cette fonction est pratique pour générer un vecteur que l'on peut ensuite remplir petit à petit
 vec.vide
 ```
 
@@ -64,6 +78,14 @@ objet.vide
 
 ```
 
+#### **Matrices** 
+
+= série de valeurs à deux dimensions
+
+Chiffres entre crochet: avant la virgule = ligne, après la virgule = colonne
+
+[Création d'une matrice:]{.underline}
+
 ```{r}
 nombre <- c(1:15)
 nombre = 1:15 # peut également s'écrire nombre<-1:15
@@ -72,21 +94,34 @@ nombre
 
 ```{r}
 matrice.1 <- matrix(nombre,ncol=3) 
-# l'argument ncol précise que la matrice possède 3 colonnes. La matrice est remplie par défaut en suivant les colonnes. Attention : si le nombre d'éléments de "nombre" divisé par le nombre de colonnes ne produit pas un nombre entier, la fonction matrix() recycle les éléments de "nombre" pour terminer le remplissage de matrice.1. Tester avec nombre<-1:13
 matrice.1 # matrice numérique
-
 ```
+
+L'argument **ncol** précise que la matrice possède 3 colonnes (de le vecteur nombre). La matrice est remplie par défaut en suivant les colonnes.
+
+Attention : si le nombre d'éléments de "nombre" divisé par le nombre de colonnes ne produit pas un nombre entier, la fonction matrix() recycle les éléments de "nombre" pour terminer le remplissage de matrice.1. Tester avec nombre \<- 1:13
+
+##### **Autre façon de créer une matrice - La fonction dim()** 
 
 ```{r}
 matrice.1 <- 1:15 # la matrice est d'abord un vecteur
-dim(matrice.1) <- c(5, 3) # dim() transforme le vecteur matrice.1 en matrice à 5 lignes et 3 colonnes (précisé par le vecteur c(5, 3)). Si la dimension choisie (ici 5 lignes x 3 colonnes = 15 cases) ne correspond pas exactement au nombre d'éléments de matrice.1, la fonction dim() ne recycle pas. Elle produit un message d'erreur
+dim(matrice.1) <- c(5, 3) 
 matrice.1
 ```
 
+La matrice est d'abord un vecteur
+
+`dim()` transforme le vecteur *matrice.1* en matrice à 5 lignes et 3 colonnes (précisé par *le vecteur c(5, 3)*). Si la dimension choisie (ici 5 lignes x 3 colonnes = 15 cases) ne correspond pas exactement au nombre d'éléments de *matrice.1*, la fonction dim() ne recycle pas. Elle produit un message d'erreur
+
+[Creation d'une matrice à trois lignes et remplissage en commençant par les lignes :]{.underline}
+
 ```{r}
-matrice.2 <- matrix((1:15)*100,nrow=3, byrow=TRUE) # le vecteur (1:15)*100 est introduit directement dans la fonction matrix()
+matrice.2 <- matrix((1:15)*100,nrow=3, byrow=TRUE) 
+# le vecteur (1:15)*100 est introduit directement dans la fonction matrix()
 matrice.2
 ```
+
+[Créatrion d'une matrice vide de taille non nulle:]{.underline}
 
 ```{r}
 mat.vide <- matrix(nrow=2, ncol=4)
@@ -94,14 +129,21 @@ mat.vide <- matrix(nrow=2, ncol=4)
 mat.vide
 ```
 
+#### Arrays 
+
+= série de valeurs à n dimensions
+
 ```{r}
 array.1 <- array(letters, dim=c(3,5,2)) 
-# letters donne l'alphabet et dim=c(3,5,2) indique que l'array possède 3 lignes, 5 colonnes et 2 niveaux de 3ème dimension. Tout comme matrix(), la fonction array() recycle les élements de letters pour terminer le remplissage du tableau
-#ligne -> colonne -> 3eme dimension 
+#  l'array possède 3 lignes, 5 colonnes et 2 niveaux de 3ème dimension.
 array.1 
 # array de mode caractère : les caractères sont toujours présentés entre guillemets, c'est un moyen de connaître le mode de l'objet. En ne mettant que l'argument dim=c(3,5,2), on crée un array vide rempli de NA
 
 ```
+
+#### **Data frame** 
+
+= série de valeurs en colonnes, sont créées à partir des vecteurs ou des matrices.
 
 ```{r}
 dataframe.1 <- data.frame(matrice.2)
@@ -127,6 +169,10 @@ dataframe.vide <- as.data.frame(mat.vide)
 dataframe.vide
 
 ```
+
+#### Liste 
+
+= série de données, sont crées à partit d'objets de tout type: simples. vecteurs, matrices, arrays, data frames, listes, facteurs et tables.
 
 ```{r}
 liste.1 <- list(x, hauteur, matrice.1, dataframe.2) # Pour nommer les compartiments : liste.1<-list(a = x, b = hauteur, c = matrice.1, d = dataframe.2)

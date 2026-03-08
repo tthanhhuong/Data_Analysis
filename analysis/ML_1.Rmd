@@ -1,0 +1,560 @@
+---
+title: "ML_1"
+author: "PHAM Huong"
+date: "2026-03-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Analyse de la variance à un facteur (ANOVA I)
+
+## **Exercice 1 - Exemple du cours**
+
+Considérons les résultats d’une étude clinique portant sur la comparaison de l’effet de deux anti- hypertenseurs et d’un placebo sur la pression artérielle. Nous disponsons d’un échantillon de 45 patients choisis au hasard, parmi lesquels 15 patients ont reçu l’anti-hypertenseur A, 15 patients ont reçu l’anti- hypertenseur B et 15 patients ont reçu le placebo. Pour chaque patient nous disposons de la pression artérielle systolique (en mmHg) 3 mois après l’initiation du traitement.
+
+1.  Importez le jeu de données data_aov.csv dans R. Puis mettez en forme les données.
+
+    ```{r}
+    setwd("/Users/thanhhuong/R/Data_Analysis")
+    data_aov <- read.csv("/Volumes/ORICO/Modèle Linaire/TD ANOVA I-20260121/data_aov.csv",sep = ",", dec = ".")
+
+    str(data_aov)
+    data_aov$Traitement <- as.factor(data_aov$Traitement)
+    str(data_aov)
+    ```
+
+2.  Calculez la moyenne globale de la pression artérielle systolique, puis la moyenne par groupe. Représentez ces résultats graphiquement.
+
+    ```{r}
+
+    ## 2. Statistiques descriptives
+    moyenne_globale <- mean(data_aov$Pression_arterielle)
+    moyenne_globale
+
+    library(tidyverse) # Manipulation et visualisation des données
+
+    library(rstatix) # Fonctions pour analyses statistiques
+    moyenne_groupe <- data_aov %>%
+      group_by(Traitement) %>%
+      get_summary_stats(Pression_arterielle, type = "mean_sd")
+    moyenne_groupe
+
+    ## Représentation graphique
+    library(ggpubr) # Réalisation de graphiques
+    ggboxplot(data_aov, x = "Traitement", y = "Pression_arterielle")
+
+    ```
+
+    Après avoir vérifiez les hypothèses nécessaire à une analyse de la variance, réalisez cette analyse avec R. L’effet du traitement a-t-il un effet significatif sur la pression artérielle systolique ?
+
+    ```{r}
+
+    ## 3. Analyse de la variance
+    ### Vérification des hypothèses
+    # Normalité
+
+    # Test de Shapiro-Wilk
+    data_aov %>%
+      group_by(Traitement)%>%
+      shapiro_test(Pression_arterielle)
+
+    ```
+
+    ```{r}
+    # Tests de Kolmogorov-Smirnov
+    data_aov$Pression_arterielle2 <- jitter(data_aov$Pression_arterielle) 
+    ks.test(data_aov$Pression_arterielle2[data_aov$Traitement == "A"],"pnorm", mean = 120, sd = 1.6)
+    ks.test(data_aov$Pression_arterielle2[data_aov$Traitement == "B"], "pnorm", mean = 110, sd = 2.22)
+    ks.test(data_aov$Pression_arterielle2[data_aov$Traitement == "Placebo"], "pnorm", mean = 146, sd = 1.8)
+
+
+    ```
+
+    ```{r}
+
+    # Histogrammes
+    hist(data_aov$Pression_arterielle[data_aov$Traitement == "A"])
+    hist(data_aov$Pression_arterielle[data_aov$Traitement == "B"])
+    hist(data_aov$Pression_arterielle[data_aov$Traitement == "Placebo"])
+
+    ```
+
+    ```{r}
+    # Egalité des variances
+    data_aov %>%
+      levene_test(Pression_arterielle ~ Traitement)
+
+    ```
+
+    ```{r}
+    ### Analyse
+    res.aov <- aov(Pression_arterielle ~ Traitement, data_aov)
+    summary(res.aov)
+
+    res.aov2 <- data_aov %>% anova_test(Pression_arterielle ~ Traitement)
+    res.aov2
+
+    # La colonne ges représente la taille de l'effet, c'est à dire la proportion de la variabilité de la variable
+    # réponse (pression artérielle) qui peut être expliquée par la variable explicative (le traitement). Une valeur
+    # de 0.99 indique de 99% de la variance de la pression artérielle peut être attribuable au traitement.
+    ```
+
+3.  Effectuez des comparaisons deux à deux en utilisant les méthodes statistiques appropriées. Est-il nécessaire de corriger pour la multiplicité des tests ? Pourquoi ?
+
+    ```{r}
+
+    ## 4. Comparaisons 2 à 2
+    ### a) sans correction pour la multiplicité
+    pwc <- data_aov %>% pairwise_t_test(Pression_arterielle ~ Traitement)
+    pwc
+
+    ### b) Avec correction pour la multiplicité
+    pwc2 <- data_aov %>% pairwise_t_test(
+      Pression_arterielle ~ Traitement,
+      p.adjust.method = "bonferroni")
+    pwc2
+
+    pwc2 <- data_aov %>% pairwise_t_test(
+      Pression_arterielle ~ Traitement,
+      p.adjust.method = "holm")
+    pwc2
+
+    pwc3 <- data_aov %>% pairwise_t_test(
+      Pression_arterielle ~ Traitement,
+      p.adjust.method = "BH")
+    pwc3
+    ```
+
+## **Exercice 2**
+
+La même étude a été réalisé sur des patients présentant des caractéristiques différentes. Nous dis- posons, là aussi, d’un échantillon de 45 patients choisis au hasard, parmi lesquels 15 patients ont reçu l’anti-hypertenseur A, 15 patients ont reçu l’anti-hypertenseur B et 15 patients ont reçu le placebo. Pour chaque patient nous disposons de la pression artérielle systolique (en mmHg) 3 mois après l’initiation du traitement.
+
+1.  Importez le jeu de données data_aov2.csv dans R. Puis mettez en forme les données.
+
+    ```{r}
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    # Exercice 2 #
+    ## 1. IMportation du jeu de données et mise en forme
+    data_aov2 <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD ANOVA I-20260121/data_aov2.csv",
+                  sep = ";", 
+                  dec = ".")
+
+    str(data_aov2)
+    data_aov2$Traitement <- as.factor(data_aov2$Traitement)
+    str(data_aov2)
+    ```
+
+2.  Calculez la moyenne globale de la pression artérielle systolique, puis la moyenne par groupe. Représentez ces résultats graphiquement.
+
+    ```{r}
+
+    ## 2. Statistiques descriptives
+    moyenne_globale <- mean(data_aov2$Pression_arterielle)
+    moyenne_globale
+
+    moyenne_groupe <- data_aov2 %>%
+      group_by(Traitement) %>%
+      get_summary_stats(Pression_arterielle, type = "mean_sd")
+    moyenne_groupe
+
+    ## Représentation graphique
+    ggboxplot(data_aov2, x = "Traitement", y = "Pression_arterielle")
+    ```
+
+3.  Après avoir vérifiez les hypothèses nécessaire à une analyse de la variance, réalisez cette analyse avec R. L’effet du traitement a-t-il un effet significatif sur la pression artérielle systolique ?
+
+    ```{r}
+    ## 3. Analyse de la variance
+    ### Vérification des hypothèses
+    # Normalité
+    data_aov2 %>%
+      group_by(Traitement)%>%
+      shapiro_test(Pression_arterielle)
+
+    # data_aov2 %>%
+    #   group_by(Traitement)%>%
+    #   ks_test(Pression_arterielle)
+
+    # Egalité des variances
+    data_aov2 %>%
+      levene_test(Pression_arterielle ~ Traitement)
+
+    ### Analyse
+    res.aov <- aov(Pression_arterielle ~ Traitement, data_aov2)
+    summary(res.aov)
+
+    res.aov2 <- data_aov2 %>% anova_test(Pression_arterielle ~ Traitement)
+    res.aov2
+
+
+    ```
+
+4.  Si cela est pertinent, effectuez des comparaisons deux à deux en utilisant les méthodes statistiques appropriées.
+
+5.  Interprétez les résultats.
+
+## **Exercice 3 - Arthrose du genou**
+
+Nous souhaitons évaluer l’effet d’un nouveau traitement contre l’arthrose du genou comparativement à un placebo. Deux doses de ce traitement sont investiguées ainsi qu’un placebo. Pour chaque patient, la douleur causée par l’arthrose est évaluée sur base d’une échelle visuelle analogique (VAS) avant la prise du traitement et 1 mois après. Nous disposons de la différence avant-après du niveau de douleur pour chaque patient. Les données sont disponible dans le fichier knee_arthrosis.csv.
+
+1.  Importez le jeu de données dans R.
+
+    ```{r}
+    ## 1. Importation des données
+    setwd("/Users/thanhhuong/R/Data_Analysis")
+    knee_arthrosis <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD ANOVA I-20260121/knee_arthrosis.csv",
+                  sep = ";",
+                  dec = ".",
+                  header = TRUE)
+
+    str(knee_arthrosis)
+    knee_arthrosis$treatment <- as.factor(knee_arthrosis$treatment)
+    str(knee_arthrosis)
+    ```
+
+2.  Quelle analyse statistique doit-on réaliser pour évaluer l’effet du nouveau traitement ? Pourquoi ?
+
+    ```{r}
+    ## 2. Statistiques descriptives
+    ### Analyse globale
+    moyenne_globale <- mean(knee_arthrosis$vas_scale)
+    moyenne_globale
+
+    ### Analyse par groupe
+    library(tidyverse) # Manipulation et visualisation des données
+    library(rstatix) # Fonctions pour analyses statistiques
+    moyenne_groupe <- knee_arthrosis %>%
+      group_by(treatment) %>%
+      get_summary_stats(vas_scale, type = "mean_sd")
+    moyenne_groupe
+
+    ## Représentation graphique
+    library(ggpubr) # Réalisation de graphiques
+    ggboxplot(knee_arthrosis, x = "treatment", y = "vas_scale")
+    ```
+
+3.  Réalisez des statistiques descriptives afin d’avoir un premier aperçue de l’information contenue dans les données.
+
+4.  Réalisez cette analyse avec R. Evaluez quelle est ou quelles sont les doses efficaces comparativement au placebo.
+
+    ```{r}
+    ## 4. Analyse de la variance
+    ### Vérification des hypothèses
+    # Normalité
+    # Tests de Kolmogorov-Smirnov
+    knee_arthrosis$vas_scale2 <- jitter(knee_arthrosis$vas_scale) 
+    ks.test(knee_arthrosis$vas_scale2[knee_arthrosis$treatment == "Dose1"],"pnorm", mean = -24, sd = 3.8)
+    ks.test(knee_arthrosis$vas_scale2[knee_arthrosis$treatment == "Dose2"], "pnorm", mean = -10.7, sd = 3.8)
+    ks.test(knee_arthrosis$vas_scale2[knee_arthrosis$treatment == "Placebo"], "pnorm", mean = -9.9, sd = 4.2)
+
+
+    # Egalité des variances
+    knee_arthrosis %>%
+      levene_test(vas_scale ~ treatment)
+
+    ### Analyse
+    res.aov <- aov(vas_scale ~ treatment, knee_arthrosis)
+    summary(res.aov)
+
+    res.aov2 <- knee_arthrosis %>% anova_test(vas_scale ~ treatment)
+    res.aov2
+
+    ## Comparaisons 2 à 2 avec correction pour tests multiples
+    levels(knee_arthrosis$treatment)
+
+    library(multcomp)
+    contr <- rbind("Dose1 - Dose2" = c(1, -1, 0),
+                   "Dose1 - Placebo" = c(1, 0, -1),
+                   "Dose2 - Placebo" = c(0, 1, -1))
+    pwc2 <- glht(res.aov, linfct = mcp(treatment = contr))
+    pwc2
+
+    pwc2_pvalue <- knee_arthrosis %>% pairwise_t_test(
+      vas_scale ~ treatment,
+      p.adjust.method = "bonferroni")
+    pwc2_pvalue
+
+    pwc3_pvalue <- knee_arthrosis %>% pairwise_t_test(
+      vas_scale ~ treatment,
+      p.adjust.method = "holm")
+    pwc3_pvalue
+
+    pwc4_pvalue <- knee_arthrosis %>% pairwise_t_test(
+      vas_scale ~ treatment,
+      p.adjust.method = "BH")
+    pwc4_pvalue
+    ```
+
+5.  Que pouvez-vous conclure ?
+
+6.  La même étude a été réalisé sur un deuxième échantillon de patients présentant des caractéristiques différentes. Les données se trouvent dans le fichier knee_arthrosis2.csv. Réalisez l’analyse de ces nouvelles données. Que constatez-vous ?
+
+    ```{r}
+    ## Importation des données
+    knee_arthrosis2 <- read.csv(file = "/Volumes/ORICO/Modèle Linaire/TD ANOVA I-20260121/knee_arthrosis2.csv",
+                    sep = ";",
+                    dec = ".",
+                    header = TRUE)
+
+    str(knee_arthrosis2)
+    knee_arthrosis2$treatment <- as.factor(knee_arthrosis2$treatment)
+    str(knee_arthrosis2)
+    ```
+
+    ```{r}
+    ## Statistiques descriptives
+    ### Analyse globale
+    moyenne_globale <- mean(knee_arthrosis2$vas_scale)
+    moyenne_globale
+    ```
+
+    ```{r}
+    ### Analyse par groupe
+    moyenne_groupe <- knee_arthrosis2 %>%
+      group_by(treatment) %>%
+      get_summary_stats(vas_scale, type = "mean_sd")
+    moyenne_groupe
+
+    ```
+
+    ```{r}
+    ## Représentation graphique
+    ggboxplot(knee_arthrosis2, x = "treatment", y = "vas_scale")
+    ```
+
+    ```{r}
+    ## Analyse de la variance
+    ### Vérification des hypothèses
+    # Normalité
+    knee_arthrosis2 %>%
+      group_by(treatment)%>%
+      shapiro_test(vas_scale)
+
+    ```
+
+    ```{r}
+    # Egalité des variances
+    knee_arthrosis2 %>%
+      levene_test(vas_scale ~ treatment)
+    ```
+
+    ```{r}
+    ### Analyse
+    res.aov3 <- knee_arthrosis2 %>% welch_anova_test(vas_scale ~ treatment)
+    res.aov3
+
+    ## Comparaisons 2 à 2 avec correction pour tests multiples
+    moyenne_groupe$mean[1] - moyenne_groupe$mean[2] # Dose1 - Dose2
+    moyenne_groupe$mean[1] - moyenne_groupe$mean[3] # Dose1 - Placebo
+    moyenne_groupe$mean[2] - moyenne_groupe$mean[3] # Dose2 - Placebo
+
+    pwc2_value <- knee_arthrosis %>% pairwise_t_test(
+      vas_scale ~ treatment,
+      p.adjust.method = "bonferroni",
+      pool.sd = FALSE)
+    pwc2_value
+
+    pwc3_value <- knee_arthrosis %>% pairwise_t_test(
+      vas_scale ~ treatment,
+      p.adjust.method = "holm",
+      pool.sd = FALSE)
+    pwc3_value
+
+    pwc4_value <- knee_arthrosis %>% pairwise_t_test(
+      vas_scale ~ treatment,
+      p.adjust.method = "BH",
+      pool.sd = FALSE)
+    pwc4_value
+
+    ```
+
+# Excercice Supplementaire
+
+## 1 - Questions de cours
+
+### Concepts généraux
+
+1.  Quelle est la question statistique que l’ANOVA à un facteur permet de tester ?
+2.  Vrai ou Faux : L’ANOVA compare des variances pour conclure sur des différences de moyennes. 3. Quelle est la variable expliquée et la variable explicative dans l’exemple des antihypertenseurs ? 4. Pourquoi ne pas utiliser uniquement des tests t de Student pour comparer plusieurs moyennes ? 5. 5 Que signifie ‘erreur de type I’ dans le contexte des tests multiples ?
+
+### Hypothèses
+
+1.  Citez les trois hypothèses nécessaires pour appliquer une ANOVA I classique.
+2.  Quel test est recommandé pour vérifier la normalité des données dans un petitéchantillon ?
+3.  Quel test est utilisé pour vérifier l’égalité des variances entre groupes ?
+4.  Vrai ou Faux : Si les variances sont inégales, l’ANOVA I reste valide sans ajustement.
+5.  Quelle alternative à l’ANOVA classique est proposée lorsque l’hypothèse d’égalité desvariances n’est pas respectée ?
+
+### Calculs et interprétation
+
+1.  Définissez la somme des carrés totale, la somme des carrés résiduelle et la somme des carrés des traitements.
+2.  Complétez : somme carré total = + .
+3.  Que représente CM res sous H0 ?
+4.  Écrivez la formule de la statistique utilisé pour une ANOVA I.
+5.  Sous H0, quelle est la distribution de cette statistique de test?
+6.  Si la statistique de test Fobs = 6.2 et le seuil critique est de 19.45, que concluez-vous ?
+7.  Pourquoi la variabilité intra-groupe influence-t-elle la conclusion de l’ANOVA ?
+
+### Multiplicité des tests
+
+1.  Expliquez pourquoi il est nécessaire de corriger pour la multiplicité des tests après une ANOVA significative.
+2.  Quelle est la différence entre FWER et FDR ?
+3.  Quelleméthodeestrecommandéepouruneétudeexploratoire:BonferroniouBenjamini-Hochberg? Justifiez.
+
+## 2 - Exercices R
+
+### Exercice 1 — Impact de trois programmes sportifs sur la fréquence cardiaque au repos
+
+Une étude s’intéresse à l’effet de trois programmes sportifs (Yoga, Cardio, Musculation) sur la fré- quence cardiaque au repos après 8 semaines d’entraînement. Un total de 60 volontaires a été réparti aléatoirement en trois groupes de 20 personnes chacun. La fréquence cardiaque (en battements par mi- nute) a été mesurée à la fin des 8 semaines.
+
+1\. Importez le fichier "frequence_cardiaque.csv" dans R et mettez en forme le jeu de données si nécessaire.
+
+```{r}
+# 1. Importation et mise en forme des données
+data1 <- read.csv("/Volumes/ORICO/Modèle Linaire/TD ANOVA I-20260121/Exercices supplémentaires-20260308/frequence_cardiaque.csv",
+                  sep = ",",
+                  dec = ".",
+                  header = TRUE)
+
+
+str(data1)
+data1$Programme <- as.factor(data1$Programme)
+str(data1)
+
+```
+
+2\. Calculez la moyenne générale et les moyennes par programme. Que remarquez-vous ?
+
+```{r}
+# 2. Statistiques descriptives
+mean(data1$Frequence_bpm)
+
+data1 %>%
+  group_by(Programme) %>%
+  summarise(
+    Moyenne = mean(Frequence_bpm),
+    SD = sd(Frequence_bpm),
+    n = n()
+  )
+```
+
+3\. Représentez graphiquement la distribution des fréquences cardiaques par groupe.
+
+```{r}
+# 3. Représentation graphique des données
+boxplot(Frequence_bpm ~ Programme, data = data1,
+        main = "Fréquence cardiaque par programme",
+        xlab = "Programme", ylab = "Fréquence (bpm)",
+        col = c("lightblue", "lightgreen", "lightpink"))
+
+```
+
+4\. Formulez l’hypothèse nulle et l’hypothèse alternative adaptées à ce contexte.
+
+5\. Réalisez une ANOVA à un facteur pour tester si le programme sportif influence la fréquence cardiaque au repos. N’oubliez de vérifier les hypothèses sous-jacentes avant de tirer des conclusions.
+
+```{r}
+# 4. ANOVA I
+## a. Vérification des hypothèses
+# Normalité par groupe
+data1 %>% group_by(Programme) %>% shapiro_test(Frequence_bpm)
+
+# Égalité des variances
+leveneTest(Frequence_bpm ~ Programme, data = data1)
+
+# Analyse
+anova1 <- aov(Frequence_bpm ~ Programme, data = data1)
+summary(anova1)
+
+# Comparaison 2 à 2
+data1 %>% pairwise_t_test(
+  Frequence_bpm ~ Programme,
+  p.adjust.method = "bonferroni")
+
+```
+
+6\. Si l’effet est significatif, effectuez des comparaisons 2 à 2 afin d’identifier quels groupes diffèrent entre eux.
+
+### Exercice 2 — Influence de trois types de fertilisant sur la croissance des plantes
+
+Un essai agronomique compare trois fertilisants (Fertilisant X, Fertilisant Y, Fertilisant Z) sur la croissance de plants de tomates. Quarante-cinq plants ont été répartis en trois groupes de 15. Après 6 semaines, la hauteur des plants (en cm) a été mesurée.
+
+1\. Importez dans R le fichier croissance_plantes.csv et mettez en forme les données si nécessaire.
+
+```{r}
+# 1. Importation et mise en forme des données
+data2 <- read.csv("/Volumes/ORICO/Modèle Linaire/TD ANOVA I-20260121/Exercices supplémentaires-20260308/croissance_plantes.csv",
+                  sep = ",",
+                  dec = ".",
+                  header = TRUE)
+
+str(data2)
+data2$Fertilisant <- as.factor(data2$Fertilisant)
+str(data2)
+
+```
+
+2\. Calculez la moyenne globale et les moyennes par fertilisant. Que suggèrent ces résultats ?
+
+```{r}
+# 2. Statistiques descriptives
+mean(data2$Hauteur_cm)
+
+data2 %>%
+  group_by(Fertilisant) %>%
+  summarise(
+    Moyenne = mean(Hauteur_cm),
+    SD = sd(Hauteur_cm),
+    n = n()
+  )
+
+```
+
+3\. Choisissez un graphique pertinent pour visualiser les différences entre groupes et justifiez ce choix.
+
+```{r}
+# 3. Représentation graphique des données
+boxplot(Hauteur_cm ~ Fertilisant, data = data2,
+        main = "Hauteur des plants par fertilisant",
+        xlab = "Fertilisant", ylab = "Hauteur (cm)",
+        col = c("lightblue", "lightgreen", "lightpink"))
+```
+
+4\. Rappelez les prérequis de l’ANOVA dans ce cas et vérifiez-les à l’aide de R.
+
+```{r}
+# 4. Vérification des hypothèses
+## a. Normalité
+data2 %>% group_by(Fertilisant) %>% shapiro_test(Hauteur_cm)
+
+## b. Egalité des variance
+leveneTest(Hauteur_cm ~ Fertilisant, data = data2)
+
+```
+
+5\. Effectuez l’analyse adapté afin d’évaluer l’effet des fertilisant sur la croissance des plans de tomates, puis interprétez la statistique F et la p-valeur dans le contexte de l’essai.
+
+```{r}
+# 5. ANOVA de Welch (car les variances ne sont pas égales)
+anova2 <- data2 %>% welch_anova_test(Hauteur_cm ~ Fertilisant)
+anova2
+```
+
+6\. Si nécessaire, réalisez des comparaisons 2 à 2 en testant différentes méthodes de correction pour tests multiples et discutez de leur utilité pour la conclusion agronomique.
+
+```{r}
+# 6. Comparaison 2 à 2 avec correction pour multiplicité
+data2 %>% pairwise_t_test(
+  Hauteur_cm ~ Fertilisant,
+  p.adjust.method = "BH",
+  pool.sd = FALSE)
+
+data2 %>% pairwise_t_test(
+  Hauteur_cm ~ Fertilisant,
+  p.adjust.method = "bonferroni",
+  pool.sd = FALSE)
+```
