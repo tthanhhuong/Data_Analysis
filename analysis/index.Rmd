@@ -1,5 +1,5 @@
 ---
-title: "Home"
+title: "EDSB - Projet de Thanh-Huong PHAM"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -8,23 +8,20 @@ editor_options:
   chunk_output_type: console
 ---
 
-# **M1 - EDSB - Projet de Huong PHAM**
 
-## **R**
+# **Les tests statistiques à l'aide de R - Gael**
 
-### Les tests statistiques à l'aide de R - Biostats
+### [Chapitre 1 - Preservation de R](Gael_1.html)
 
-#### [Chapitre 1 - Preservation de R](Gael_1.html)
-
-#### Chapitre 4 - Les étapes d'un test statistique
+### Chapitre 4 - Les étapes d'un test statistique
 
 Distribution de probabilité
 
 [Excercices](4_Excercice.html)
 
-## **Data Mining**
+# **Data Mining**
 
-## **Modèle Linéaire**
+# **Modèle Linéaire**
 
 ### [1. Analyse de la variance à un facteur (ANOVA I)](ML_1.html)
 
@@ -33,3 +30,5 @@ Distribution de probabilité
 ### [3. Analyse de la variance à deux facteurs (ANOVA II)](ML_3.html)
 
 ### [4. Régression linéaire multiple et analyse en covariance (ANCOVA)](ML_4.html)
+
+
