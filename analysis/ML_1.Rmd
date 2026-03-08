@@ -464,7 +464,7 @@ boxplot(Frequence_bpm ~ Programme, data = data1,
 data1 %>% group_by(Programme) %>% shapiro_test(Frequence_bpm)
 
 # Égalité des variances
-leveneTest(Frequence_bpm ~ Programme, data = data1)
+levene_test(Frequence_bpm ~ Programme, data = data1)
 
 # Analyse
 anova1 <- aov(Frequence_bpm ~ Programme, data = data1)
@@ -532,7 +532,7 @@ boxplot(Hauteur_cm ~ Fertilisant, data = data2,
 data2 %>% group_by(Fertilisant) %>% shapiro_test(Hauteur_cm)
 
 ## b. Egalité des variance
-leveneTest(Hauteur_cm ~ Fertilisant, data = data2)
+levene_test(Hauteur_cm ~ Fertilisant, data = data2)
 
 ```
 
