@@ -369,7 +369,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -380,8 +380,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -394,9 +394,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
@@ -419,21 +419,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -524,15 +521,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree5217a4afeed951ea2e4c6b9ebdc01f5e8c4b6d5dtargetblank5217a4aa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/5217a4afeed951ea2e4c6b9ebdc01f5e8c4b6d5d" target="_blank">5217a4a</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree5217a4afeed951ea2e4c6b9ebdc01f5e8c4b6d5dtargetblank5217a4aa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -542,7 +539,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>.
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/5217a4afeed951ea2e4c6b9ebdc01f5e8c4b6d5d" target="_blank">5217a4a</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -563,10 +560,7 @@ Ignored files:
     Ignored:    analysis/.Rhistory
 
 Unstaged changes:
-    Modified:   analysis/4_Excercice.Rmd
-    Modified:   analysis/Gael_1.Rmd
-    Modified:   analysis/about.Rmd
-    Modified:   analysis/index.Rmd
+    Modified:   .gitignore
 
 </code></pre>
 <p>
@@ -610,6 +604,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/analysis/Gael_1.Rmd" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+<td>
+8 Mar
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/tthanhhuong/Data_Analysis/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/Gael_1.html" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+<td>
+8 Mar
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1995,6 +2023,43 @@ for (i in 1:ncol(matrice.3)){matrice.3[,i] &lt;- rev(matrice.3 [,i])} # la fonct
 matrice.3 &lt;- t(matrice.3) # la fonction t() est la transposée d&#39;une matrice
 image(1:nrow(matrice.3), 1:ncol(matrice.3), matrice.3, main=&quot;Matrice.2&quot;, col = grey.colors(length(unique(matrice.2))), xlab=&quot;&quot;, ylab=&quot;&quot;, xaxt=&quot;n&quot;, yaxt=&quot;n&quot;, bty=&quot;n&quot;) # length(unique(matrice.2)) fournit le nombre de valeurs différentes de la matrice soit 15 pour matrice.2. Voir le paragraphe 1.10.4 pour l&#39;explication des arguments graphiques de la fonction image() comme xaxt par exemple. Le code permettant d&#39;afficher les numéros de ligne et de colonne est le suivant : image(1:nrow(matrice.3), 1:ncol(matrice.3), matrice.3, main=&quot;Matrice.2&quot;, col = grey.colors(length(unique(matrice.2))), xlab=&quot;Numéro de colonne&quot;, ylab=&quot; Numéro de ligne&quot;, yaxt=&quot;n&quot;, bty=&quot;o&quot;, cex.lab=1.5, cex.axis=1.5) ; axis(side=2, at =nrow(matrice.2):1, labels =1:nrow(matrice.2), cex.axis=1.5). Employer l&#39;argument useRaster = TRUE en cas de matrice de grande taille (passe du vectoriel au matriciel bitmap, un format moins lourd à gérer). Pour la couleur, remplacer la fonction grey.colors(length(unique(matrice.2))) par heat.colors(length(unique(matrice.2))) par exemple</code></pre>
 <p><img src="figure/Gael_1.Rmd/unnamed-chunk-37-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-1">
+Past versions of unnamed-chunk-37-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-37-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/Gael_1.Rmd/unnamed-chunk-37-1.png" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="data-frames" class="section level4">
 <h4>Data frames</h4>
@@ -2560,17 +2625,21 @@ tzcode source: internal
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
+other attached packages:
+[1] workflowr_1.7.2
+
 loaded via a namespace (and not attached):
- [1] vctrs_0.7.1       cli_3.6.5         knitr_1.51        rlang_1.1.7      
- [5] xfun_0.56         stringi_1.8.7     otel_0.2.0        promises_1.5.0   
- [9] jsonlite_2.0.0    workflowr_1.7.2   glue_1.8.0        rprojroot_2.1.1  
-[13] git2r_0.36.2      htmltools_0.5.9   httpuv_1.6.16     sass_0.4.10      
-[17] rmarkdown_2.30    jquerylib_0.1.4   evaluate_1.0.5    tibble_3.3.1     
-[21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   whisker_0.4.1    
-[25] stringr_1.6.0     compiler_4.4.2    fs_1.6.6          Rcpp_1.1.1       
-[29] pkgconfig_2.0.3   rstudioapi_0.18.0 later_1.4.6       digest_0.6.39    
-[33] R6_2.6.1          pillar_1.11.1     magrittr_2.0.4    bslib_0.10.0     
-[37] tools_4.4.2       cachem_1.1.0     </code></pre>
+ [1] vctrs_0.7.1       httr_1.4.8        cli_3.6.5         knitr_1.51       
+ [5] rlang_1.1.7       xfun_0.56         stringi_1.8.7     otel_0.2.0       
+ [9] processx_3.8.6    promises_1.5.0    jsonlite_2.0.0    glue_1.8.0       
+[13] rprojroot_2.1.1   git2r_0.36.2      htmltools_0.5.9   httpuv_1.6.16    
+[17] ps_1.9.1          sass_0.4.10       rmarkdown_2.30    jquerylib_0.1.4  
+[21] tibble_3.3.1      evaluate_1.0.5    fastmap_1.2.0     yaml_2.3.12      
+[25] lifecycle_1.0.5   whisker_0.4.1     stringr_1.6.0     compiler_4.4.2   
+[29] fs_1.6.6          pkgconfig_2.0.3   Rcpp_1.1.1        rstudioapi_0.18.0
+[33] later_1.4.6       digest_0.6.39     R6_2.6.1          pillar_1.11.1    
+[37] callr_3.7.6       magrittr_2.0.4    bslib_0.10.0      tools_4.4.2      
+[41] cachem_1.1.0      getPass_0.2-4    </code></pre>
 </div>
 </div>
 </div>

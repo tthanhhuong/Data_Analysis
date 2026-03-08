@@ -394,9 +394,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 2
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
@@ -419,21 +419,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R
-Markdown file created these results, you’ll want to first commit it to
-the Git repo. If you’re still working on the analysis, you can ignore
-this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -550,15 +547,15 @@ relative
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree5217a4afeed951ea2e4c6b9ebdc01f5e8c4b6d5dtargetblank5217a4aa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/5217a4afeed951ea2e4c6b9ebdc01f5e8c4b6d5d" target="_blank">5217a4a</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb0140572be201fd65b4fcf015b668188036d9357targetblankb014057a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree5217a4afeed951ea2e4c6b9ebdc01f5e8c4b6d5dtargetblank5217a4aa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -568,7 +565,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b0140572be201fd65b4fcf015b668188036d9357" target="_blank">b014057</a>.
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/5217a4afeed951ea2e4c6b9ebdc01f5e8c4b6d5d" target="_blank">5217a4a</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -588,14 +585,8 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/.Rhistory
 
-Untracked files:
-    Untracked:  analysis/ML_1.Rmd
-
 Unstaged changes:
-    Modified:   analysis/4_Excercice.Rmd
-    Modified:   analysis/Gael_1.Rmd
-    Modified:   analysis/about.Rmd
-    Modified:   analysis/index.Rmd
+    Modified:   .gitignore
 
 </code></pre>
 <p>
@@ -611,9 +602,88 @@ have uncommitted changes.
 </div>
 <div id="versions" class="tab-pane fade">
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/ML_1.Rmd</code>) and HTML
+(<code>docs/ML_1.html</code>) files. If you’ve configured a remote Git
+repository (see <code>?wflow_git_remote</code>), click on the hyperlinks
+in the table below to view the files as they were in that past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/5217a4afeed951ea2e4c6b9ebdc01f5e8c4b6d5d/analysis/ML_1.Rmd" target="_blank">5217a4a</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+<td>
+Republish modified analyses
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/analysis/ML_1.Rmd" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+<td>
+8 Mar
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/tthanhhuong/Data_Analysis/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/ML_1.html" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+<td>
+8 Mar
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -693,6 +763,43 @@ moyenne_groupe</code></pre>
 library(ggpubr) # Réalisation de graphiques
 ggboxplot(data_aov, x = &quot;Traitement&quot;, y = &quot;Pression_arterielle&quot;)</code></pre>
 <p><img src="figure/ML_1.Rmd/unnamed-chunk-2-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+<p>Past versions of unnamed-chunk-2-1.png</p>
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_1.Rmd/unnamed-chunk-2-1.png" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Après avoir vérifiez les hypothèses nécessaire à une analyse de la
 variance, réalisez cette analyse avec R. L’effet du traitement a-t-il un
 effet significatif sur la pression artérielle systolique ?</p>
@@ -736,10 +843,121 @@ alternative hypothesis: two-sided</code></pre>
 <pre class="r"><code># Histogrammes
 hist(data_aov$Pression_arterielle[data_aov$Traitement == &quot;A&quot;])</code></pre>
 <p><img src="figure/ML_1.Rmd/unnamed-chunk-5-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+<p>Past versions of unnamed-chunk-5-1.png</p>
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_1.Rmd/unnamed-chunk-5-1.png" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>hist(data_aov$Pression_arterielle[data_aov$Traitement == &quot;B&quot;])</code></pre>
 <p><img src="figure/ML_1.Rmd/unnamed-chunk-5-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+<p>Past versions of unnamed-chunk-5-2.png</p>
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_1.Rmd/unnamed-chunk-5-2.png" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>hist(data_aov$Pression_arterielle[data_aov$Traitement == &quot;Placebo&quot;])</code></pre>
 <p><img src="figure/ML_1.Rmd/unnamed-chunk-5-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-3">
+<p>Past versions of unnamed-chunk-5-3.png</p>
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_1.Rmd/unnamed-chunk-5-3.png" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Egalité des variances
 data_aov %&gt;%
   levene_test(Pression_arterielle ~ Traitement)</code></pre>
@@ -856,7 +1074,44 @@ moyenne_groupe</code></pre>
 3 Placebo    Pression_arterielle    52  122.  17.3</code></pre>
 <pre class="r"><code>## Représentation graphique
 ggboxplot(data_aov2, x = &quot;Traitement&quot;, y = &quot;Pression_arterielle&quot;)</code></pre>
-<p><img src="figure/ML_1.Rmd/unnamed-chunk-10-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="figure/ML_1.Rmd/unnamed-chunk-10-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+<p>Past versions of unnamed-chunk-10-1.png</p>
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_1.Rmd/unnamed-chunk-10-1.png" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></li>
 <li><p>Après avoir vérifiez les hypothèses nécessaire à une analyse de
 la variance, réalisez cette analyse avec R. L’effet du traitement a-t-il
 un effet significatif sur la pression artérielle systolique ?</p>
@@ -951,7 +1206,44 @@ moyenne_groupe</code></pre>
 <pre class="r"><code>## Représentation graphique
 library(ggpubr) # Réalisation de graphiques
 ggboxplot(knee_arthrosis, x = &quot;treatment&quot;, y = &quot;vas_scale&quot;)</code></pre>
-<p><img src="figure/ML_1.Rmd/unnamed-chunk-13-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="figure/ML_1.Rmd/unnamed-chunk-13-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+<p>Past versions of unnamed-chunk-13-1.png</p>
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_1.Rmd/unnamed-chunk-13-1.png" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></li>
 <li><p>Réalisez des statistiques descriptives afin d’avoir un premier
 aperçue de l’information contenue dans les données.</p></li>
 <li><p>Réalisez cette analyse avec R. Evaluez quelle est ou quelles sont
@@ -1111,6 +1403,43 @@ moyenne_groupe</code></pre>
 <pre class="r"><code>## Représentation graphique
 ggboxplot(knee_arthrosis2, x = &quot;treatment&quot;, y = &quot;vas_scale&quot;)</code></pre>
 <p><img src="figure/ML_1.Rmd/unnamed-chunk-18-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
+<p>Past versions of unnamed-chunk-18-1.png</p>
+</button>
+</p>
+<div id="fig-unnamed-chunk-18-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_1.Rmd/unnamed-chunk-18-1.png" target="_blank">ef88e31</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>## Analyse de la variance
 ### Vérification des hypothèses
 # Normalité
@@ -1272,13 +1601,69 @@ str(data1)</code></pre>
  $ Frequence_bpm: num  62.3 63 67.5 67.3 70.4 71.5 66.2 66.8 63.6 63.7 ...</code></pre>
 <p>2. Calculez la moyenne générale et les moyennes par programme. Que
 remarquez-vous ?</p>
+<pre class="r"><code># 2. Statistiques descriptives
+mean(data1$Frequence_bpm)</code></pre>
+<pre><code>[1] 65.27833</code></pre>
+<pre class="r"><code>data1 %&gt;%
+  group_by(Programme) %&gt;%
+  summarise(
+    Moyenne = mean(Frequence_bpm),
+    SD = sd(Frequence_bpm),
+    n = n()
+  )</code></pre>
+<pre><code># A tibble: 3 × 4
+  Programme   Moyenne    SD     n
+  &lt;fct&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+1 Cardio         59.7  3.32    20
+2 Musculation    70.0  3.44    20
+3 Yoga           66.1  4.32    20</code></pre>
 <p>3. Représentez graphiquement la distribution des fréquences
 cardiaques par groupe.</p>
+<pre class="r"><code># 3. Représentation graphique des données
+boxplot(Frequence_bpm ~ Programme, data = data1,
+        main = &quot;Fréquence cardiaque par programme&quot;,
+        xlab = &quot;Programme&quot;, ylab = &quot;Fréquence (bpm)&quot;,
+        col = c(&quot;lightblue&quot;, &quot;lightgreen&quot;, &quot;lightpink&quot;))</code></pre>
+<p><img src="figure/ML_1.Rmd/unnamed-chunk-24-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <p>4. Formulez l’hypothèse nulle et l’hypothèse alternative adaptées à
 ce contexte.</p>
 <p>5. Réalisez une ANOVA à un facteur pour tester si le programme
 sportif influence la fréquence cardiaque au repos. N’oubliez de vérifier
 les hypothèses sous-jacentes avant de tirer des conclusions.</p>
+<pre class="r"><code># 4. ANOVA I
+## a. Vérification des hypothèses
+# Normalité par groupe
+data1 %&gt;% group_by(Programme) %&gt;% shapiro_test(Frequence_bpm)</code></pre>
+<pre><code># A tibble: 3 × 4
+  Programme   variable      statistic     p
+  &lt;fct&gt;       &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt;
+1 Cardio      Frequence_bpm     0.959 0.519
+2 Musculation Frequence_bpm     0.959 0.532
+3 Yoga        Frequence_bpm     0.974 0.831</code></pre>
+<pre class="r"><code># Égalité des variances
+levene_test(Frequence_bpm ~ Programme, data = data1)</code></pre>
+<pre><code># A tibble: 1 × 4
+    df1   df2 statistic     p
+  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;
+1     2    57      1.07 0.350</code></pre>
+<pre class="r"><code># Analyse
+anova1 &lt;- aov(Frequence_bpm ~ Programme, data = data1)
+summary(anova1)</code></pre>
+<pre><code>            Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+Programme    2 1082.4   541.2   39.18 1.97e-11 ***
+Residuals   57  787.3    13.8                     
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># Comparaison 2 à 2
+data1 %&gt;% pairwise_t_test(
+  Frequence_bpm ~ Programme,
+  p.adjust.method = &quot;bonferroni&quot;)</code></pre>
+<pre><code># A tibble: 3 × 9
+  .y.          group1 group2    n1    n2        p p.signif    p.adj p.adj.signif
+* &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;       
+1 Frequence_b… Cardio Muscu…    20    20 3.76e-12 ****     1.13e-11 ****        
+2 Frequence_b… Cardio Yoga      20    20 1.07e- 6 ****     3.21e- 6 ****        
+3 Frequence_b… Muscu… Yoga      20    20 1.66e- 3 **       4.99e- 3 **          </code></pre>
 <p>6. Si l’effet est significatif, effectuez des comparaisons 2 à 2 afin
 d’identifier quels groupes diffèrent entre eux.</p>
 </div>
@@ -1293,18 +1678,98 @@ Quarante-cinq plants ont été répartis en trois groupes de 15. Après 6
 semaines, la hauteur des plants (en cm) a été mesurée.</p>
 <p>1. Importez dans R le fichier croissance_plantes.csv et mettez en
 forme les données si nécessaire.</p>
+<pre class="r"><code># 1. Importation et mise en forme des données
+data2 &lt;- read.csv(&quot;/Volumes/ORICO/Modèle Linaire/TD ANOVA I-20260121/Exercices supplémentaires-20260308/croissance_plantes.csv&quot;,
+                  sep = &quot;,&quot;,
+                  dec = &quot;.&quot;,
+                  header = TRUE)
+
+str(data2)</code></pre>
+<pre><code>&#39;data.frame&#39;:   45 obs. of  2 variables:
+ $ Fertilisant: chr  &quot;Fertilisant X&quot; &quot;Fertilisant X&quot; &quot;Fertilisant X&quot; &quot;Fertilisant X&quot; ...
+ $ Hauteur_cm : num  33.5 35.8 34.2 34.8 31.9 34 37 33.1 34.6 40.4 ...</code></pre>
+<pre class="r"><code>data2$Fertilisant &lt;- as.factor(data2$Fertilisant)
+str(data2)</code></pre>
+<pre><code>&#39;data.frame&#39;:   45 obs. of  2 variables:
+ $ Fertilisant: Factor w/ 3 levels &quot;Fertilisant X&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ Hauteur_cm : num  33.5 35.8 34.2 34.8 31.9 34 37 33.1 34.6 40.4 ...</code></pre>
 <p>2. Calculez la moyenne globale et les moyennes par fertilisant. Que
 suggèrent ces résultats ?</p>
+<pre class="r"><code># 2. Statistiques descriptives
+mean(data2$Hauteur_cm)</code></pre>
+<pre><code>[1] 38.12889</code></pre>
+<pre class="r"><code>data2 %&gt;%
+  group_by(Fertilisant) %&gt;%
+  summarise(
+    Moyenne = mean(Hauteur_cm),
+    SD = sd(Hauteur_cm),
+    n = n()
+  )</code></pre>
+<pre><code># A tibble: 3 × 4
+  Fertilisant   Moyenne    SD     n
+  &lt;fct&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+1 Fertilisant X    35.4  2.41    15
+2 Fertilisant Y    40.5  2.15    15
+3 Fertilisant Z    38.5  4.14    15</code></pre>
 <p>3. Choisissez un graphique pertinent pour visualiser les différences
 entre groupes et justifiez ce choix.</p>
+<pre class="r"><code># 3. Représentation graphique des données
+boxplot(Hauteur_cm ~ Fertilisant, data = data2,
+        main = &quot;Hauteur des plants par fertilisant&quot;,
+        xlab = &quot;Fertilisant&quot;, ylab = &quot;Hauteur (cm)&quot;,
+        col = c(&quot;lightblue&quot;, &quot;lightgreen&quot;, &quot;lightpink&quot;))</code></pre>
+<p><img src="figure/ML_1.Rmd/unnamed-chunk-28-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <p>4. Rappelez les prérequis de l’ANOVA dans ce cas et vérifiez-les à
 l’aide de R.</p>
+<pre class="r"><code># 4. Vérification des hypothèses
+## a. Normalité
+data2 %&gt;% group_by(Fertilisant) %&gt;% shapiro_test(Hauteur_cm)</code></pre>
+<pre><code># A tibble: 3 × 4
+  Fertilisant   variable   statistic     p
+  &lt;fct&gt;         &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt;
+1 Fertilisant X Hauteur_cm     0.962 0.730
+2 Fertilisant Y Hauteur_cm     0.957 0.632
+3 Fertilisant Z Hauteur_cm     0.958 0.655</code></pre>
+<pre class="r"><code>## b. Egalité des variance
+levene_test(Hauteur_cm ~ Fertilisant, data = data2)</code></pre>
+<pre><code># A tibble: 1 × 4
+    df1   df2 statistic      p
+  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;  &lt;dbl&gt;
+1     2    42      4.02 0.0254</code></pre>
 <p>5. Effectuez l’analyse adapté afin d’évaluer l’effet des fertilisant
 sur la croissance des plans de tomates, puis interprétez la statistique
 F et la p-valeur dans le contexte de l’essai.</p>
+<pre class="r"><code># 5. ANOVA de Welch (car les variances ne sont pas égales)
+anova2 &lt;- data2 %&gt;% welch_anova_test(Hauteur_cm ~ Fertilisant)
+anova2</code></pre>
+<pre><code># A tibble: 1 × 7
+  .y.            n statistic   DFn   DFd         p method     
+* &lt;chr&gt;      &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;      
+1 Hauteur_cm    45      18.6     2  26.7 0.0000088 Welch ANOVA</code></pre>
 <p>6. Si nécessaire, réalisez des comparaisons 2 à 2 en testant
 différentes méthodes de correction pour tests multiples et discutez de
 leur utilité pour la conclusion agronomique.</p>
+<pre class="r"><code># 6. Comparaison 2 à 2 avec correction pour multiplicité
+data2 %&gt;% pairwise_t_test(
+  Hauteur_cm ~ Fertilisant,
+  p.adjust.method = &quot;BH&quot;,
+  pool.sd = FALSE)</code></pre>
+<pre><code># A tibble: 3 × 10
+  .y.     group1 group2    n1    n2 statistic    df       p   p.adj p.adj.signif
+* &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;       
+1 Hauteu… Ferti… Ferti…    15    15     -6.17  27.6 1.23e-6 3.69e-6 ****        
+2 Hauteu… Ferti… Ferti…    15    15     -2.52  22.5 1.9 e-2 2.9 e-2 *           
+3 Hauteu… Ferti… Ferti…    15    15      1.68  21.0 1.07e-1 1.07e-1 ns          </code></pre>
+<pre class="r"><code>data2 %&gt;% pairwise_t_test(
+  Hauteur_cm ~ Fertilisant,
+  p.adjust.method = &quot;bonferroni&quot;,
+  pool.sd = FALSE)</code></pre>
+<pre><code># A tibble: 3 × 10
+  .y.     group1 group2    n1    n2 statistic    df       p   p.adj p.adj.signif
+* &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;       
+1 Hauteu… Ferti… Ferti…    15    15     -6.17  27.6 1.23e-6 3.69e-6 ****        
+2 Hauteu… Ferti… Ferti…    15    15     -2.52  22.5 1.9 e-2 5.7 e-2 ns          
+3 Hauteu… Ferti… Ferti…    15    15      1.68  21.0 1.07e-1 3.21e-1 ns          </code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1336,25 +1801,26 @@ other attached packages:
  [5] mvtnorm_1.3-3   ggpubr_0.6.2    rstatix_0.7.3   lubridate_1.9.5
  [9] forcats_1.0.1   stringr_1.6.0   dplyr_1.2.0     purrr_1.2.1    
 [13] readr_2.1.6     tidyr_1.3.2     tibble_3.3.1    ggplot2_4.0.2  
-[17] tidyverse_2.0.0
+[17] tidyverse_2.0.0 workflowr_1.7.2
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.6       xfun_0.56          bslib_0.10.0       lattice_0.22-9    
- [5] tzdb_0.5.0         vctrs_0.7.1        tools_4.4.2        generics_0.1.4    
- [9] sandwich_3.1-1     pkgconfig_2.0.3    Matrix_1.7-4       RColorBrewer_1.1-3
-[13] S7_0.2.1           lifecycle_1.0.5    compiler_4.4.2     farver_2.1.2      
-[17] git2r_0.36.2       codetools_0.2-20   carData_3.0-6      httpuv_1.6.16     
-[21] htmltools_0.5.9    sass_0.4.10        yaml_2.3.12        Formula_1.2-5     
-[25] later_1.4.6        pillar_1.11.1      car_3.1-5          jquerylib_0.1.4   
-[29] cachem_1.1.0       abind_1.4-8        tidyselect_1.2.1   digest_0.6.39     
-[33] stringi_1.8.7      labeling_0.4.3     splines_4.4.2      rprojroot_2.1.1   
-[37] fastmap_1.2.0      grid_4.4.2         cli_3.6.5          magrittr_2.0.4    
-[41] utf8_1.2.6         broom_1.0.12       withr_3.0.2        scales_1.4.0      
-[45] promises_1.5.0     backports_1.5.0    timechange_0.4.0   rmarkdown_2.30    
-[49] otel_0.2.0         ggsignif_0.6.4     workflowr_1.7.2    zoo_1.8-15        
-[53] hms_1.1.4          evaluate_1.0.5     knitr_1.51         rlang_1.1.7       
-[57] Rcpp_1.1.1         glue_1.8.0         rstudioapi_0.18.0  jsonlite_2.0.0    
-[61] R6_2.6.1           fs_1.6.6          </code></pre>
+ [1] gtable_0.3.6       xfun_0.56          bslib_0.10.0       processx_3.8.6    
+ [5] lattice_0.22-9     callr_3.7.6        tzdb_0.5.0         vctrs_0.7.1       
+ [9] tools_4.4.2        ps_1.9.1           generics_0.1.4     sandwich_3.1-1    
+[13] pkgconfig_2.0.3    Matrix_1.7-4       RColorBrewer_1.1-3 S7_0.2.1          
+[17] lifecycle_1.0.5    compiler_4.4.2     farver_2.1.2       git2r_0.36.2      
+[21] codetools_0.2-20   getPass_0.2-4      carData_3.0-6      httpuv_1.6.16     
+[25] htmltools_0.5.9    sass_0.4.10        yaml_2.3.12        Formula_1.2-5     
+[29] later_1.4.6        pillar_1.11.1      car_3.1-5          jquerylib_0.1.4   
+[33] whisker_0.4.1      cachem_1.1.0       abind_1.4-8        tidyselect_1.2.1  
+[37] digest_0.6.39      stringi_1.8.7      splines_4.4.2      labeling_0.4.3    
+[41] rprojroot_2.1.1    fastmap_1.2.0      grid_4.4.2         cli_3.6.5         
+[45] magrittr_2.0.4     utf8_1.2.6         broom_1.0.12       withr_3.0.2       
+[49] scales_1.4.0       promises_1.5.0     backports_1.5.0    timechange_0.4.0  
+[53] rmarkdown_2.30     httr_1.4.8         otel_0.2.0         ggsignif_0.6.4    
+[57] zoo_1.8-15         hms_1.1.4          evaluate_1.0.5     knitr_1.51        
+[61] rlang_1.1.7        Rcpp_1.1.1         glue_1.8.0         rstudioapi_0.18.0 
+[65] jsonlite_2.0.0     R6_2.6.1           fs_1.6.6          </code></pre>
 </div>
 </div>
 </div>
