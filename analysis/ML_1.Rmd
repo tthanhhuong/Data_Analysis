@@ -102,6 +102,12 @@ Considérons les résultats d’une étude clinique portant sur la comparaison d
     # de 0.99 indique de 99% de la variance de la pression artérielle peut être attribuable au traitement.
     ```
 
+    *Trung bình HA tâm thu sau 3 tháng khác nhau rất mạnh giữa 3 nhóm: A khoảng **120 mmHg**, B khoảng **110 mmHg**, placebo khoảng **146 mmHg**.*
+
+    *Các kiểm định Shapiro-Wilk trong từng nhóm đều không có ý nghĩa thống kê và Levene test cũng không có ý nghĩa (`p = 0.500`), nên giả định của ANOVA cổ điển nhìn chung được chấp nhận.*
+
+    *ANOVA cho kết quả **F = 1426**, `p < 2e-16`, với `ges = 0.985`, nghĩa là hiệu ứng của điều trị là cực lớn. Kết luận: ở bộ dữ liệu này, điều trị gần như giải thích hầu hết biến thiên của huyết áp.*
+
     4.  Effectuez des comparaisons deux à deux en utilisant les méthodes statistiques appropriées. Est-il nécessaire de corriger pour la multiplicité des tests ? Pourquoi ?
 
     ```{r}
@@ -127,6 +133,10 @@ Considérons les résultats d’une étude clinique portant sur la comparaison d
       p.adjust.method = "BH")
     pwc3
     ```
+
+    ***So sánh 2-2:** tất cả các cặp đều khác biệt có ý nghĩa, kể cả sau Bonferroni, Holm hay BH. Về mặt lâm sàng thuần túy trên bộ số liệu này, **B tốt nhất**, **A đứng giữa**, **placebo kém nhất**. Không phải “có xu hướng”, mà là khác biệt rất rõ.*
+
+Les conditions d’application de l’ANOVA sont globalement satisfaites. L’analyse montre un effet très significatif du traitement sur la pression artérielle systolique (F(2,42)=1426.0, p\<0.001). Les comparaisons post-hoc montrent que les trois groupes diffèrent significativement entre eux. Le traitement B est associé à la pression artérielle moyenne la plus basse, suivi du traitement A, tandis que le placebo présente la moyenne la plus élevée.
 
 ## **Exercice 2**
 
@@ -195,7 +205,13 @@ La même étude a été réalisé sur des patients présentant des caractéristi
 
 4.  Si cela est pertinent, effectuez des comparaisons deux à deux en utilisant les méthodes statistiques appropriées.
 
+    *Trung bình 3 nhóm gần như chồng lên nhau: A khoảng **121**, B khoảng **120**, placebo khoảng **122 mmHg**, với SD cũng gần tương tự nhau. Shapiro-Wilk và Levene đều không gợi ý vi phạm giả định. ANOVA cho **F = 0.286**, `p = 0.752`, `ges = 0.004`. Nghĩa là **không có bằng chứng** cho thấy điều trị ảnh hưởng đến HA tâm thu trong mẫu này. Hiệu ứng, nếu có, là rất nhỏ so với biến thiên nội nhóm.*
+
+    *Ở đây không phải “ANOVA không chứng minh được điều trị hiệu quả”, mà chính xác hơn là **không bác bỏ được H0 rằng các trung bình bằng nhau**. Với kết quả này, **post-hoc 2-2 không còn là bước cần thiết** trong logic chuẩn của bài.*  
+
 5.  Interprétez les résultats.
+
+    *Les moyennes observées dans les trois groupes sont très proches. Les hypothèses de normalité et d’homogénéité des variances sont respectées. L’ANOVA ne met pas en évidence d’effet significatif du traitement sur la pression artérielle systolique (F(2,133)=0.286, p=0.752). On ne peut donc pas conclure à une différence entre les groupes.*
 
 ## **Exercice 3 - Arthrose du genou**
 
@@ -291,6 +307,12 @@ Nous souhaitons évaluer l’effet d’un nouveau traitement contre l’arthrose
 
 5.  Que pouvez-vous conclure ?
 
+    *Biến kết cục là **chênh lệch đau VAS trước và sau điều trị**, và trong dữ liệu của bạn các giá trị đều âm. Theo cách mã hóa này, có thể hiểu rằng **giá trị càng âm thì mức giảm đau càng lớn**. Trung bình là: **Dose1 = -23.8**, **Dose2 = -10.7**, **Placebo = -9.94**. Giả định ANOVA cổ điển ổn: KS đều không có ý nghĩa, Levene `p = 0.308`. ANOVA cho **F = 270.9**, `p < 2e-16`, `ges = 0.724`, tức là hiệu ứng điều trị rất mạnh.* 
+
+    ***Điểm mấu chốt của câu hỏi không phải chỉ là ANOVA có ý nghĩa**, mà là “liều nào hiệu quả so với placebo”. Ở phần pairwise sau hiệu chỉnh, **Dose1 khác Dose2** và **Dose1 khác placebo** với p cực nhỏ; còn **Dose2 không khác placebo**(`p.adj ≈ 0.763`, không có ý nghĩa). Vậy kết luận chuẩn là: **chỉ Dose1 chứng minh được hiệu quả vượt placebo**, còn **Dose2 thì không**.* 
+
+    *=\> L’ANOVA met en évidence un effet global très significatif du traitement sur l’évolution du score EVA (F(2,207)=270.9, p\<0.001). Les comparaisons multiples montrent que la dose 1 diffère significativement de la dose 2 et du placebo, alors que la dose 2 ne diffère pas significativement du placebo. Ainsi, seule la dose 1 peut être considérée comme efficace par rapport au placebo.*
+
 6.  La même étude a été réalisé sur un deuxième échantillon de patients présentant des caractéristiques différentes. Les données se trouvent dans le fichier knee_arthrosis2.csv. Réalisez l’analyse de ces nouvelles données. Que constatez-vous ?
 
     ```{r}
@@ -342,6 +364,12 @@ Nous souhaitons évaluer l’effet d’un nouveau traitement contre l’arthrose
       levene_test(vas_scale ~ treatment)
     ```
 
+    *Trung bình các nhóm là **Dose1 = -24.7**, **Dose2 = -11.9**, **Placebo = -9.43**; Shapiro ổn nhưng Levene rất có ý nghĩa (`p = 0.0000656`), nên **không được dùng ANOVA cổ điển**.*
+
+    *=\> Đổi sang **Welch ANOVA**.*
+
+    *Welch cho kết quả **statistic = 61.2**, `p = 3.33e-16`, nghĩa là vẫn có khác biệt toàn cục giữa các nhóm.* 
+
     ```{r}
     ### Analyse
     res.aov3 <- knee_arthrosis2 %>% welch_anova_test(vas_scale ~ treatment)
@@ -352,7 +380,7 @@ Nous souhaitons évaluer l’effet d’un nouveau traitement contre l’arthrose
     moyenne_groupe$mean[1] - moyenne_groupe$mean[3] # Dose1 - Placebo
     moyenne_groupe$mean[2] - moyenne_groupe$mean[3] # Dose2 - Placebo
 
-    pwc2_value <- knee_arthrosis %>% pairwise_t_test(
+    pwc2_value <- knee_arthrosis2 %>% pairwise_t_test(
       vas_scale ~ treatment,
       p.adjust.method = "bonferroni",
       pool.sd = FALSE)
@@ -379,7 +407,10 @@ Nous souhaitons évaluer l’effet d’un nouveau traitement contre l’arthrose
 ### Concepts généraux
 
 1.  Quelle est la question statistique que l’ANOVA à un facteur permet de tester ?
-2.  Vrai ou Faux : L’ANOVA compare des variances pour conclure sur des différences de moyennes. 3. Quelle est la variable expliquée et la variable explicative dans l’exemple des antihypertenseurs ? 4. Pourquoi ne pas utiliser uniquement des tests t de Student pour comparer plusieurs moyennes ? 5. 5 Que signifie ‘erreur de type I’ dans le contexte des tests multiples ?
+2.  Vrai ou Faux : L’ANOVA compare des variances pour conclure sur des différences de moyennes.
+3.  Quelle est la variable expliquée et la variable explicative dans l’exemple des antihypertenseurs ?
+4.  Pourquoi ne pas utiliser uniquement des tests t de Student pour comparer plusieurs moyennes ?
+5.  Que signifie ‘erreur de type I’ dans le contexte des tests multiples ?
 
 ### Hypothèses
 

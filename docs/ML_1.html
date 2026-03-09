@@ -550,15 +550,15 @@ relative
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb77660e0f2300e78f7f5c794d38762aef5420594targetblankb77660ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree894e205114e303ecfa2886d8ece13da23cfa0fdatargetblank894e205a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b77660e0f2300e78f7f5c794d38762aef5420594" target="_blank">b77660e</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/894e205114e303ecfa2886d8ece13da23cfa0fda" target="_blank">894e205</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreeb77660e0f2300e78f7f5c794d38762aef5420594targetblankb77660ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree894e205114e303ecfa2886d8ece13da23cfa0fdatargetblank894e205a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -568,7 +568,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/b77660e0f2300e78f7f5c794d38762aef5420594" target="_blank">b77660e</a>.
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/894e205114e303ecfa2886d8ece13da23cfa0fda" target="_blank">894e205</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -589,9 +589,7 @@ Ignored files:
     Ignored:    analysis/.Rhistory
 
 Unstaged changes:
-    Modified:   .gitignore
     Modified:   analysis/ML_1.Rmd
-    Modified:   analysis/about.Rmd
 
 </code></pre>
 <p>
@@ -635,6 +633,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/83611de3f87550fca4372c107d44ddf9b2247844/analysis/ML_1.Rmd" target="_blank">83611de</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+<td>
+Update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/tthanhhuong/Data_Analysis/83611de3f87550fca4372c107d44ddf9b2247844/docs/ML_1.html" target="_blank">83611de</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-08
+</td>
+<td>
+Update
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1023,6 +1055,16 @@ res.aov2</code></pre>
 <pre class="r"><code># La colonne ges représente la taille de l&#39;effet, c&#39;est à dire la proportion de la variabilité de la variable
 # réponse (pression artérielle) qui peut être expliquée par la variable explicative (le traitement). Une valeur
 # de 0.99 indique de 99% de la variance de la pression artérielle peut être attribuable au traitement.</code></pre>
+<p><em>Trung bình HA tâm thu sau 3 tháng khác nhau rất mạnh giữa 3 nhóm:
+A khoảng <strong>120 mmHg</strong>, B khoảng <strong>110 mmHg</strong>,
+placebo khoảng <strong>146 mmHg</strong>.</em></p>
+<p><em>Các kiểm định Shapiro-Wilk trong từng nhóm đều không có ý nghĩa
+thống kê và Levene test cũng không có ý nghĩa (<code>p = 0.500</code>),
+nên giả định của ANOVA cổ điển nhìn chung được chấp nhận.</em></p>
+<p><em>ANOVA cho kết quả <strong>F =
+1426</strong>, <code>p &lt; 2e-16</code>, với <code>ges = 0.985</code>,
+nghĩa là hiệu ứng của điều trị là cực lớn. Kết luận: ở bộ dữ liệu này,
+điều trị gần như giải thích hầu hết biến thiên của huyết áp.</em></p>
 <ol start="4" style="list-style-type: decimal">
 <li>Effectuez des comparaisons deux à deux en utilisant les méthodes
 statistiques appropriées. Est-il nécessaire de corriger pour la
@@ -1068,8 +1110,20 @@ pwc3</code></pre>
 * &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;       
 1 Pression_ar… A      B         15    15 7.70e-19 ****     7.70e-19 ****        
 2 Pression_ar… A      Place…    15    15 1.69e-33 ****     2.53e-33 ****        
-3 Pression_ar… B      Place…    15    15 9.44e-40 ****     2.83e-39 ****        </code></pre></li>
+3 Pression_ar… B      Place…    15    15 9.44e-40 ****     2.83e-39 ****        </code></pre>
+<p><em><strong>So sánh 2-2:</strong> tất cả các cặp đều khác biệt có ý
+nghĩa, kể cả sau Bonferroni, Holm hay BH. Về mặt lâm sàng thuần túy trên
+bộ số liệu này, <strong>B tốt nhất</strong>, <strong>A đứng
+giữa</strong>, <strong>placebo kém nhất</strong>. Không phải “có xu
+hướng”, mà là khác biệt rất rõ.</em></p></li>
 </ol>
+<p>Les conditions d’application de l’ANOVA sont globalement satisfaites.
+L’analyse montre un effet très significatif du traitement sur la
+pression artérielle systolique (F(2,42)=1426.0, p&lt;0.001). Les
+comparaisons post-hoc montrent que les trois groupes diffèrent
+significativement entre eux. Le traitement B est associé à la pression
+artérielle moyenne la plus basse, suivi du traitement A, tandis que le
+placebo présente la moyenne la plus élevée.</p>
 </div>
 <div id="exercice-2" class="section level2">
 <h2><strong>Exercice 2</strong></h2>
@@ -1194,8 +1248,27 @@ res.aov2</code></pre>
       Effect DFn DFd     F     p p&lt;.05   ges
 1 Traitement   2 133 0.286 0.752       0.004</code></pre></li>
 <li><p>Si cela est pertinent, effectuez des comparaisons deux à deux en
-utilisant les méthodes statistiques appropriées.</p></li>
-<li><p>Interprétez les résultats.</p></li>
+utilisant les méthodes statistiques appropriées.</p>
+<p><em>Trung bình 3 nhóm gần như chồng lên nhau: A
+khoảng <strong>121</strong>, B khoảng <strong>120</strong>, placebo
+khoảng <strong>122 mmHg</strong>, với SD cũng gần tương tự nhau.
+Shapiro-Wilk và Levene đều không gợi ý vi phạm giả định. ANOVA
+cho <strong>F =
+0.286</strong>, <code>p = 0.752</code>, <code>ges = 0.004</code>. Nghĩa
+là <strong>không có bằng chứng</strong> cho thấy điều trị ảnh hưởng đến
+HA tâm thu trong mẫu này. Hiệu ứng, nếu có, là rất nhỏ so với biến thiên
+nội nhóm.</em></p>
+<p><em>Ở đây không phải “ANOVA không chứng minh được điều trị hiệu quả”,
+mà chính xác hơn là <strong>không bác bỏ được H0 rằng các trung bình
+bằng nhau</strong>. Với kết quả này, <strong>post-hoc 2-2 không còn là
+bước cần thiết</strong> trong logic chuẩn của bài.</em>  </p></li>
+<li><p>Interprétez les résultats.</p>
+<p><em>Les moyennes observées dans les trois groupes sont très proches.
+Les hypothèses de normalité et d’homogénéité des variances sont
+respectées. L’ANOVA ne met pas en évidence d’effet significatif du
+traitement sur la pression artérielle systolique (F(2,133)=0.286,
+p=0.752). On ne peut donc pas conclure à une différence entre les
+groupes.</em></p></li>
 </ol>
 </div>
 <div id="exercice-3---arthrose-du-genou" class="section level2">
@@ -1407,7 +1480,30 @@ pwc4_pvalue</code></pre>
 1 vas_scale Dose1  Dose2      70    70 6.01e-49 ****     9.02e-49 ****        
 2 vas_scale Dose1  Placebo    70    70 2.47e-52 ****     7.4 e-52 ****        
 3 vas_scale Dose2  Placebo    70    70 2.54e- 1 ns       2.54e- 1 ns          </code></pre></li>
-<li><p>Que pouvez-vous conclure ?</p></li>
+<li><p>Que pouvez-vous conclure ?</p>
+<p><em>Biến kết cục là <strong>chênh lệch đau VAS trước và sau điều
+trị</strong>, và trong dữ liệu của bạn các giá trị đều âm. Theo cách mã
+hóa này, có thể hiểu rằng <strong>giá trị càng âm thì mức giảm đau càng
+lớn</strong>. Trung bình là: <strong>Dose1 =
+-23.8</strong>, <strong>Dose2 = -10.7</strong>, <strong>Placebo =
+-9.94</strong>. Giả định ANOVA cổ điển ổn: KS đều không có ý nghĩa,
+Levene <code>p = 0.308</code>. ANOVA cho <strong>F =
+270.9</strong>, <code>p &lt; 2e-16</code>, <code>ges = 0.724</code>, tức
+là hiệu ứng điều trị rất mạnh.</em> </p>
+<p><em><strong>Điểm mấu chốt của câu hỏi không phải chỉ là ANOVA có ý
+nghĩa</strong>, mà là “liều nào hiệu quả so với placebo”. Ở phần
+pairwise sau hiệu chỉnh, <strong>Dose1 khác
+Dose2</strong> và <strong>Dose1 khác placebo</strong> với p cực nhỏ;
+còn <strong>Dose2 không khác
+placebo</strong>(<code>p.adj ≈ 0.763</code>, không có ý nghĩa). Vậy kết
+luận chuẩn là: <strong>chỉ Dose1 chứng minh được hiệu quả vượt
+placebo</strong>, còn <strong>Dose2 thì không</strong>.</em> </p>
+<p><em>=&gt; L’ANOVA met en évidence un effet global très significatif
+du traitement sur l’évolution du score EVA (F(2,207)=270.9, p&lt;0.001).
+Les comparaisons multiples montrent que la dose 1 diffère
+significativement de la dose 2 et du placebo, alors que la dose 2 ne
+diffère pas significativement du placebo. Ainsi, seule la dose 1 peut
+être considérée comme efficace par rapport au placebo.</em></p></li>
 <li><p>La même étude a été réalisé sur un deuxième échantillon de
 patients présentant des caractéristiques différentes. Les données se
 trouvent dans le fichier knee_arthrosis2.csv. Réalisez l’analyse de ces
@@ -1502,6 +1598,15 @@ knee_arthrosis2 %&gt;%
     df1   df2 statistic         p
   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
 1     2   117      10.5 0.0000656</code></pre>
+<p><em>Trung bình các nhóm là <strong>Dose1 =
+-24.7</strong>, <strong>Dose2 = -11.9</strong>, <strong>Placebo =
+-9.43</strong>; Shapiro ổn nhưng Levene rất có ý nghĩa
+(<code>p = 0.0000656</code>), nên <strong>không được dùng ANOVA cổ
+điển</strong>.</em></p>
+<p><em>=&gt; Đổi sang <strong>Welch ANOVA</strong>.</em></p>
+<p><em>Welch cho kết quả <strong>statistic =
+61.2</strong>, <code>p = 3.33e-16</code>, nghĩa là vẫn có khác biệt toàn
+cục giữa các nhóm.</em> </p>
 <pre class="r"><code>### Analyse
 res.aov3 &lt;- knee_arthrosis2 %&gt;% welch_anova_test(vas_scale ~ treatment)
 res.aov3</code></pre>
@@ -1516,7 +1621,7 @@ moyenne_groupe$mean[1] - moyenne_groupe$mean[2] # Dose1 - Dose2</code></pre>
 <pre><code>[1] -15.227</code></pre>
 <pre class="r"><code>moyenne_groupe$mean[2] - moyenne_groupe$mean[3] # Dose2 - Placebo</code></pre>
 <pre><code>[1] -2.492</code></pre>
-<pre class="r"><code>pwc2_value &lt;- knee_arthrosis %&gt;% pairwise_t_test(
+<pre class="r"><code>pwc2_value &lt;- knee_arthrosis2 %&gt;% pairwise_t_test(
   vas_scale ~ treatment,
   p.adjust.method = &quot;bonferroni&quot;,
   pool.sd = FALSE)
@@ -1524,9 +1629,9 @@ pwc2_value</code></pre>
 <pre><code># A tibble: 3 × 10
   .y.   group1 group2    n1    n2 statistic    df        p    p.adj p.adj.signif
 * &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;       
-1 vas_… Dose1  Dose2     70    70    -20.3   138. 2.32e-43 6.96e-43 ****        
-2 vas_… Dose1  Place…    70    70    -20.4   136. 2.89e-43 8.67e-43 ****        
-3 vas_… Dose2  Place…    70    70     -1.12  137. 2.66e- 1 7.98e- 1 ns          </code></pre>
+1 vas_… Dose1  Dose2     40    40     -8.23  72.2 5.46e-12 1.64e-11 ****        
+2 vas_… Dose1  Place…    40    40    -11.1   55.6 9.48e-16 2.84e-15 ****        
+3 vas_… Dose2  Place…    40    40     -2.27  65.9 2.6 e- 2 7.9 e- 2 ns          </code></pre>
 <pre class="r"><code>pwc3_value &lt;- knee_arthrosis %&gt;% pairwise_t_test(
   vas_scale ~ treatment,
   p.adjust.method = &quot;holm&quot;,
@@ -1562,11 +1667,13 @@ pwc4_value</code></pre>
 <li>Quelle est la question statistique que l’ANOVA à un facteur permet
 de tester ?</li>
 <li>Vrai ou Faux : L’ANOVA compare des variances pour conclure sur des
-différences de moyennes. 3. Quelle est la variable expliquée et la
-variable explicative dans l’exemple des antihypertenseurs ? 4. Pourquoi
-ne pas utiliser uniquement des tests t de Student pour comparer
-plusieurs moyennes ? 5. 5 Que signifie ‘erreur de type I’ dans le
-contexte des tests multiples ?</li>
+différences de moyennes.</li>
+<li>Quelle est la variable expliquée et la variable explicative dans
+l’exemple des antihypertenseurs ?</li>
+<li>Pourquoi ne pas utiliser uniquement des tests t de Student pour
+comparer plusieurs moyennes ?</li>
+<li>Que signifie ‘erreur de type I’ dans le contexte des tests multiples
+?</li>
 </ol>
 </div>
 <div id="hypothèses" class="section level3">
