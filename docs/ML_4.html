@@ -13,7 +13,7 @@
 
 <meta name="date" content="2026-03-08" />
 
-<title>TD4 R - Régression linéaire multiple et analyse de covariance</title>
+<title>Régression linéaire multiple et analyse de covariance (ANCOVA)</title>
 
 <script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -359,8 +359,8 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">TD4 R - Régression linéaire multiple et
-analyse de covariance</h1>
+<h1 class="title toc-ignore">Régression linéaire multiple et analyse de
+covariance (ANCOVA)</h1>
 <h4 class="author">PHAM Huong</h4>
 <h4 class="date">2026-03-08</h4>
 
@@ -395,9 +395,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 2
 </p>
 <p>
 <strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
@@ -420,18 +420,21 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
@@ -548,15 +551,15 @@ relative
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree98b3a9d2af1c50d0263e4a187d234c1f7709cda1targetblank98b3a9da">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreef0709bec0e15d804d9d034fd07c8219ed11d5d00targetblankf0709bea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/98b3a9d2af1c50d0263e4a187d234c1f7709cda1" target="_blank">98b3a9d</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/f0709bec0e15d804d9d034fd07c8219ed11d5d00" target="_blank">f0709be</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree98b3a9d2af1c50d0263e4a187d234c1f7709cda1targetblank98b3a9da"
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreef0709bec0e15d804d9d034fd07c8219ed11d5d00targetblankf0709bea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -566,7 +569,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/98b3a9d2af1c50d0263e4a187d234c1f7709cda1" target="_blank">98b3a9d</a>.
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/f0709bec0e15d804d9d034fd07c8219ed11d5d00" target="_blank">f0709be</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -584,14 +587,38 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
     Ignored:    analysis/.Rhistory
+    Ignored:    analysis/images/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/images/
+    Untracked:  analysis/images/clipboard-2151769098.png
+    Untracked:  analysis/images/clipboard-3147457855.png
+    Untracked:  analysis/images/clipboard-3261197731.png
+    Untracked:  analysis/images/clipboard-3552048261.png
+    Untracked:  analysis/images/clipboard-4074991009.png
+    Untracked:  analysis/images/clipboard-720147393.png
 
 Unstaged changes:
-    Modified:   analysis/ML_1.Rmd
     Modified:   analysis/ML_2.Rmd
+    Modified:   analysis/ML_4.Rmd
+    Deleted:    analysis/images/clipboard-1004469372.png
+    Deleted:    analysis/images/clipboard-1149420379.png
+    Deleted:    analysis/images/clipboard-1191025101.png
+    Deleted:    analysis/images/clipboard-1444228596.png
+    Deleted:    analysis/images/clipboard-176940514.png
+    Deleted:    analysis/images/clipboard-195845525.png
+    Deleted:    analysis/images/clipboard-2003456162.png
+    Deleted:    analysis/images/clipboard-2061175937.png
+    Deleted:    analysis/images/clipboard-3168697251.png
+    Deleted:    analysis/images/clipboard-3223333217.png
+    Deleted:    analysis/images/clipboard-3276515724.png
+    Deleted:    analysis/images/clipboard-363149457.png
+    Deleted:    analysis/images/clipboard-396700802.png
+    Deleted:    analysis/images/clipboard-3988885783.png
+    Deleted:    analysis/images/clipboard-553745980.png
+    Deleted:    analysis/images/clipboard-580881902.png
+    Deleted:    analysis/images/clipboard-598795064.png
 
 </code></pre>
 <p>
@@ -635,6 +662,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/tthanhhuong/Data_Analysis/f0709bec0e15d804d9d034fd07c8219ed11d5d00/docs/ML_4.html" target="_blank">f0709be</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -743,6 +787,18 @@ Huong PHAM
 <hr>
 </div>
 </div>
+</div>
+<div id="a.-régression-linéaire-multiple" class="section level1">
+<h1><strong>A. Régression linéaire multiple</strong></h1>
+<p><img src="assets/clipboard-3743540989.png" /></p>
+<p><img src="assets/clipboard-182334936.png" /></p>
+<p><img src="assets/clipboard-375922867.png" /></p>
+<p><img src="assets/clipboard-1616882929.png" /></p>
+</div>
+<div id="b.-ancova" class="section level1">
+<h1><strong>B. ANCOVA</strong></h1>
+<p><img src="assets/clipboard-1236446406.png" /></p>
+<p><img src="assets/clipboard-3037178067.png" /></p>
 </div>
 <div id="exercice-1---régression-linéaire-multiple-exemple-du-cours"
 class="section level1">
@@ -1004,6 +1060,23 @@ Huong PHAM
 </table>
 </div>
 </div>
+<p><strong><em>Statistiques descriptives và corrélations
+:</em></strong></p>
+<p><em>Bộ dữ liệu có 200 quan sát; cholesterol có trung bình
+khoảng <strong>6.11 mmol/L</strong>, SBP khoảng <strong>130.2
+mmHg</strong>, DBP khoảng <strong>82.3 mmHg</strong>, tuổi
+khoảng <strong>48.0 năm</strong>, BMI khoảng <strong>37.45
+kg/m²</strong>. Có thiếu dữ liệu đáng kể cho <code>chol</code> và đặc
+biệt là <code>age</code>, nên việc
+dùng <code>complete.cases()</code> sau đó là hoàn toàn có lý.</em></p>
+<p><em><strong>VN:</strong> Ở bước mô tả, bạn cần nói ngay hai ý: mức
+cholesterol trung bình của mẫu tương đối cao, và dữ liệu có thiếu, nên
+các phân tích tương quan/hồi quy phải lưu ý số lượng quan sát thực sự
+được dùng.<br />
+<strong>FR:</strong> À l’étape descriptive, il faut souligner que le
+taux moyen de cholestérol est relativement élevé et qu’il existe des
+valeurs manquantes, en particulier pour l’âge, ce qui réduit l’effectif
+des analyses complètes.</em></p>
 <pre class="r"><code>## Représentation graphique et coefficients de corrélation
 plot(x = exercice1$sbp, y = exercice1$chol,
      xlab = &quot;Pression artérielle systolique (mmHg)&quot;, ylab = &quot;Taux de cholestérol (mmol/L)&quot;)</code></pre>
@@ -1229,6 +1302,23 @@ alternative hypothesis: true correlation is not equal to 0
 sample estimates:
         cor 
 -0.02016888 </code></pre>
+<p><strong><em>Tương quan Pearson cho thấy:</em></strong></p>
+<ul>
+<li><p><em><code>sbp</code> với <code>chol</code>:</em> r=0.378<em>, p
+rất nhỏ</em></p></li>
+<li><p><em><code>dbp</code> với <code>chol</code>:</em> r=0.399 <em>p
+rất nhỏ</em></p></li>
+<li><p><em><code>age</code> với <code>chol</code>:</em> r=0.333<em>, p =
+0.0012</em></p></li>
+<li><p><em><code>bmi</code> với <code>chol</code>:</em> r=−0.020<em>, p
+= 0.796, không có ý nghĩa.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Trước điều chỉnh, cholesterol tăng cùng SBP,
+DBP và tuổi; BMI gần như không liên quan.<br />
+<strong>FR:</strong> Avant ajustement, le cholestérol est positivement
+corrélé à la pression systolique, à la pression diastolique et à l’âge,
+alors que l’IMC ne montre pas d’association linéaire
+significative.</em></p>
 <pre class="r"><code>## Dataset avec données complètes 
 exercice1_bis &lt;- exercice1[complete.cases(exercice1[,c(&quot;age&quot;,&quot;chol&quot;, &quot;sbp&quot;, &quot;dbp&quot;, &quot;bmi&quot;)]), ]</code></pre></li>
 <li><p>Estimez une régression linéaire permettant d’expliquer le taux de
@@ -1259,8 +1349,80 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 
 Residual standard error: 1.056 on 87 degrees of freedom
 Multiple R-squared:  0.1998,    Adjusted R-squared:  0.163 
-F-statistic: 5.431 on 4 and 87 DF,  p-value: 0.0005958</code></pre></li>
-<li><p>Vérifiez les hypothèses sous-jacentes au modèle.</p>
+F-statistic: 5.431 on 4 and 87 DF,  p-value: 0.0005958</code></pre>
+<p><strong><em>Mô hình hồi quy multiple :</em></strong></p>
+<p><em>Mô hình <code>chol ~ age + sbp + dbp + bmi</code> cho:</em></p>
+<p><em><img src="assets/clipboard-2832655002.png" /></em></p>
+<p><em>Nghĩa là mô hình có ý nghĩa toàn cục, nhưng chỉ giải thích
+khoảng <strong>20%</strong> biến thiên của cholesterol. Suy ra phần lớn
+biến thiên còn lại đến từ những yếu tố khác không có trong mô hình. Từ
+bậc tự do còn lại, mô hình complete-case này dùng <strong>92 quan
+sát</strong>.</em></p>
+<p><em><strong>VN:</strong> Mô hình có ý nghĩa thống kê toàn cục, nhưng
+khả năng giải thích ở mức vừa-thấp. Không được nói “mô hình tốt” chỉ vì
+p-value nhỏ.<br />
+<strong>FR:</strong> Le modèle est globalement significatif, mais son
+pouvoir explicatif reste modeste. Il ne faut pas confondre
+significativité statistique et qualité prédictive élevée.</em></p>
+<p><strong><em>Các hệ số:</em></strong></p>
+<ul>
+<li><p><em><code>age</code> = <strong>+0.0401</strong>, p =
+0.0118</em></p></li>
+<li><p><em><code>sbp</code> = <strong>-0.00469</strong>, p =
+0.697</em></p></li>
+<li><p><em><code>dbp</code> = <strong>+0.0315</strong>, p =
+0.086</em></p></li>
+<li><p><em><code>bmi</code> = <strong>+0.0739</strong>, p =
+0.203.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Sau ajustement đồng thời trên SBP, DBP và
+BMI, chỉ có <strong>tuổi</strong> còn liên quan có ý nghĩa với
+cholesterol. Cụ thể, tăng 1 tuổi liên quan với tăng trung bình
+khoảng <strong>0.04 mmol/L cholesterol</strong>, giữ các biến khác cố
+định. SBP không còn significant, DBP chỉ ở mức biên, BMI không
+significant.<br />
+<strong>FR:</strong> Après ajustement simultané sur la pression
+systolique, la pression diastolique et l’IMC,
+seul <strong>l’âge</strong> reste significativement associé au
+cholestérol. Une augmentation d’un an est associée à une hausse moyenne
+d’environ <strong>0.04 mmol/L</strong> du cholestérol, toutes choses
+égales par ailleurs. La PAS n’est plus significative, la PAD est
+seulement borderline, et l’IMC n’est pas significatif.</em></p>
+<p><strong><em>Vì sao SBP/DBP tương quan dương nhưng vào mô hình lại mất
+ý nghĩa?</em></strong></p>
+<p><em>Đây là điểm rất đáng nói khi đi thi. Trong dữ liệu
+này, <code>sbp</code> và <code>dbp</code> tương quan với nhau rất
+mạnh: <strong>r = 0.879</strong>. VIF của chúng lần lượt
+khoảng <strong>4.65</strong> và <strong>4.48</strong>, cao hơn rõ rệt so
+với các biến khác. Điều đó giải thích vì sao ở phân tích đơn biến cả hai
+đều có vẻ liên quan với cholesterol, nhưng khi đưa cùng lúc vào mô hình
+thì hiệu ứng riêng phần trở nên không ổn định, SE tăng, p-value tăng,
+thậm chí dấu của <code>sbp</code> đổi âm.</em></p>
+<p><em><strong>VN:</strong> Đây là ví dụ kinh điển
+của <strong>multicolinéarité modérée à importante</strong>.<br />
+<strong>FR:</strong> C’est un exemple classique où une association
+univariée ne se maintient pas nécessairement après ajustement, en raison
+de la colinéarité entre variables explicatives.</em> </p></li>
+<li><p><strong>Vérifiez les hypothèses sous-jacentes au
+modèle.</strong></p>
+<p><strong><em>Giả định của mô hình :</em></strong></p>
+<p><em>Cần nhớ đúng 5 ý:</em></p>
+<ul>
+<li><p><em>linéarité</em></p></li>
+<li><p><em>indépendance des observations</em></p></li>
+<li><p><em>normalité des erreurs</em></p></li>
+<li><p><em>homoscédasticité</em></p></li>
+<li><p><em>absence de multicolinéarité importante.</em></p></li>
+</ul>
+<p><strong><em>HTML cho thấy tác giả đã kiểm tra:</em></strong></p>
+<ul>
+<li><p><em>residuals vs each predictor</em></p></li>
+<li><p><em>QQ plot</em></p></li>
+<li><p><em>residuals vs fitted</em></p></li>
+<li><p><em>VIF</em></p></li>
+<li><p><em>leverage</em></p></li>
+<li><p><em>Cook’s distance.</em></p></li>
+</ul>
 <pre class="r"><code># 4. Vérification des hypothèses du modèle
 ## Linéarité
 par(mfrow = c(2,2))
@@ -1491,6 +1653,28 @@ Huong PHAM
 </table>
 </div>
 </div>
+<p><strong>Multicolinéarité</strong> Đây là chỗ dễ bị hỏi lý thuyết lẫn
+diễn giải output.</p>
+<p><strong>VIF:</strong></p>
+<p><img src="assets/clipboard-4148273029.png" /></p>
+<p><strong>Ý nghĩa:</strong></p>
+<ul>
+<li><p>gần 1: ổn</p></li>
+<li><p>cao: biến đó bị giải thích mạnh bởi các biến giải thích còn
+lại</p></li>
+<li><p>ngưỡng thực hành hay dùng: <strong>&gt;
+5</strong> hoặc <strong>&gt; 10</strong> tùy tác giả.</p></li>
+</ul>
+<p><strong>Hậu quả:</strong></p>
+<ul>
+<li><p>SE tăng</p></li>
+<li><p>khoảng tin cậy rộng</p></li>
+<li><p>p-value tăng</p></li>
+<li><p>coefficient mất ổn định</p></li>
+<li><p>có thể đổi dấu “ngược đời”</p></li>
+<li><p>mô hình vẫn có thể dự đoán được, nhưng <strong>khó giải thích
+từng hệ số riêng lẻ</strong>.</p></li>
+</ul>
 <pre class="r"><code>## Multicolinéarité
 ### Variance des paramètres
 summary(modele1)</code></pre>
@@ -1525,8 +1709,41 @@ bmi -0.07838923 0.05805031 -0.01672517  1.00000000</code></pre>
 <pre class="r"><code>### Facteur d&#39;inflation de la variance
 vif(modele1)</code></pre>
 <pre><code>     age      sbp      dbp      bmi 
-1.146645 4.647430 4.476243 1.035598 </code></pre></li>
-<li><p>Y-a-t’il des observations aberrantes et/ou influentes ?</p>
+1.146645 4.647430 4.476243 1.035598 </code></pre>
+<p><strong><em>Về mặt số liệu:</em></strong></p>
+<ul>
+<li><p><em>QQ plot có đánh dấu 2 quan sát (67, 69), tức có vài điểm lệch
+ở đuôi phân bố phần dư</em></p></li>
+<li><p><em>leverage cao ở các quan sát 61, 73, 86, 87</em></p></li>
+<li><p><em>Cook’s distance tối đa khoảng <strong>0.1085</strong>, thấp
+hơn 1 rõ rệt, nên <strong>không có điểm ảnh hưởng mạnh theo ngưỡng thực
+hành thường dùng</strong>.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Kết luận hợp lý khi đi thi là: không có bằng
+chứng số học của một vi phạm thô bạo, nhưng có <strong>multicolinéarité
+giữa SBP và DBP</strong>, cùng vài điểm leverage cao cần lưu ý.<br />
+<strong>FR:</strong> La conclusion raisonnable est qu’il n’existe pas de
+violation majeure évidente sur la base des diagnostics rapportés, mais
+qu’il existe une <strong>colinéarité notable entre PAS et
+PAD</strong> ainsi que quelques observations à levier
+élevé</em></p></li>
+<li><p><strong>Y-a-t’il des observations aberrantes et/ou influentes
+?</strong></p>
+<p><strong>Valeurs aberrantes và influentes</strong></p>
+<ul>
+<li><p><strong>Valeur aberrante</strong>: điểm khác thường so với đám
+mây dữ liệu</p></li>
+<li><p><strong>Valeur influente</strong>: điểm mà nếu bỏ ra thì kết quả
+mô hình thay đổi đáng kể.</p></li>
+</ul>
+<p><strong>Levier:</strong></p>
+<p><img src="assets/clipboard-1130729836.png" /></p>
+<p>thì được xem là cao. </p>
+<p><strong>Distance de Cook:</strong></p>
+<p>Với một cá thể mới xh:</p>
+<p><img src="assets/clipboard-3374935997.png" /></p>
+<p>Khoảng dự đoán luôn rộng hơn khoảng tin cậy của giá trị trung bình,
+vì nó bao gồm biến thiên cá thể.</p>
 <pre class="r"><code># 5. Observations aberrrantes et influentes
 ## Observations aberrantes : leviers
 leviers &lt;- data.frame(obs = seq(1:92),leviers = hatvalues(modele1))
@@ -1650,7 +1867,20 @@ prediction &lt;- predict(modele1, newdata = x_h,
                       level = 0.95)
 prediction</code></pre>
 <pre><code>       fit      lwr      upr
-1 7.106913 4.881493 9.332332</code></pre></li>
+1 7.106913 4.881493 9.332332</code></pre>
+<p><strong><em>Prédiction :</em></strong></p>
+<p><em>Dự đoán cho người 65 tuổi, BMI 35, SBP 134, DBP 96:</em></p>
+<ul>
+<li><p><em>valeur prédite = <strong>7.11 mmol/L</strong></em></p></li>
+<li><p><em>intervalle de prédiction 95% = <strong>[4.88 ;
+9.33]</strong>.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Giá trị dự đoán trung tâm là 7.11 mmol/L,
+nhưng khoảng dự đoán khá rộng, cho thấy dự đoán cá thể còn bất định đáng
+kể.<br />
+<strong>FR:</strong> La valeur prédite est de 7.11 mmol/L, avec un
+intervalle de prédiction assez large, ce qui traduit une incertitude
+importante au niveau individuel.</em></p></li>
 </ol>
 </div>
 <div id="exercice-2---analyse-de-covariance" class="section level1">
@@ -1782,7 +2012,27 @@ Activation        TCC     Temoin
   &lt;fct&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 1 Activation  0     11.3  11.0   19.2  3.72
 2 TCC         1.69   6.73  7.64  14.5  3.16
-3 Temoin      3.79  13.5  13.2   24.1  4.27</code></pre></li>
+3 Temoin      3.79  13.5  13.2   24.1  4.27</code></pre>
+<p><em>Mỗi nhóm có <strong>60</strong> bệnh nhân.
+Về <code>phq9_base</code>, trung bình:</em></p>
+<ul>
+<li><p><em>Activation: <strong>14.9</strong></em></p></li>
+<li><p><em>TCC: <strong>15.6</strong></em></p></li>
+<li><p><em>Témoin: <strong>14.1</strong></em></p></li>
+</ul>
+<p><em>Về <code>phq9_post</code>, trung bình:</em></p>
+<ul>
+<li><p><em>Activation: <strong>11.0</strong></em></p></li>
+<li><p><em>TCC: <strong>7.64</strong></em></p></li>
+<li><p><em>Témoin: <strong>13.2</strong>.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Nhìn thô, TCC cho kết quả sau điều trị tốt
+nhất, Activation đứng giữa, nhóm chứng kém nhất. Nhưng với ANCOVA, đó
+mới chỉ là mô tả thô.<br />
+<strong>FR:</strong> Descriptivement, la TCC semble la plus efficace,
+l’Activation est intermédiaire et le groupe témoin présente les scores
+post-traitement les plus élevés. Cependant, cela reste une comparaison
+brute avant ajustement sur le score initial.</em></p></li>
 <li><p>Représentation graphiquement la relation entre le traitement, le
 score de dépression initial et le score de dépression 8 semaines après
 l’initiation du traitement. Que constatez-vous ?</p>
@@ -2487,58 +2737,100 @@ P value adjustment: BH method for 3 tests </code></pre></li>
 <div id="régression-linéaire-multiple" class="section level3">
 <h3>Régression linéaire multiple</h3>
 <ol style="list-style-type: decimal">
-<li>Quelle est la différence entre une régression linéaire simple et une
-régression linéaire multiple ?</li>
-<li>Donnez la forme générale de l’équation d’une régression linéaire
-multiple.</li>
-<li>Que représente le coefficient β0 dans un modèle de régression
-linéaire multiple ?</li>
-<li>Quelle est la méthode utilisée pour estimer les paramètres d’un
-modèle de régression linéaire multiple ?</li>
-<li>Écrivez la formule matricielle de l’estimateur des moindres carrés
-pour β.</li>
-<li>Quelles sont les hypothèses fondamentales d’un modèle de régression
-linéaire multiple ?</li>
-<li>Comment calcule-t-on le coefficient de détermination R2 et que
-signifie-t-il ?</li>
-<li>Pourquoi utilise-t-on le coefficient de détermination ajusté Ra2 et
-comment se calcule-t-il ?</li>
-<li>Quelle est la statistique de test utilisée pour vérifier la
-significativité globale d’un modèle ?</li>
-<li>Quelle est la statistique de test pour évaluer la significativité
-individuelle d’un paramètre βj ?</li>
-<li>Donnez la formule d’un intervalle de prédiction pour une nouvelle
-observation.</li>
-<li>Quelles sont les conséquences de la multicolinéarité sur
-l’interprétation des paramètres ?</li>
-<li>Comment calcule-t-on le facteur d’inflation de la variance (VIF) et
-que signifie-t-il ?</li>
-<li>Quelle règle pratique permet d’identifier une observation influente
-à partir de la distance de Cook ?</li>
-<li>Quelle est la différence entre une valeur aberrante et une valeur
-influente ?</li>
+<li><p><strong>Quelle est la différence entre une régression linéaire
+simple et une régression linéaire multiple ?</strong></p>
+<p>Khác gì giữa régression simple và multiple?<br />
+Régression simple có 1 biến giải thích; multiple có nhiều biến giải
+thích. Multiple cho phép ước lượng <strong>effets
+ajustés</strong>.</p></li>
+<li><p><strong>Donnez la forme générale de l’équation d’une régression
+linéaire multiple.</strong></p>
+<p><img src="assets/clipboard-4074991009.png" /></p></li>
+<li><p><strong>Que représente le coefficient β0 dans un modèle de
+régression linéaire multiple ?</strong></p>
+<p>β0​ là giá trị trung bình kỳ vọng của Y khi tất cả các biến giải thích
+bằng 0.</p></li>
+<li><p><strong>Quelle est la méthode utilisée pour estimer les
+paramètres d’un modèle de régression linéaire multiple ?</strong></p>
+<p>Moindres carrés ordinaires</p></li>
+<li><p><strong>Écrivez la formule matricielle de l’estimateur des
+moindres carrés pour β.</strong></p>
+<p><img src="assets/clipboard-2151769098.png" /></p></li>
+<li><p><strong>Quelles sont les hypothèses fondamentales d’un modèle de
+régression linéaire multiple ?</strong></p>
+<p>Linéarité,</p>
+<p>indépendance</p>
+<p>normalité des erreurs,</p>
+<p>homoscédasticité,</p>
+<p>absence de multicolinéarité importante.</p></li>
+<li><p><strong>Comment calcule-t-on le coefficient de détermination R2
+et que signifie-t-il ?</strong></p>
+<p><img src="assets/clipboard-3147457855.png" /></p>
+<p>Là tỷ lệ biến thiên của Y được mô hình giải thích.</p></li>
+<li><p><strong>Pourquoi utilise-t-on le coefficient de détermination
+ajusté Ra2 et comment se calcule-t-il ?</strong></p>
+<p>Vì sao cầnR2 ajusté?<br />
+Vì R2 thường tăng khi thêm biến, kể cả biến vô ích. R2R2 ajusté hiệu
+chỉnh theo số biến:</p></li>
+<li><p><strong>Quelle est la statistique de test utilisée pour vérifier
+la significativité globale d’un modèle ?</strong></p>
+<p>F-test cho giả thuyết H0:β1=⋯=βp=0.</p></li>
+<li><p><strong>Quelle est la statistique de test pour évaluer la
+significativité individuelle d’un paramètre βj ?</strong></p>
+<p>t-test cho H0:βj=0 </p></li>
+<li><p><strong>Donnez la formule d’un intervalle de prédiction pour une
+nouvelle observation.</strong></p>
+<p><img src="assets/clipboard-3552048261.png" /></p></li>
+<li><p><strong>Quelles sont les conséquences de la multicolinéarité sur
+l’interprétation des paramètres ?</strong></p>
+<p>SE tăng, IC rộng, hệ số không ổn định, p-value tăng, dấu hệ số có thể
+bất thường, làm diễn giải từng biến kém tin cậy. </p></li>
+<li><p><strong>Comment calcule-t-on le facteur d’inflation de la
+variance (VIF) et que signifie-t-il ?</strong></p>
+<p><img src="assets/clipboard-3261197731.png" /></p>
+<p>VIF cao nghĩa là biến đó bị đồng tuyến tính với các biến còn
+lại.</p></li>
+<li><p><strong>Quelle règle pratique permet d’identifier une observation
+influente à partir de la distance de Cook ?</strong></p>
+<p>Cook &gt; 1 thường được xem là observation influente</p></li>
+<li><p><strong>Quelle est la différence entre une valeur aberrante et
+une valeur influente ?</strong></p>
+<p>Aberrante là điểm khác thường; influente là điểm làm thay đổi kết quả
+mô hình rõ rệt khi loại bỏ nó. Một điểm có thể aberrante mà chưa chắc
+influente. </p></li>
 </ol>
 </div>
 <div id="analyse-de-covariance-ancova" class="section level3">
-<h3>Analyse de Covariance (ANCOVA)</h3>
+<h3><strong>Analyse de Covariance (ANCOVA)</strong></h3>
 <ol style="list-style-type: decimal">
-<li>Qu’est-ce qu’une analyse de covariance (ANCOVA) et dans quel
-contexte l’utilise-t-on ?</li>
-<li>Donnez la forme générale du modèle ANCOVA sans interaction.</li>
-<li>Que signifie l’hypothèse d’homogénéité des pentes dans une ANCOVA
-?</li>
-<li>Comment tester la significativité d’un terme d’interaction dans une
-ANCOVA ?</li>
-<li>Dans le cadre d’une ANCOVA, comment interpréter un coefficient
-associé à une variable qualita- tive (facteur) par rapport au niveau de
-référence ?</li>
+<li><p><strong>Qu’est-ce qu’une analyse de covariance (ANCOVA) et dans
+quel contexte l’utilise-t-on ?</strong></p>
+<p>Là mô hình tuyến tính dùng khi có một biến định tính và một biến định
+lượng cùng giải thích một biến đáp ứng liên tục.</p></li>
+<li><p><strong>Donnez la forme générale du modèle ANCOVA sans
+interaction.</strong></p>
+<p><img src="assets/clipboard-720147393.png" /></p></li>
+<li><p><strong>Que signifie l’hypothèse d’homogénéité des pentes dans
+une ANCOVA ?</strong></p>
+<p>Là giả định cho rằng hiệu ứng của covariable định lượng lên outcome
+giống nhau ở mọi nhóm, tức không có interaction X×Z. </p></li>
+<li><p><strong>Comment tester la significativité d’un terme
+d’interaction dans une ANCOVA ?</strong></p>
+<p>Fit mô hình có thêm X×Z, rồi kiểm định các hệ số interaction bằng
+test F hoặc ANOVA type III. </p></li>
+<li><p><strong>Dans le cadre d’une ANCOVA, comment interpréter un
+coefficient associé à une variable qualita- tive (facteur) par rapport
+au niveau de référence ?</strong></p>
+<p>Đó là chênh lệch adjusted của outcome giữa nhóm đó và nhóm tham
+chiếu, với cùng mức covariable, miễn là mô hình không interaction hoặc
+đang xét tại một mức covariable xác định. </p></li>
 </ol>
 </div>
 </div>
 <div id="exercices-r" class="section level2">
 <h2>Exercices R</h2>
-<div id="exercice-1" class="section level3">
-<h3>Exercice 1</h3>
+<div id="exercice-1-pharma_study.csv" class="section level3">
+<h3>Exercice 1 : <code>pharma_study.csv</code></h3>
 <p>Une étude clinique a été menée sur 250 patients traités par un nouvel
 antihypertenseur. Pour chaque patient, on a mesuré :</p>
 <p>— Concentration plasmatique du médicament (mg/L) ;</p>
@@ -2621,13 +2913,50 @@ cor(pharma$conc, pharma$adherence)</code></pre>
 <pre class="r"><code>cor(pharma$conc, pharma$poids)</code></pre>
 <pre><code>[1] -0.1410113</code></pre>
 <pre class="r"><code>cor(pharma$conc, pharma$clairance)</code></pre>
-<pre><code>[1] -0.3042902</code></pre></li>
+<pre><code>[1] -0.3042902</code></pre>
+<p><strong><em>a) Corrélations</em></strong></p>
+<p><em>HTML cho:</em></p>
+<ul>
+<li><p><em>corr
+với <code>adherence</code>: <strong>0.4957</strong></em></p></li>
+<li><p><em>với <code>age</code>: <strong>0.2797</strong></em></p></li>
+<li><p><em>với <code>poids</code>: <strong>-0.1410</strong></em></p></li>
+<li><p><em>với <code>clairance</code>: <strong>-0.3043</strong>.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Nồng độ thuốc tăng theo mức độ tuân thủ và
+tuổi; giảm theo cân nặng và độ thanh thải.<br />
+<strong>FR:</strong> La concentration plasmatique augmente avec
+l’adhérence et l’âge, et diminue avec le poids et la
+clairance.</em></p></li>
 <li><p>Estimez un modèle de régression linéaire multiple expliquant la
 concentration plasmatique en fonction des quatre variables
 explicatives.</p>
 <pre class="r"><code># 3. Estimation d&#39;un modèle de régression linéaire multiple
 m1 &lt;- lm(conc ~ age + poids + clairance + adherence, 
-         data = pharma)</code></pre></li>
+         data = pharma)</code></pre>
+<p><strong><em>b) Mô hình multiple</em></strong></p>
+<p><em><code>m1 &lt;- lm(conc ~ age + poids + clairance + adherence)</code> cho:</em></p>
+<ul>
+<li><p><em>Intercept <strong>2.886</strong></em></p></li>
+<li><p><em>age <strong>0.00883</strong>, p = 0.00316</em></p></li>
+<li><p><em>poids <strong>-0.00795</strong>, p = 0.00197</em></p></li>
+<li><p><em>clairance <strong>-0.00858</strong>, p =
+0.00790</em></p></li>
+<li><p><em>adherence <strong>0.22694</strong>, p &lt;
+2e-16</em></p></li>
+<li><p>R2=0.3721,Ra2=0.3618</p></li>
+<li><p><em>F = <strong>36.3</strong>, p &lt; 2.2e-16.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Mô hình có ý nghĩa toàn cục mạnh và giải
+thích khoảng <strong>37.2%</strong> biến thiên nồng độ thuốc. Cả 4 biến
+đều có hiệu ứng độc lập có ý nghĩa thống kê. Trong đó adherence có hệ số
+lớn nhất và t-value mạnh nhất, nên là biến chi phối nhất trong mô hình
+này.<br />
+<strong>FR:</strong> Le modèle est globalement très significatif et
+explique environ <strong>37.2%</strong> de la variabilité de la
+concentration plasmatique. Les quatre variables explicatives ont un
+effet indépendant significatif, et l’adhérence apparaît comme le
+déterminant le plus marqué.</em></p></li>
 <li><p>Vérifiez les hypothèses du modèle (linéarité, normalité des
 résidus, homoscédasticité, absence de multicolinéarité).</p>
 <pre class="r"><code># 4. Vérification des hypothèses
@@ -2760,7 +3089,25 @@ Huong PHAM
 library(car)
 vif(m1)</code></pre>
 <pre><code>      age     poids clairance adherence 
- 1.621135  1.004179  1.620119  1.004784 </code></pre></li>
+ 1.621135  1.004179  1.620119  1.004784 </code></pre>
+<p><strong><em>c) Diagnostic</em></strong></p>
+<p><em>VIF:</em></p>
+<ul>
+<li><p><em>age <strong>1.62</strong></em></p></li>
+<li><p><em>poids <strong>1.00</strong></em></p></li>
+<li><p><em>clairance <strong>1.62</strong></em></p></li>
+<li><p><em>adherence <strong>1.00</strong><br />
+Không có multicolinéarité đáng lo. Leverage threshold
+= <strong>0.04</strong>; có vài điểm vượt ngưỡng. Cook max
+khoảng <strong>0.055</strong>, không có điểm influente
+mạnh.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Giả định nhìn chung ổn. Không có
+multicolinéarité đáng kể, một số điểm có levier cao nhưng chưa thấy
+observation influente thực sự.<br />
+<strong>FR:</strong> Les hypothèses paraissent globalement acceptables.
+Il n’y a pas de multicolinéarité notable, et quelques observations ont
+un levier élevé sans être franchement influentes.</em></p></li>
 <li><p>Interprétez le coefficient de détermination R2.</p>
 <pre class="r"><code># 5. Coefficient de détermination
 summary(m1)$r.squared </code></pre>
@@ -2836,8 +3183,8 @@ predict(m1,
 1 4.129373 2.964919 5.293827</code></pre></li>
 </ol>
 </div>
-<div id="exercice-2" class="section level3">
-<h3>Exercice 2</h3>
+<div id="exercice-2-diet_diabetes.csv" class="section level3">
+<h3>Exercice 2 : diet_diabetes.csv</h3>
 <p>Nous souhaitons évaluer l’efficacité de trois régimes alimentaires
 pour réduire la glycémie (12 semaines après l’introduction du régime)
 chez des patients diabétiques, en tenant compte de la glycémie initiale.
@@ -3169,7 +3516,16 @@ Residuals       117.812 144
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p><strong><em>La pvaleur du terme d’intéraction &gt; 0.05. Les pentes
-sont donc homogènes.</em></strong></p></li>
+sont donc homogènes.</em></strong></p>
+<p><strong><em>a) Homogénéité des pentes</em></strong></p>
+<p><em>Mô hình có interaction <code>gly_base:regime</code> cho p
+= <strong>0.9625</strong>, nên <strong>không có bằng chứng
+interaction</strong>; ANCOVA sans interaction là hợp lệ.</em></p>
+<p><em><strong>VN:</strong> Đây mới là ANCOVA “sạch giáo khoa”: test
+interaction trước, p lớn, nên bỏ interaction là đúng.<br />
+<strong>FR:</strong> C’est un exemple classique d’ANCOVA correctement
+spécifiée: l’interaction n’est pas significative, donc le modèle sans
+interaction est approprié.</em></p></li>
 <li><p>Le régime a-t-il un effet significatif sur la glycémie après 12
 semaines ? Qu’en est-il de la glycémie initiale ?</p>
 <pre class="r"><code># 6. Interprétation du modèle
@@ -3186,7 +3542,36 @@ Residuals   117.874 146
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p><strong><em>Le régime et la glycémie initiale ont un effet
 statistiquement significatif sur la glycémie 12 semaines après
-l’initiation du traitement.</em></strong></p></li>
+l’initiation du traitement.</em></strong></p>
+<p><em><code>m2 &lt;- lm(gly_post ~ gly_base + regime)</code> cho:</em></p>
+<ul>
+<li><p><em><code>gly_base</code>: <strong>0.6915</strong>, p &lt;
+2e-16</em></p></li>
+<li><p><em><code>regimeMediterraneen</code>: <strong>0.4546</strong>, p
+= 0.0125</em></p></li>
+<li><p><em><code>regimeStandard</code>: <strong>1.3002</strong>, p =
+2.43e-11</em></p></li>
+<li><p>R2=0.588<em>,</em> Ra2=0.5795</p></li>
+<li><p><em>test global F = <strong>69.45</strong>, p &lt;
+2.2e-16.</em></p></li>
+</ul>
+<p><em>Vì nhóm tham chiếu là <strong>LowCarb</strong>, nên:</em></p>
+<ul>
+<li><p><em>Mediterraneen có glycémie sau 12 tuần cao hơn <strong>0.455
+mmol/L</strong> so với LowCarb</em></p></li>
+<li><p><em>Standard cao hơn <strong>1.300 mmol/L</strong> so với
+LowCarb</em></p></li>
+<li><p><em>glycémie de base tăng 1 mmol/L thì gly_post tăng
+khoảng <strong>0.691 mmol/L</strong>, giữ chế độ ăn cố
+định.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Sau điều chỉnh trên đường huyết ban
+đầu, <strong>LowCarb là tốt nhất</strong>, Mediterraneen đứng giữa,
+Standard kém nhất.<br />
+<strong>FR:</strong> Après ajustement sur la glycémie
+initiale, <strong>le régime pauvre en glucides est le plus
+efficace</strong>, le régime méditerranéen est intermédiaire, et le
+régime standard est le moins efficace.</em> </p></li>
 <li><p>Interprétez les coefficients estimés et les différences ajustées
 entre les régimes.</p>
 <pre class="r"><code># 7. Interprétation des résultats
@@ -3243,6 +3628,34 @@ $contrasts
 
 P value adjustment: BH method for 3 tests </code></pre></li>
 </ol>
+<p><strong><em>c) Moyennes ajustées</em></strong></p>
+<p><em><code>emmeans</code> cho:</em></p>
+<ul>
+<li><p><em>LowCarb <strong>5.57</strong></em></p></li>
+<li><p><em>Mediterraneen <strong>6.02</strong></em></p></li>
+<li><p><em>Standard <strong>6.87</strong><br />
+và mọi so sánh đôi đều có ý nghĩa.</em></p></li>
+</ul>
+<p><em><strong>VN:</strong> Chênh adjusted giữa LowCarb và Standard là
+lớn nhất, khoảng <strong>1.30 mmol/L</strong>, rất rõ cả về thống kê lẫn
+thực hành.<br />
+<strong>FR:</strong> La différence ajustée la plus importante est
+observée entre LowCarb et Standard, d’environ <strong>1.30
+mmol/L</strong>, avec une forte signification statistique.</em> </p>
+</div>
+<div id="lưu-ý" class="section level3">
+<h3><strong>Lưu ý</strong></h3>
+<p><strong>Régression multiple = effets ajustés</strong>, không phải chỉ
+là tương quan cộng dồn.</p>
+<p><strong>R² cao không tự động có nghĩa mô hình tốt</strong>, và R²
+thấp không tự động có nghĩa mô hình vô dụng.</p>
+<p><strong>Multicolinéarité</strong> làm hỏng diễn giải hệ số riêng
+phần, chứ không nhất thiết làm mô hình dự đoán tệ.</p>
+<p><strong>ANCOVA phải test interaction trước</strong>. Không test mà
+nhảy vào moyennes ajustées là đang đánh bạc với đề thi.</p>
+<p>Với ML_4 hiện tại, <strong>hãy tin slide hơn phần comment của HTML ở
+Exercice 2</strong>, vì HTML đã import nhầm file và tự tạo mâu thuẫn
+logic.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -3273,27 +3686,26 @@ other attached packages:
  [1] emmeans_2.0.1   lubridate_1.9.5 forcats_1.0.1   stringr_1.6.0  
  [5] dplyr_1.2.0     purrr_1.2.1     readr_2.1.6     tidyr_1.3.2    
  [9] tibble_3.3.1    ggplot2_4.0.2   tidyverse_2.0.0 car_3.1-5      
-[13] carData_3.0-6   workflowr_1.7.2
+[13] carData_3.0-6  
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.6       xfun_0.56          bslib_0.10.0       processx_3.8.6    
- [5] lattice_0.22-9     callr_3.7.6        tzdb_0.5.0         vctrs_0.7.1       
- [9] tools_4.4.2        ps_1.9.1           generics_0.1.4     sandwich_3.1-1    
-[13] pkgconfig_2.0.3    Matrix_1.7-4       RColorBrewer_1.1-3 S7_0.2.1          
-[17] lifecycle_1.0.5    compiler_4.4.2     farver_2.1.2       git2r_0.36.2      
-[21] codetools_0.2-20   getPass_0.2-4      httpuv_1.6.16      htmltools_0.5.9   
-[25] sass_0.4.10        yaml_2.3.12        Formula_1.2-5      later_1.4.6       
-[29] pillar_1.11.1      jquerylib_0.1.4    whisker_0.4.1      MASS_7.3-65       
-[33] cachem_1.1.0       multcomp_1.4-29    abind_1.4-8        nlme_3.1-168      
-[37] tidyselect_1.2.1   digest_0.6.39      mvtnorm_1.3-3      stringi_1.8.7     
-[41] labeling_0.4.3     splines_4.4.2      rprojroot_2.1.1    fastmap_1.2.0     
-[45] grid_4.4.2         cli_3.6.5          magrittr_2.0.4     survival_3.8-6    
-[49] utf8_1.2.6         TH.data_1.1-5      withr_3.0.2        scales_1.4.0      
-[53] promises_1.5.0     estimability_1.5.1 timechange_0.4.0   rmarkdown_2.30    
-[57] httr_1.4.8         otel_0.2.0         zoo_1.8-15         hms_1.1.4         
-[61] coda_0.19-4.1      evaluate_1.0.5     knitr_1.51         mgcv_1.9-4        
-[65] rlang_1.1.7        Rcpp_1.1.1         glue_1.8.0         rstudioapi_0.18.0 
-[69] jsonlite_2.0.0     R6_2.6.1           fs_1.6.6          </code></pre>
+ [1] gtable_0.3.6       xfun_0.56          bslib_0.10.0       lattice_0.22-9    
+ [5] tzdb_0.5.0         vctrs_0.7.1        tools_4.4.2        generics_0.1.4    
+ [9] sandwich_3.1-1     pkgconfig_2.0.3    Matrix_1.7-4       RColorBrewer_1.1-3
+[13] S7_0.2.1           lifecycle_1.0.5    compiler_4.4.2     farver_2.1.2      
+[17] git2r_0.36.2       codetools_0.2-20   httpuv_1.6.16      htmltools_0.5.9   
+[21] sass_0.4.10        yaml_2.3.12        Formula_1.2-5      later_1.4.6       
+[25] pillar_1.11.1      jquerylib_0.1.4    whisker_0.4.1      MASS_7.3-65       
+[29] cachem_1.1.0       multcomp_1.4-29    abind_1.4-8        nlme_3.1-168      
+[33] tidyselect_1.2.1   digest_0.6.39      mvtnorm_1.3-3      stringi_1.8.7     
+[37] labeling_0.4.3     splines_4.4.2      rprojroot_2.1.1    fastmap_1.2.0     
+[41] grid_4.4.2         cli_3.6.5          magrittr_2.0.4     survival_3.8-6    
+[45] utf8_1.2.6         TH.data_1.1-5      withr_3.0.2        scales_1.4.0      
+[49] promises_1.5.0     timechange_0.4.0   estimability_1.5.1 rmarkdown_2.30    
+[53] otel_0.2.0         workflowr_1.7.2    zoo_1.8-15         hms_1.1.4         
+[57] coda_0.19-4.1      evaluate_1.0.5     knitr_1.51         mgcv_1.9-4        
+[61] rlang_1.1.7        Rcpp_1.1.1         glue_1.8.0         rstudioapi_0.18.0 
+[65] jsonlite_2.0.0     R6_2.6.1           fs_1.6.6          </code></pre>
 </div>
 </div>
 </div>

@@ -13,11 +13,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # **TD2 R - Régression linéaire simple**
 
-![](images/clipboard-1149420379.png)
+```{r}
+knitr::include_graphics("images/clipboard-1149420379.png", error = FALSE)
+```
 
-![](images/clipboard-580881902.png)
+![](assets/clipboard-1149420379.png)
 
-### Différence entre corrélation et régression
+![](assets/clipboard-580881902.png)
+
+### **Différence entre corrélation et régression**
 
 -   **Corrélation** đo **cường độ và chiều** của liên hệ tuyến tính, đối xứng giữa X và Y.
 
@@ -25,15 +29,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   Corrélation không cho phương trình dự đoán; régression thì có. Đây cũng là lý do “không được dừng ở r” trong bài thi.
 
-### Ước lượng moindres carrés ordinaires
+### **Ước lượng moindres carrés ordinaires**
 
-![](images/clipboard-598795064.png)
+![](assets/clipboard-598795064.png)
 
-### Ý nghĩa các chỉ số trong `summary(lm())`
+### **Ý nghĩa các chỉ số trong `summary(lm())`**
 
-![](images/clipboard-3988885783.png)
+![](assets/clipboard-3988885783.png)
 
-### Giả định của hồi quy tuyến tính đơn
+### **Giả định của hồi quy tuyến tính đơn**
 
 -   **L**inearité: trung bình của Y thay đổi tuyến tính theo X
 
@@ -43,15 +47,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   **E**qual variance: phương sai sai số không đổi, tức homoscédasticité.
 
-### Kiểm tra giả định như thế nào?
+### **Kiểm tra giả định như thế nào?**
 
-![](images/clipboard-1191025101.png)
+![](assets/clipboard-1191025101.png)
 
-### Quan hệ giữa régression và ANOVA
+### **Quan hệ giữa régression và ANOVA**
 
 Trong notebook, exercice 3 cho thấy mô hình `lm(Pression_arterielle ~ Traitement)` với biến định tính cho ra **cùng F-statistic = 1426** như ANOVA cổ điển. Tức là ANOVA một yếu tố thực ra là một trường hợp đặc biệt của mô hình tuyến tính, chỉ khác cách mã hóa biến giải thích. Tổng bình phương vẫn phân rã thành:
 
-![](images/clipboard-1444228596.png)
+![](assets/clipboard-1444228596.png)
 
 # **Exercice 1 - Exemple du cours**
 
@@ -219,7 +223,7 @@ Nous disposons pour cela d’un échantillon de 250 observations pour lesquelles
 
     ***Interprétation du modèle estimé :***
 
-    ![](images/clipboard-1004469372.png)
+    ![](assets/clipboard-1004469372.png)
 
     **FR :** La pente 0.04337 signifie qu’une augmentation d’1 point de pourcentage des lipides alimentaires est associée à une augmentation moyenne de 0.043 g/L du cholestérol. L’ordonnée à l’origine 0.473 correspond au cholestérol théorique attendu pour X=0, mais son interprétation pratique est limitée. Les estimateurs obtenus à la main et avec `lm()` coïncident, ce qui valide le calcul par moindres carrés. 
 
@@ -340,7 +344,7 @@ Dans le cadre de cette exercice, nous souhaiterions évaluer **l’effet de la t
 
     *Mô hình đầu tiên là:*
 
-    *![](images/clipboard-176940514.png){width="1164"}*
+    *![](assets/clipboard-176940514.png){width="1164"}*
 
     ***FR :** Une augmentation d’1 cm de taille est associée à une augmentation moyenne de 0.0455 unité de VEF. La pente est hautement significative (`t = 69.77`, `p < 2e-16`) et le modèle explique 88.25% de la variabilité du VEF. C’est un excellent ajustement sur le plan quantitatif.*
 
@@ -430,7 +434,7 @@ Dans le cadre de cette exercice, nous souhaiterions évaluer **l’effet de la t
 
     *Mô hình sau biến đổi là:*
 
-    *![](images/clipboard-3168697251.png)*
+    *![](assets/clipboard-3168697251.png)*
 
     ***FR :** Après transformation logarithmique, la pente reste très significative (`t = 75.80`, `p < 2e-16`) et* R*2 augmente à 0.8987. Le modèle sur l’échelle logarithmique semble donc mieux adapté.*
 
@@ -588,11 +592,11 @@ Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude cl
 
 1.  **Écrivez l’équation d’un modèle linéaire simple.**
 
-    ![](images/clipboard-195845525.png)
+    ![](assets/clipboard-195845525.png)
 
 2.  **Que représentent les paramètres β0 et β1 ?**
 
-    ![](images/clipboard-3276515724.png)
+    ![](assets/clipboard-3276515724.png)
 
 3.  **Que signifie le terme d’erreur ε dans le modèle ?**
 
@@ -702,7 +706,7 @@ Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude cl
 
 2.  **Donnez la relation fondamentale entre SCtot, SCexp et SCres.**
 
-    ![](images/clipboard-2061175937.png)
+    ![](assets/clipboard-2061175937.png)
 
 3.  **Pourquoi le test F est-il identique dans les deux approches ?**
 
@@ -710,7 +714,7 @@ Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude cl
 
 ## 2 - Exercices R
 
-### Exercice 1 — Consommation de sel et pression artérielle systolique
+### **Exercice 1 — Consommation de sel et pression artérielle systolique**
 
 Une étude explore la relation entre la consommation quotidienne de sel (en grammes par jour) et la pression artérielle systolique (en mmHg) chez des adultes. Les données proviennent d’un échantillon de 240 individus (fichier sel_tension.csv). Questions :
 
@@ -813,7 +817,7 @@ Une étude explore la relation entre la consommation quotidienne de sel (en gram
 
     ***Modèle et significativité***
 
-    *![](images/clipboard-553745980.png)*
+    *![](assets/clipboard-553745980.png)*
 
     *Mỗi tăng 1 g muối/ngày làm PAS tăng trung bình khoảng **1.34 mmHg**.*
 
@@ -841,7 +845,7 @@ Une étude explore la relation entre la consommation quotidienne de sel (en gram
 
 10. Discutez l’effet du sel et les limites éventuelles de l’analyse.
 
-### Exercice 2 — Âge et temps de réaction
+### **Exercice 2 — Âge et temps de réaction**
 
 Une étude examine la relation entre l’âge (en années) et le temps de réaction (en millisecondes) lors d’une tâche cognitive. Les données concernent 300 participants âgés de 20 à 75 ans (fichier age_temps_reaction.csv). Questions :
 
@@ -958,7 +962,7 @@ Une étude examine la relation entre l’âge (en années) et le temps de réact
 
     ***Modèle estimé:***
 
-    *![](images/clipboard-396700802.png)*
+    *![](assets/clipboard-396700802.png)*
 
     *Mỗi tăng 1 tuổi làm temps de réaction tăng trung bình khoảng **2.94 ms**.*
 
@@ -966,7 +970,7 @@ Une étude examine la relation entre l’âge (en années) et le temps de réact
 
     *Đây là mức khá tốt nhưng chưa hoàn hảo, tức còn nhiều yếu tố khác ảnh hưởng.* 
 
-## Interpretation en français :)
+## **Interpretation en français :)**
 
 -   La régression linéaire simple étudie le lien entre une variable explicative quantitative et une variable réponse quantitative.
 

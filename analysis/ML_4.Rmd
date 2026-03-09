@@ -1,5 +1,5 @@
 ---
-title: "TD4 R - Régression linéaire multiple et analyse de covariance"
+title: "Régression linéaire multiple et analyse de covariance (ANCOVA)"
 author: "PHAM Huong"
 date: "2026-03-08"
 output: html_document
@@ -8,6 +8,22 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# **A. Régression linéaire multiple**
+
+![](assets/clipboard-3743540989.png)
+
+![](assets/clipboard-182334936.png)
+
+![](assets/clipboard-375922867.png)
+
+![](assets/clipboard-1616882929.png)
+
+# **B. ANCOVA**
+
+![](assets/clipboard-1236446406.png)
+
+![](assets/clipboard-3037178067.png)
 
 # Exercice 1 - Régression linéaire multiple : exemple du cours
 
@@ -53,6 +69,13 @@ Nous disposons pour cela d’un échantillon de 200 observations.
     hist(exercice1$bmi)
     ```
 
+    ***Statistiques descriptives và corrélations :***
+
+    *Bộ dữ liệu có 200 quan sát; cholesterol có trung bình khoảng **6.11 mmol/L**, SBP khoảng **130.2 mmHg**, DBP khoảng **82.3 mmHg**, tuổi khoảng **48.0 năm**, BMI khoảng **37.45 kg/m²**. Có thiếu dữ liệu đáng kể cho `chol` và đặc biệt là `age`, nên việc dùng `complete.cases()` sau đó là hoàn toàn có lý.*
+
+    ***VN:** Ở bước mô tả, bạn cần nói ngay hai ý: mức cholesterol trung bình của mẫu tương đối cao, và dữ liệu có thiếu, nên các phân tích tương quan/hồi quy phải lưu ý số lượng quan sát thực sự được dùng.\
+    **FR:** À l’étape descriptive, il faut souligner que le taux moyen de cholestérol est relativement élevé et qu’il existe des valeurs manquantes, en particulier pour l’âge, ce qui réduit l’effectif des analyses complètes.*
+
     ```{r}
     ## Représentation graphique et coefficients de corrélation
     plot(x = exercice1$sbp, y = exercice1$chol,
@@ -80,6 +103,19 @@ Nous disposons pour cela d’un échantillon de 200 observations.
     cor.test(exercice1$bmi, exercice1$chol, use = "complete.obs")
     ```
 
+    ***Tương quan Pearson cho thấy:***
+
+    -   *`sbp` với `chol`:* r=0.378*, p rất nhỏ*
+
+    -   *`dbp` với `chol`:* r=0.399 *p rất nhỏ*
+
+    -   *`age` với `chol`:* r=0.333*, p = 0.0012*
+
+    -   *`bmi` với `chol`:* r=−0.020*, p = 0.796, không có ý nghĩa.*
+
+    ***VN:** Trước điều chỉnh, cholesterol tăng cùng SBP, DBP và tuổi; BMI gần như không liên quan.\
+    **FR:** Avant ajustement, le cholestérol est positivement corrélé à la pression systolique, à la pression diastolique et à l’âge, alors que l’IMC ne montre pas d’association linéaire significative.*
+
     ```{r}
     ## Dataset avec données complètes 
     exercice1_bis <- exercice1[complete.cases(exercice1[,c("age","chol", "sbp", "dbp", "bmi")]), ]
@@ -95,7 +131,66 @@ Nous disposons pour cela d’un échantillon de 200 observations.
 
     ```
 
-4.  Vérifiez les hypothèses sous-jacentes au modèle.
+    ***Mô hình hồi quy multiple :***
+
+    *Mô hình `chol ~ age + sbp + dbp + bmi` cho:*
+
+    *![](assets/clipboard-2832655002.png)*
+
+    *Nghĩa là mô hình có ý nghĩa toàn cục, nhưng chỉ giải thích khoảng **20%** biến thiên của cholesterol. Suy ra phần lớn biến thiên còn lại đến từ những yếu tố khác không có trong mô hình. Từ bậc tự do còn lại, mô hình complete-case này dùng **92 quan sát**.*
+
+    ***VN:** Mô hình có ý nghĩa thống kê toàn cục, nhưng khả năng giải thích ở mức vừa-thấp. Không được nói “mô hình tốt” chỉ vì p-value nhỏ.\
+    **FR:** Le modèle est globalement significatif, mais son pouvoir explicatif reste modeste. Il ne faut pas confondre significativité statistique et qualité prédictive élevée.*
+
+    ***Các hệ số:***
+
+    -   *`age` = **+0.0401**, p = 0.0118*
+
+    -   *`sbp` = **-0.00469**, p = 0.697*
+
+    -   *`dbp` = **+0.0315**, p = 0.086*
+
+    -   *`bmi` = **+0.0739**, p = 0.203.*
+
+    ***VN:** Sau ajustement đồng thời trên SBP, DBP và BMI, chỉ có **tuổi** còn liên quan có ý nghĩa với cholesterol. Cụ thể, tăng 1 tuổi liên quan với tăng trung bình khoảng **0.04 mmol/L cholesterol**, giữ các biến khác cố định. SBP không còn significant, DBP chỉ ở mức biên, BMI không significant.\
+    **FR:** Après ajustement simultané sur la pression systolique, la pression diastolique et l’IMC, seul **l’âge** reste significativement associé au cholestérol. Une augmentation d’un an est associée à une hausse moyenne d’environ **0.04 mmol/L** du cholestérol, toutes choses égales par ailleurs. La PAS n’est plus significative, la PAD est seulement borderline, et l’IMC n’est pas significatif.*
+
+    ***Vì sao SBP/DBP tương quan dương nhưng vào mô hình lại mất ý nghĩa?***
+
+    *Đây là điểm rất đáng nói khi đi thi. Trong dữ liệu này, `sbp` và `dbp` tương quan với nhau rất mạnh: **r = 0.879**. VIF của chúng lần lượt khoảng **4.65** và **4.48**, cao hơn rõ rệt so với các biến khác. Điều đó giải thích vì sao ở phân tích đơn biến cả hai đều có vẻ liên quan với cholesterol, nhưng khi đưa cùng lúc vào mô hình thì hiệu ứng riêng phần trở nên không ổn định, SE tăng, p-value tăng, thậm chí dấu của `sbp` đổi âm.*
+
+    ***VN:** Đây là ví dụ kinh điển của **multicolinéarité modérée à importante**.\
+    **FR:** C’est un exemple classique où une association univariée ne se maintient pas nécessairement après ajustement, en raison de la colinéarité entre variables explicatives.* 
+
+4.  **Vérifiez les hypothèses sous-jacentes au modèle.**
+
+    ***Giả định của mô hình :***
+
+    *Cần nhớ đúng 5 ý:*
+
+    -   *linéarité*
+
+    -   *indépendance des observations*
+
+    -   *normalité des erreurs*
+
+    -   *homoscédasticité*
+
+    -   *absence de multicolinéarité importante.*
+
+    ***HTML cho thấy tác giả đã kiểm tra:***
+
+    -   *residuals vs each predictor*
+
+    -   *QQ plot*
+
+    -   *residuals vs fitted*
+
+    -   *VIF*
+
+    -   *leverage*
+
+    -   *Cook’s distance.*
 
     ```{r}
     # 4. Vérification des hypothèses du modèle
@@ -145,6 +240,34 @@ Nous disposons pour cela d’un échantillon de 200 observations.
 
     ```
 
+    **Multicolinéarité** Đây là chỗ dễ bị hỏi lý thuyết lẫn diễn giải output.
+
+    **VIF:**
+
+    ![](assets/clipboard-4148273029.png)
+
+    **Ý nghĩa:**
+
+    -   gần 1: ổn
+
+    -   cao: biến đó bị giải thích mạnh bởi các biến giải thích còn lại
+
+    -   ngưỡng thực hành hay dùng: **\> 5** hoặc **\> 10** tùy tác giả.
+
+    **Hậu quả:**
+
+    -   SE tăng
+
+    -   khoảng tin cậy rộng
+
+    -   p-value tăng
+
+    -   coefficient mất ổn định
+
+    -   có thể đổi dấu “ngược đời”
+
+    -   mô hình vẫn có thể dự đoán được, nhưng **khó giải thích từng hệ số riêng lẻ**.
+
     ```{r}
     ## Multicolinéarité
     ### Variance des paramètres
@@ -162,7 +285,38 @@ Nous disposons pour cela d’un échantillon de 200 observations.
     vif(modele1)
     ```
 
-5.  Y-a-t’il des observations aberrantes et/ou influentes ?
+    ***Về mặt số liệu:***
+
+    -   *QQ plot có đánh dấu 2 quan sát (67, 69), tức có vài điểm lệch ở đuôi phân bố phần dư*
+
+    -   *leverage cao ở các quan sát 61, 73, 86, 87*
+
+    -   *Cook’s distance tối đa khoảng **0.1085**, thấp hơn 1 rõ rệt, nên **không có điểm ảnh hưởng mạnh theo ngưỡng thực hành thường dùng**.*
+
+    ***VN:** Kết luận hợp lý khi đi thi là: không có bằng chứng số học của một vi phạm thô bạo, nhưng có **multicolinéarité giữa SBP và DBP**, cùng vài điểm leverage cao cần lưu ý.\
+    **FR:** La conclusion raisonnable est qu’il n’existe pas de violation majeure évidente sur la base des diagnostics rapportés, mais qu’il existe une **colinéarité notable entre PAS et PAD** ainsi que quelques observations à levier élevé*
+
+5.  **Y-a-t’il des observations aberrantes et/ou influentes ?**
+
+    **Valeurs aberrantes và influentes**
+
+    -   **Valeur aberrante**: điểm khác thường so với đám mây dữ liệu
+
+    -   **Valeur influente**: điểm mà nếu bỏ ra thì kết quả mô hình thay đổi đáng kể.
+
+    **Levier:**
+
+    ![](assets/clipboard-1130729836.png)
+
+    thì được xem là cao. 
+
+    **Distance de Cook:**
+
+    Với một cá thể mới xh:
+
+    ![](assets/clipboard-3374935997.png)
+
+    Khoảng dự đoán luôn rộng hơn khoảng tin cậy của giá trị trung bình, vì nó bao gồm biến thiên cá thể.
 
     ```{r}
     # 5. Observations aberrrantes et influentes
@@ -206,6 +360,17 @@ Nous disposons pour cela d’un échantillon de 200 observations.
     prediction
 
     ```
+
+    ***Prédiction :***
+
+    *Dự đoán cho người 65 tuổi, BMI 35, SBP 134, DBP 96:*
+
+    -   *valeur prédite = **7.11 mmol/L***
+
+    -   *intervalle de prédiction 95% = **[4.88 ; 9.33]**.*
+
+    ***VN:** Giá trị dự đoán trung tâm là 7.11 mmol/L, nhưng khoảng dự đoán khá rộng, cho thấy dự đoán cá thể còn bất định đáng kể.\
+    **FR:** La valeur prédite est de 7.11 mmol/L, avec un intervalle de prédiction assez large, ce qui traduit une incertitude importante au niveau individuel.*
 
 # Exercice 2 - Analyse de covariance
 
@@ -281,6 +446,25 @@ L’objectif est de comparer les scores post-traitement entre les trois groupes,
       )
 
     ```
+
+    *Mỗi nhóm có **60** bệnh nhân. Về `phq9_base`, trung bình:*
+
+    -   *Activation: **14.9***
+
+    -   *TCC: **15.6***
+
+    -   *Témoin: **14.1***
+
+    *Về `phq9_post`, trung bình:*
+
+    -   *Activation: **11.0***
+
+    -   *TCC: **7.64***
+
+    -   *Témoin: **13.2**.*
+
+    ***VN:** Nhìn thô, TCC cho kết quả sau điều trị tốt nhất, Activation đứng giữa, nhóm chứng kém nhất. Nhưng với ANCOVA, đó mới chỉ là mô tả thô.\
+    **FR:** Descriptivement, la TCC semble la plus efficace, l’Activation est intermédiaire et le groupe témoin présente les scores post-traitement les plus élevés. Cependant, cela reste une comparaison brute avant ajustement sur le score initial.*
 
 3.  Représentation graphiquement la relation entre le traitement, le score de dépression initial et le score de dépression 8 semaines après l’initiation du traitement. Que constatez-vous ?
 
@@ -507,33 +691,105 @@ L’objectif est de comparer les scores post-traitement entre les trois groupes,
 
 ### Régression linéaire multiple
 
-1.  Quelle est la différence entre une régression linéaire simple et une régression linéaire multiple ?
-2.  Donnez la forme générale de l’équation d’une régression linéaire multiple.
-3.  Que représente le coefficient β0 dans un modèle de régression linéaire multiple ?
-4.  Quelle est la méthode utilisée pour estimer les paramètres d’un modèle de régression linéaire multiple ?
-5.  Écrivez la formule matricielle de l’estimateur des moindres carrés pour β.
-6.  Quelles sont les hypothèses fondamentales d’un modèle de régression linéaire multiple ?
-7.  Comment calcule-t-on le coefficient de détermination R2 et que signifie-t-il ?
-8.  Pourquoi utilise-t-on le coefficient de détermination ajusté Ra2 et comment se calcule-t-il ?
-9.  Quelle est la statistique de test utilisée pour vérifier la significativité globale d’un modèle ?
-10. Quelle est la statistique de test pour évaluer la significativité individuelle d’un paramètre βj ?
-11. Donnez la formule d’un intervalle de prédiction pour une nouvelle observation.
-12. Quelles sont les conséquences de la multicolinéarité sur l’interprétation des paramètres ?
-13. Comment calcule-t-on le facteur d’inflation de la variance (VIF) et que signifie-t-il ?
-14. Quelle règle pratique permet d’identifier une observation influente à partir de la distance de Cook ?
-15. Quelle est la différence entre une valeur aberrante et une valeur influente ?
+1.  **Quelle est la différence entre une régression linéaire simple et une régression linéaire multiple ?**
 
-### Analyse de Covariance (ANCOVA)
+    Khác gì giữa régression simple và multiple?\
+    Régression simple có 1 biến giải thích; multiple có nhiều biến giải thích. Multiple cho phép ước lượng **effets ajustés**.
 
-1.  Qu’est-ce qu’une analyse de covariance (ANCOVA) et dans quel contexte l’utilise-t-on ?
-2.  Donnez la forme générale du modèle ANCOVA sans interaction.
-3.  Que signifie l’hypothèse d’homogénéité des pentes dans une ANCOVA ?
-4.  Comment tester la significativité d’un terme d’interaction dans une ANCOVA ?
-5.  Dans le cadre d’une ANCOVA, comment interpréter un coefficient associé à une variable qualita- tive (facteur) par rapport au niveau de référence ?
+2.  **Donnez la forme générale de l’équation d’une régression linéaire multiple.**
+
+    ![](assets/clipboard-4074991009.png)
+
+3.  **Que représente le coefficient β0 dans un modèle de régression linéaire multiple ?**
+
+    β0​ là giá trị trung bình kỳ vọng của Y khi tất cả các biến giải thích bằng 0.
+
+4.  **Quelle est la méthode utilisée pour estimer les paramètres d’un modèle de régression linéaire multiple ?**
+
+    Moindres carrés ordinaires
+
+5.  **Écrivez la formule matricielle de l’estimateur des moindres carrés pour β.**
+
+    ![](assets/clipboard-2151769098.png)
+
+6.  **Quelles sont les hypothèses fondamentales d’un modèle de régression linéaire multiple ?**
+
+    Linéarité,
+
+    indépendance
+
+    normalité des erreurs,
+
+    homoscédasticité,
+
+    absence de multicolinéarité importante.
+
+7.  **Comment calcule-t-on le coefficient de détermination R2 et que signifie-t-il ?**
+
+    ![](assets/clipboard-3147457855.png)
+
+    Là tỷ lệ biến thiên của Y được mô hình giải thích.
+
+8.  **Pourquoi utilise-t-on le coefficient de détermination ajusté Ra2 et comment se calcule-t-il ?**
+
+    Vì sao cầnR2 ajusté?\
+    Vì R2 thường tăng khi thêm biến, kể cả biến vô ích. R2R2 ajusté hiệu chỉnh theo số biến:
+
+9.  **Quelle est la statistique de test utilisée pour vérifier la significativité globale d’un modèle ?**
+
+    F-test cho giả thuyết H0:β1=⋯=βp=0.
+
+10. **Quelle est la statistique de test pour évaluer la significativité individuelle d’un paramètre βj ?**
+
+    t-test cho H0:βj=0 
+
+11. **Donnez la formule d’un intervalle de prédiction pour une nouvelle observation.**
+
+    ![](assets/clipboard-3552048261.png)
+
+12. **Quelles sont les conséquences de la multicolinéarité sur l’interprétation des paramètres ?**
+
+    SE tăng, IC rộng, hệ số không ổn định, p-value tăng, dấu hệ số có thể bất thường, làm diễn giải từng biến kém tin cậy. 
+
+13. **Comment calcule-t-on le facteur d’inflation de la variance (VIF) et que signifie-t-il ?**
+
+    ![](assets/clipboard-3261197731.png)
+
+    VIF cao nghĩa là biến đó bị đồng tuyến tính với các biến còn lại.
+
+14. **Quelle règle pratique permet d’identifier une observation influente à partir de la distance de Cook ?**
+
+    Cook \> 1 thường được xem là observation influente
+
+15. **Quelle est la différence entre une valeur aberrante et une valeur influente ?**
+
+    Aberrante là điểm khác thường; influente là điểm làm thay đổi kết quả mô hình rõ rệt khi loại bỏ nó. Một điểm có thể aberrante mà chưa chắc influente. 
+
+### **Analyse de Covariance (ANCOVA)**
+
+1.  **Qu’est-ce qu’une analyse de covariance (ANCOVA) et dans quel contexte l’utilise-t-on ?**
+
+    Là mô hình tuyến tính dùng khi có một biến định tính và một biến định lượng cùng giải thích một biến đáp ứng liên tục.
+
+2.  **Donnez la forme générale du modèle ANCOVA sans interaction.**
+
+    ![](assets/clipboard-720147393.png)
+
+3.  **Que signifie l’hypothèse d’homogénéité des pentes dans une ANCOVA ?**
+
+    Là giả định cho rằng hiệu ứng của covariable định lượng lên outcome giống nhau ở mọi nhóm, tức không có interaction X×Z. 
+
+4.  **Comment tester la significativité d’un terme d’interaction dans une ANCOVA ?**
+
+    Fit mô hình có thêm X×Z, rồi kiểm định các hệ số interaction bằng test F hoặc ANOVA type III. 
+
+5.  **Dans le cadre d’une ANCOVA, comment interpréter un coefficient associé à une variable qualita- tive (facteur) par rapport au niveau de référence ?**
+
+    Đó là chênh lệch adjusted của outcome giữa nhóm đó và nhóm tham chiếu, với cùng mức covariable, miễn là mô hình không interaction hoặc đang xét tại một mức covariable xác định. 
 
 ## Exercices R
 
-### Exercice 1
+### Exercice 1 : `pharma_study.csv`
 
 Une étude clinique a été menée sur 250 patients traités par un nouvel antihypertenseur. Pour chaque patient, on a mesuré :
 
@@ -602,6 +858,21 @@ Une étude clinique a été menée sur 250 patients traités par un nouvel antih
     cor(pharma$conc, pharma$clairance)
     ```
 
+    ***a) Corrélations***
+
+    *HTML cho:*
+
+    -   *corr với `adherence`: **0.4957***
+
+    -   *với `age`: **0.2797***
+
+    -   *với `poids`: **-0.1410***
+
+    -   *với `clairance`: **-0.3043**.*
+
+    ***VN:** Nồng độ thuốc tăng theo mức độ tuân thủ và tuổi; giảm theo cân nặng và độ thanh thải.\
+    **FR:** La concentration plasmatique augmente avec l’adhérence et l’âge, et diminue avec le poids et la clairance.*
+
 3.  Estimez un modèle de régression linéaire multiple expliquant la concentration plasmatique en fonction des quatre variables explicatives.
 
     ```{r}
@@ -610,6 +881,27 @@ Une étude clinique a été menée sur 250 patients traités par un nouvel antih
              data = pharma)
 
     ```
+
+    ***b) Mô hình multiple***
+
+    *`m1 <- lm(conc ~ age + poids + clairance + adherence)` cho:*
+
+    -   *Intercept **2.886***
+
+    -   *age **0.00883**, p = 0.00316*
+
+    -   *poids **-0.00795**, p = 0.00197*
+
+    -   *clairance **-0.00858**, p = 0.00790*
+
+    -   *adherence **0.22694**, p \< 2e-16*
+
+    -   R2=0.3721,Ra2=0.3618
+
+    -   *F = **36.3**, p \< 2.2e-16.*
+
+    ***VN:** Mô hình có ý nghĩa toàn cục mạnh và giải thích khoảng **37.2%** biến thiên nồng độ thuốc. Cả 4 biến đều có hiệu ứng độc lập có ý nghĩa thống kê. Trong đó adherence có hệ số lớn nhất và t-value mạnh nhất, nên là biến chi phối nhất trong mô hình này.\
+    **FR:** Le modèle est globalement très significatif et explique environ **37.2%** de la variabilité de la concentration plasmatique. Les quatre variables explicatives ont un effet indépendant significatif, et l’adhérence apparaît comme le déterminant le plus marqué.*
 
 4.  Vérifiez les hypothèses du modèle (linéarité, normalité des résidus, homoscédasticité, absence de multicolinéarité).
 
@@ -636,6 +928,22 @@ Une étude clinique a été menée sur 250 patients traités par un nouvel antih
     library(car)
     vif(m1)
     ```
+
+    ***c) Diagnostic***
+
+    *VIF:*
+
+    -   *age **1.62***
+
+    -   *poids **1.00***
+
+    -   *clairance **1.62***
+
+    -   *adherence **1.00**\
+        Không có multicolinéarité đáng lo. Leverage threshold = **0.04**; có vài điểm vượt ngưỡng. Cook max khoảng **0.055**, không có điểm influente mạnh.*
+
+    ***VN:** Giả định nhìn chung ổn. Không có multicolinéarité đáng kể, một số điểm có levier cao nhưng chưa thấy observation influente thực sự.\
+    **FR:** Les hypothèses paraissent globalement acceptables. Il n’y a pas de multicolinéarité notable, et quelques observations ont un levier élevé sans être franchement influentes.*
 
 5.  Interprétez le coefficient de détermination R2.
 
@@ -685,7 +993,7 @@ Une étude clinique a été menée sur 250 patients traités par un nouvel antih
             level=0.95)
     ```
 
-### Exercice 2
+### Exercice 2 : diet_diabetes.csv
 
 Nous souhaitons évaluer l’efficacité de trois régimes alimentaires pour réduire la glycémie (12 semaines après l’introduction du régime) chez des patients diabétiques, en tenant compte de la glycémie initiale. Une étude a ainsi été menée auprès de 150 patients diabétiques répartis aléatoirement en trois groupes : régime méditerranéen, régime pauvre en glucides, régime standard (témoin). Pour chaque patient, la glycémie à jeun (mmol/L) a été mesurée avant le début du régime et après 12 semaines.
 
@@ -788,6 +1096,13 @@ Nous souhaitons évaluer l’efficacité de trois régimes alimentaires pour ré
 
     ***La pvaleur du terme d'intéraction \> 0.05. Les pentes sont donc homogènes.***
 
+    ***a) Homogénéité des pentes***
+
+    *Mô hình có interaction `gly_base:regime` cho p = **0.9625**, nên **không có bằng chứng interaction**; ANCOVA sans interaction là hợp lệ.*
+
+    ***VN:** Đây mới là ANCOVA “sạch giáo khoa”: test interaction trước, p lớn, nên bỏ interaction là đúng.\
+    **FR:** C’est un exemple classique d’ANCOVA correctement spécifiée: l’interaction n’est pas significative, donc le modèle sans interaction est approprié.*
+
 6.  Le régime a-t-il un effet significatif sur la glycémie après 12 semaines ? Qu’en est-il de la glycémie initiale ?
 
     ```{r}
@@ -797,6 +1112,29 @@ Nous souhaitons évaluer l’efficacité de trois régimes alimentaires pour ré
     ```
 
     ***Le régime et la glycémie initiale ont un effet statistiquement significatif sur la glycémie 12 semaines après l'initiation du traitement.***
+
+    *`m2 <- lm(gly_post ~ gly_base + regime)` cho:*
+
+    -   *`gly_base`: **0.6915**, p \< 2e-16*
+
+    -   *`regimeMediterraneen`: **0.4546**, p = 0.0125*
+
+    -   *`regimeStandard`: **1.3002**, p = 2.43e-11*
+
+    -   R2=0.588*,* Ra2=0.5795
+
+    -   *test global F = **69.45**, p \< 2.2e-16.*
+
+    *Vì nhóm tham chiếu là **LowCarb**, nên:*
+
+    -   *Mediterraneen có glycémie sau 12 tuần cao hơn **0.455 mmol/L** so với LowCarb*
+
+    -   *Standard cao hơn **1.300 mmol/L** so với LowCarb*
+
+    -   *glycémie de base tăng 1 mmol/L thì gly_post tăng khoảng **0.691 mmol/L**, giữ chế độ ăn cố định.*
+
+    ***VN:** Sau điều chỉnh trên đường huyết ban đầu, **LowCarb là tốt nhất**, Mediterraneen đứng giữa, Standard kém nhất.\
+    **FR:** Après ajustement sur la glycémie initiale, **le régime pauvre en glucides est le plus efficace**, le régime méditerranéen est intermédiaire, et le régime standard est le moins efficace.* 
 
 7.  Interprétez les coefficients estimés et les différences ajustées entre les régimes.
 
@@ -822,3 +1160,29 @@ Nous souhaitons évaluer l’efficacité de trois régimes alimentaires pour ré
             pairwise ~ regime, adjust = "BH")
 
     ```
+
+***c) Moyennes ajustées***
+
+*`emmeans` cho:*
+
+-   *LowCarb **5.57***
+
+-   *Mediterraneen **6.02***
+
+-   *Standard **6.87**\
+    và mọi so sánh đôi đều có ý nghĩa.*
+
+***VN:** Chênh adjusted giữa LowCarb và Standard là lớn nhất, khoảng **1.30 mmol/L**, rất rõ cả về thống kê lẫn thực hành.\
+**FR:** La différence ajustée la plus importante est observée entre LowCarb et Standard, d’environ **1.30 mmol/L**, avec une forte signification statistique.* 
+
+### **Lưu ý**
+
+**Régression multiple = effets ajustés**, không phải chỉ là tương quan cộng dồn.
+
+**R² cao không tự động có nghĩa mô hình tốt**, và R² thấp không tự động có nghĩa mô hình vô dụng.
+
+**Multicolinéarité** làm hỏng diễn giải hệ số riêng phần, chứ không nhất thiết làm mô hình dự đoán tệ.
+
+**ANCOVA phải test interaction trước**. Không test mà nhảy vào moyennes ajustées là đang đánh bạc với đề thi.
+
+Với ML_4 hiện tại, **hãy tin slide hơn phần comment của HTML ở Exercice 2**, vì HTML đã import nhầm file và tự tạo mâu thuẫn logic.
