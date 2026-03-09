@@ -1,5 +1,5 @@
 ---
-title: "ML_2"
+title: "Régression linéaire simple"
 author: "PHAM Huong"
 date: "2026-03-08"
 output: html_document
@@ -9,9 +9,51 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# RÉGRESSION LINÉAIRE SIMPLE
+
 # **TD2 R - Régression linéaire simple**
 
-## **Exercice 1 - Exemple du cours**
+![](images/clipboard-1149420379.png)
+
+![](images/clipboard-580881902.png)
+
+### Différence entre corrélation et régression
+
+-   **Corrélation** đo **cường độ và chiều** của liên hệ tuyến tính, đối xứng giữa X và Y.
+
+-   **Régression** đặt hướng phân tích rõ ràng: dùng X để **giải thích hoặc dự đoán** Y.
+
+-   Corrélation không cho phương trình dự đoán; régression thì có. Đây cũng là lý do “không được dừng ở r” trong bài thi.
+
+### Ước lượng moindres carrés ordinaires
+
+![](images/clipboard-598795064.png)
+
+### Ý nghĩa các chỉ số trong `summary(lm())`
+
+![](images/clipboard-3988885783.png)
+
+### Giả định của hồi quy tuyến tính đơn
+
+-   **L**inearité: trung bình của Y thay đổi tuyến tính theo X
+
+-   **I**ndependence: sai số độc lập
+
+-   **N**ormality: sai số phân phối gần chuẩn
+
+-   **E**qual variance: phương sai sai số không đổi, tức homoscédasticité.
+
+### Kiểm tra giả định như thế nào?
+
+![](images/clipboard-1191025101.png)
+
+### Quan hệ giữa régression và ANOVA
+
+Trong notebook, exercice 3 cho thấy mô hình `lm(Pression_arterielle ~ Traitement)` với biến định tính cho ra **cùng F-statistic = 1426** như ANOVA cổ điển. Tức là ANOVA một yếu tố thực ra là một trường hợp đặc biệt của mô hình tuyến tính, chỉ khác cách mã hóa biến giải thích. Tổng bình phương vẫn phân rã thành:
+
+![](images/clipboard-1444228596.png)
+
+# **Exercice 1 - Exemple du cours**
 
 Dans le cadre d’une étude de santé publique, nous cherchons à évaluer le lien qui pourrait exister entre la proportion de lipides contenue dans l’alimentation et le taux de cholestérol chez les adultes âgés de 45 à 65 ans.
 
@@ -52,6 +94,12 @@ Nous disposons pour cela d’un échantillon de 250 observations pour lesquelles
          main = "Distribution de la proportion de lipides dans l'alimentation ")
     ```
 
+    ***Interprétation des statistiques descriptives***
+
+    ***FR :** L’échantillon comprend 250 sujets. La proportion de lipides dans l’alimentation varie de 13.20% à 64.68%, avec une moyenne de 34.84% et un écart-type de 9.63. Le cholestérol varie de 0.652 à 3.349 g/L, avec une moyenne de 1.984 g/L et un écart-type de 0.511. Les deux variables présentent donc une variabilité suffisante pour étudier leur relation.*
+
+    ***VN :** Mẫu có 250 người. Tỷ lệ lipid trong khẩu phần dao động từ 13.20% đến 64.68%, trung bình 34.84%, SD 9.63. Cholestérol dao động từ 0.652 đến 3.349 g/L, trung bình 1.984 g/L, SD 0.511. Hai biến có độ phân tán đủ lớn để khảo sát mối liên hệ tuyến tính.*
+
     ```{r}
     #- Taux de cholesterol
     summary(exercice1$Y)
@@ -76,6 +124,12 @@ Nous disposons pour cela d’un échantillon de 250 observations pour lesquelles
 
     cor(x = exercice1$X, y = exercice1$Y)
     ```
+
+    ***Interprétation du lien entre X et Y***
+
+    ***FR :** Le nuage de points est adapté car il s’agit de deux variables quantitatives. Le coefficient de corrélation est* r=0.8177r*=0.8177, ce qui indique une forte corrélation linéaire positive: plus la proportion de lipides augmente, plus le cholestérol tend à augmenter.*
+
+    ***VN :** Dùng scatterplot là đúng vì đây là hai biến định lượng. Hệ số tương quan* r=0.8177r*=0.8177 cho thấy **tương quan tuyến tính dương mạnh**: tỷ lệ lipid ăn vào càng cao thì cholestérol càng có xu hướng cao.*
 
 4.  Pourquoi un modèle linéaire simple est la méthode statistique appropriée pour analyser l’effet de la proportion moyenne de lipides dans l’alimentation sur le taux de cholestérol ? Ecrivez l’équation du modèle.
 
@@ -160,8 +214,16 @@ Nous disposons pour cela d’un échantillon de 250 observations pour lesquelles
     summary(modele1)
 
     summary(modele1)$r.squared
-    (cor(exercice1$X, exercice1$Y))^2
+    (cor(exercice1$X, exercice1$Y))^2 
     ```
+
+    ***Interprétation du modèle estimé :***
+
+    ![](images/clipboard-1004469372.png)
+
+    **FR :** La pente 0.04337 signifie qu’une augmentation d’1 point de pourcentage des lipides alimentaires est associée à une augmentation moyenne de 0.043 g/L du cholestérol. L’ordonnée à l’origine 0.473 correspond au cholestérol théorique attendu pour X=0, mais son interprétation pratique est limitée. Les estimateurs obtenus à la main et avec `lm()` coïncident, ce qui valide le calcul par moindres carrés. 
+
+    **VN :** Hệ số góc 0.04337 nghĩa là cứ tăng 1 điểm phần trăm lipid trong khẩu phần thì cholestérol trung bình tăng khoảng 0.043 g/L. Intercept 0.473 là giá trị dự đoán khi X=0, chủ yếu có ý nghĩa toán học hơn là thực hành. Kết quả tính tay và kết quả từ `lm()` trùng nhau, chứng tỏ cách tính moindres carrés là đúng.
 
 9.  Le modèle est-il significatif ? La proportion de lipides dans l’alimentation a-t-il un effet sginficatif sur le taux de cholestérol ? Comparez ces deux résultats. Que constatez-vous ?
 
@@ -171,11 +233,13 @@ Nous disposons pour cela d’un échantillon de 250 observations pour lesquelles
     summary(modele1)
     ```
 
+    ***Significativité et qualité du modèle***
+
+    ***FR :** Le coefficient de pente est hautement significatif (`t = 22.370`, `p < 2e-16`). Le test F global est aussi très significatif (`F = 500.4`, `p < 2.2e-16`). On rejette donc* H*0​:*β*1​=0. Le modèle explique 66.86% de la variabilité du cholestérol (*R*2=0.6686), ce qui est élevé pour une régression simple.*
+
+    ***VN :** Hệ số slope có ý nghĩa thống kê rất mạnh (`t = 22.370`, `p < 2e-16`). Test F toàn cục cũng rất có ý nghĩa (`F = 500.4`, `p < 2.2e-16`). Vì vậy bác bỏ* H*0​:*β*1​=0. Mô hình giải thích khoảng 66.86% biến thiên của cholestérol, tức là khá mạnh đối với một hồi quy đơn.* 
+
 10. Interprétez les résultats du modèle.
-
-    ```{r}
-
-    ```
 
 11. Quelle est le taux de cholestérol prédit par le modèle pour une personne ayant une quantité moyenne de lipides dans son alimentation de 25 % ? De 75 % ?
 
@@ -192,7 +256,7 @@ Nous disposons pour cela d’un échantillon de 250 observations pour lesquelles
     predict(modele1, newdata = Xpred)
     ```
 
-## **Exercice 2 - Etude du volume expiratoire forcé**
+# **Exercice 2 - Etude du volume expiratoire forcé**
 
 Une étude a été réalisée auprès de 650 enfants/adolescents âgés entre 4 et 19 ans afin d’étudier le volume expiratoire forcée (VEF), mesuré en litres BTPS, un indice d’activité pulmonaire mesurant le volume d’air expulsé avec force jusqu’au volume résiduel à partir de la capacité pulmonaire totale obte- nue. Cette mesure est obtenue à partir d’une spirométrie forcée.
 
@@ -257,6 +321,12 @@ Dans le cadre de cette exercice, nous souhaiterions évaluer **l’effet de la t
     cor(exercice2$taille, exercice2$VEF)
     ```
 
+    ***Corrélation***
+
+    ***FR :** La corrélation entre la taille et le VEF est très forte (*r=0.9394r*=0.9394), donc le VEF augmente nettement avec la taille.*
+
+    ***VN :** Tương quan giữa chiều cao và VEF rất mạnh (*r=0.9394r*=0.9394), nghĩa là chiều cao tăng thì VEF tăng rất rõ*
+
 4.  Ecrivez l’équation du modèle, puis estimez-le à l’aide du logiciel R.
 
     ```{r}
@@ -265,6 +335,16 @@ Dans le cadre de cette exercice, nous souhaiterions évaluer **l’effet de la t
                   data = exercice2)
     summary(modele2)
     ```
+
+    ***Modèle brut :***
+
+    *Mô hình đầu tiên là:*
+
+    *![](images/clipboard-176940514.png){width="1164"}*
+
+    ***FR :** Une augmentation d’1 cm de taille est associée à une augmentation moyenne de 0.0455 unité de VEF. La pente est hautement significative (`t = 69.77`, `p < 2e-16`) et le modèle explique 88.25% de la variabilité du VEF. C’est un excellent ajustement sur le plan quantitatif.*
+
+    ***VN :** Cứ tăng 1 cm chiều cao thì VEF trung bình tăng khoảng 0.0455 đơn vị. Hệ số slope rất có ý nghĩa thống kê (`t = 69.77`, `p < 2e-16`) và mô hình giải thích 88.25% biến thiên của VEF. Xét riêng về mức độ phù hợp số học thì mô hình rất tốt.*
 
 5.  Vérifiez les hypothèses du modèle. Que peut-on conclure ? Quelle transformation pourrait-on faire pour que le modèle soit valide ?
 
@@ -300,6 +380,12 @@ Dans le cadre de cette exercice, nous souhaiterions évaluer **l’effet de la t
     hist((exercice2$VEF)^2)
     hist(sqrt(exercice2$VEF))
     ```
+
+    ***Hypothèses du modèle brut***
+
+    ***FR :** Le notebook montre une étude des résidus puis propose une transformation logarithmique de la réponse. Cela suggère que, malgré un très bon* R2R*2, les hypothèses du modèle brut n’étaient pas jugées suffisamment satisfaisantes, probablement en termes de normalité et/ou d’homoscédasticité. Deux observations atypiques potentielles sont signalées par le QQ-plot (111 et 262).*
+
+    ***VN :** Notebook kiểm tra residuals rồi mới chuyển sang log-transform của biến đáp ứng. Điều đó gợi ý rằng dù* R*2 rất cao, mô hình thô vẫn chưa thật sự sạch về giả định, nhiều khả năng do normalité hoặc homoscédasticité chưa tốt. QQ-plot còn gợi ý hai quan sát lệch là 111 và 262.* 
 
 6.  Estimez un modèle dans lequel vous appliquez cette transformation. Vérifiez les hypothèses sous- jacentes.
 
@@ -340,6 +426,16 @@ Dans le cadre de cette exercice, nous souhaiterions évaluer **l’effet de la t
 
     ```
 
+    ***Modèle transformé :***
+
+    *Mô hình sau biến đổi là:*
+
+    *![](images/clipboard-3168697251.png)*
+
+    ***FR :** Après transformation logarithmique, la pente reste très significative (`t = 75.80`, `p < 2e-16`) et* R*2 augmente à 0.8987. Le modèle sur l’échelle logarithmique semble donc mieux adapté.*
+
+    ***VN :** Sau khi log-transform biến đáp ứng, slope vẫn rất có ý nghĩa thống kê (`t = 75.80`, `p < 2e-16`) và* R*2 tăng lên 0.8987. Vì vậy mô hình trên thang log có vẻ phù hợp hơn mô hình thô.* 
+
 7.  Interprétez les résultats du modèle.
 
     ```{r}
@@ -347,7 +443,12 @@ Dans le cadre de cette exercice, nous souhaiterions évaluer **l’effet de la t
     summary(modele2b)
     ```
 
-## **Exercice 3 - Lien entre régression linéaire et analyse de la variance à un facteur**
+***Conclusion de l’exercice :***
+
+***FR :** La taille a un effet très important sur le VEF. Le modèle brut est déjà fort, mais le modèle avec* log⁡(VEF) *semble plus valide et plus performant.\
+**VN :** Chiều cao ảnh hưởng rất mạnh lên VEF. Mô hình thô đã mạnh, nhưng mô hình với log(*VEF*) có vẻ hợp lệ và tốt hơn.*
+
+# **Exercice 3 - Lien entre régression linéaire et analyse de la variance à un facteur**
 
 Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude clinique portant sur la com- paraison de l’effet de deux anti-hypertenseurs et d’un placebo sur la pression artérielle. Nous disponsons d’un échantillon de 45 patients choisis au hasard, parmi lesquels 15 patients ont reçu l’anti-hypertenseur A, 15 patients ont reçu l’anti-hypertenseur B et 15 patients ont reçu le placebo. Pour chaque patient nous disposons de la pression artérielle systolique (en mmHg) 3 mois après l’initiation du traitement.
 
@@ -392,6 +493,12 @@ Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude cl
 
     ```
 
+    ***Résultat ANOVA :***
+
+    ***FR :** L’ANOVA donne `F = 1426`, `p < 2e-16`. On conclut qu’il existe une différence très significative de pression artérielle moyenne entre les trois groupes de traitement.*
+
+    ***VN :** ANOVA cho `F = 1426`, `p < 2e-16`, nên có sự khác biệt rất có ý nghĩa thống kê giữa huyết áp trung bình của ba nhóm điều trị.*
+
 3.  Nous souhaitons retrouver les résultats obtenus à la question suivante en formalisant le problème sous la forme d’une régression linéaire. Ecrivez l’équation du modèle puis estimez-la avec R.
 
     ```{r}
@@ -419,6 +526,12 @@ Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude cl
 
     ```
 
+    ***Comparaisons entre groupes :***
+
+    ***FR :** Les comparaisons multiples montrent que toutes les différences entre groupes sont significatives: A diffère de B, A diffère du placebo, et B diffère du placebo, toutes avec `p < 0.0001`. Les écarts estimés sont de 10.6 mmHg entre A et B, 25.3 mmHg entre A et placebo, et 35.9 mmHg entre B et placebo.*
+
+    ***VN :** So sánh từng cặp cho thấy **mọi cặp đều khác nhau có ý nghĩa**: A khác B, A khác placebo, và B khác placebo, tất cả đều `p < 0.0001`. Chênh lệch trung bình ước lượng lần lượt là 10.6 mmHg, 25.3 mmHg và 35.9 mmHg.* 
+
 4.  Retrouvez la moyenne de la pression artérielle de chaque groupe à partir de la régression linéaire estimée, puis les différences de moyennes, à la main, puis avec R.
 
     ```{r}
@@ -438,6 +551,11 @@ Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude cl
 
     ```
 
+    ***Lecture clinique/statistique :***
+
+    ***FR :** Le groupe B obtient la pression la plus basse, puis A, puis placebo. Donc B semble le traitement le plus efficace.\
+    **VN :** Nhóm B có huyết áp thấp nhất, sau đó là A, rồi placebo cao nhất. Do đó B có vẻ là điều trị hiệu quả nhất.*
+
 5.  Vérifiez les hypothèses sous-jacentes au modèle à partir des résidus.
 
 # Exercices supplémentaires
@@ -446,49 +564,149 @@ Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude cl
 
 ### Concepts généraux
 
-1.  Quel est l’objectif principal de la régression linéaire simple ?
-2.  Vrai ou Faux : La régression linéaire simple permet d’expliquer une variable qualitative par une variable quantitative.
-3.  Quelle est la différence entre corrélation et régression ?
-4.  Donnez un exemple de contexte où la régression linéaire simple est appropriée.
-5.  Pourquoi ne pas se contenter du coefficient de corrélation pour prédire Y à partir de X ?
+1.  **Quel est l’objectif principal de la régression linéaire simple ?**
+
+    Dùng một biến định lượng X để **mô tả, lượng hóa và dự đoán** giá trị trung bình của một biến định lượng Y. 
+
+2.  **Vrai ou Faux : La régression linéaire simple permet d’expliquer une variable qualitative par une variable quantitative.**
+
+    **Faux.** Régression linéaire simple cổ điển là cho **Y định lượng**, X thường là định lượng trong khuôn khổ bài này.
+
+3.  **Quelle est la différence entre corrélation et régression ?**
+
+    Corrélation đo force/direction của liên hệ tuyến tính; régression cho phương trình dự đoán và phân biệt rõ predictor với response. 
+
+4.  **Donnez un exemple de contexte où la régression linéaire simple est appropriée.**
+
+    Ví dụ trong notebook: proportion de lipides → taux de cholestérol; taille → VEF; âge → temps de réaction. 
+
+5.  **Pourquoi ne pas se contenter du coefficient de corrélation pour prédire Y à partir de X ?**
+
+    Vì r không cho slope, intercept, dự đoán, kiểm định tham số, hay phân tích residuals. Nói cách khác: corrélation chỉ báo “có dây”, régression mới nói dây kéo đi đâu và mạnh cỡ nào.
 
 ### Définition du modèle
 
-1.  Écrivez l’équation d’un modèle linéaire simple.
-2.  Que représentent les paramètres β0 et β1 ?
-3.  Que signifie le terme d’erreur ε dans le modèle ?
-4.  Sous quelles conditions peut-on utiliser une régression linéaire simple ?
-5.  Vrai ou Faux : La variable explicative peut être qualitative dans un modèle linéaire simple.
+1.  **Écrivez l’équation d’un modèle linéaire simple.**
+
+    ![](images/clipboard-195845525.png)
+
+2.  **Que représentent les paramètres β0 et β1 ?**
+
+    ![](images/clipboard-3276515724.png)
+
+3.  **Que signifie le terme d’erreur ε dans le modèle ?**
+
+    Phần sai số không giải thích được bởi đường hồi quy, gom ảnh hưởng của biến không đo, biến thiên sinh học, sai số đo lường, ngẫu nhiên.
+
+4.  **Sous quelles conditions peut-on utiliser une régression linéaire simple ?**
+
+    Khi có một predictor định lượng, một response định lượng, quan hệ trung bình gần tuyến tính, residuals độc lập, gần chuẩn và có phương sai xấp xỉ không đổi.
+
+5.  **Vrai ou Faux : La variable explicative peut être qualitative dans un modèle linéaire simple.**
+
+    Khi có một predictor định lượng, một response định lượng, quan hệ trung bình gần tuyến tính, residuals độc lập, gần chuẩn và có phương sai xấp xỉ không đổi.
 
 ### Estimation et interprétation
 
-1.  Quelle méthode est utilisée pour estimer β0 et β1 ?
-2.  Donnez la formule de l’estimateur de β1.
-3.  Donnez la formule de l’estimateur de β0.
-4.  Que représente un résidu dans le modèle ?
-5.  Pourquoi minimise-t-on la somme des carrés des résidus ?
+1.  **Quelle méthode est utilisée pour estimer β0 et β1 ?**
+
+    Méthode des moindres carrés ordinaires, tức chọn đường làm tổng bình phương residuals là nhỏ nhất. 
+
+2.  **Donnez la formule de l’estimateur de β1.**
+
+    X tăng thì Y có xu hướng tăng trung bình.
+
+3.  **Donnez la formule de l’estimateur de β0.**
+
+    X tăng thì Y có xu hướng giảm trung bình.
+
+4.  **Que représente un résidu dans le modèle ?**
+
+    Giá trị trung bình dự đoán của Y khi X=0; chỉ có ý nghĩa thực tế nếu X=0 hợp lý trong bối cảnh dữ liệu. 
+
+5.  **Pourquoi minimise-t-on la somme des carrés des résidus ?**
+
+    Kiểm định H0​:β1​=0, tức không có liên hệ tuyến tính giữa X và Y
 
 ### Qualité et tests
 
-1.  Que mesure le coefficient de détermination R2 ?
-2.  Donnez la formule de R2.
-3.  Quelle est la relation entre R2 et le coefficient de corrélation dans le cas simple ?
-4.  Quel test permet d’évaluer la significativité globale du modèle ?
-5.  Écrivez les hypothèses du test F global.
-6.  Que conclure si Fobs \> Fcritique ?
+1.  **Que mesure le coefficient de détermination R2 ?**
+
+    Tỷ lệ biến thiên của Y được giải thích bởi mô hình.
+
+2.  **Donnez la formule de R2.**
+
+    **Non.** Mô hình giải thích tốt không đồng nghĩa quan hệ nhân quả. Hồi quy mô tả association trong dữ liệu quan sát hoặc thực nghiệm theo thiết kế có sẵn.
+
+3.  **Quelle est la relation entre R2 et le coefficient de corrélation dans le cas simple ?**
+
+    P-value nhỏ cho biết effect khó do ngẫu nhiên; importance pratique phụ thuộc cỡ slope và bối cảnh lâm sàng/khoa học.
+
+    Ví dụ r sel-PAS có ý nghĩa thống kê nhưng R2 chỉ 0.144, nên không nên thổi nó thành “mô hình tuyệt vời”. 
+
+4.  **Quel test permet d’évaluer la significativité globale du modèle ?**
+
+    Residuals phân tán nhiều quanh đường hồi quy, nên dự đoán kém chính xác hơn.
+
+5.  **Écrivez les hypothèses du test F global.**
+
+    Trong hồi quy tuyến tính đơn:
+
+    -   H0​: β1=0\
+        Nghĩa là mô hình không giải thích được gì thêm so với mô hình chỉ có intercept, tức **không có liên hệ tuyến tính giữa** X và Y.
+
+    -   H1​: β1≠0\
+        Nghĩa là **có liên hệ tuyến tính** giữa X và Y.
+
+    Nếu viết trong bối cảnh ANOVA hay hồi quy nhiều nhóm, dạng tổng quát hơn là:
+
+    -   H0​: tất cả các hiệu ứng giải thích đều bằng 0
+
+    -   H1​: ít nhất một hiệu ứng khác 0
+
+6.  **Que conclure si Fobs \> Fcritique ?**
+
+    Nếu Fobs>Fcritique​, ta **rejette** H0​ ở mức ý nghĩa α.
+
+    Kết luận bằng lời:
+
+    -   **Le modèle global est statistiquement significatif**
+
+    -   Biến giải thích mang lại thông tin có ích để giải thích biến đáp ứng
+
+    -   Trong hồi quy đơn: có bằng chứng cho thấy β1≠0, tức là có liên hệ tuyến tính có ý nghĩa thống kê giữa X và Y
 
 ### Hypothèses et diagnostics
 
-1.  Citez les hypothèses sur les résidus dans un modèle linéaire simple.
-2.  Comment vérifier la normalité des résidus ?
-3.  Comment vérifier l’homoscédasticité ?
-4.  Que faire en cas de non-linéarité ?
+1.  **Citez les hypothèses sur les résidus dans un modèle linéaire simple.**
 
-### Lien avec l’ANOVA
+    Linéarité de la moyenne, indépendance, normalité approximative, homoscédasticité. 
 
-1.  Quelle est la relation entre ANOVA et régression linéaire simple ?
-2.  Donnez la relation fondamentale entre SCtot, SCexp et SCres.
-3.  Pourquoi le test F est-il identique dans les deux approches ?
+2.  **Comment vérifier la normalité des résidus ?**
+
+    QQ-plot là công cụ mạnh nhất; histogram residuals là bổ trợ. 
+
+3.  **Comment vérifier l’homoscédasticité ?**
+
+    Residuals vs fitted hoặc residuals vs predictor, xem độ phân tán có gần như hằng định không.
+
+4.  **Que faire en cas de non-linéarité ?**
+
+    Cân nhắc transformation của Y hoặc X, hoặc thêm dạng phi tuyến. Notebook VEF đã chọn log-transform de la réponse.
+
+### **Lien avec l’ANOVA**
+
+1.  **Quelle est la relation entre ANOVA et régression linéaire simple ?**
+
+    Đều là trường hợp của mô hình tuyến tính; ANOVA là khi predictor là facteur.
+
+2.  **Donnez la relation fondamentale entre SCtot, SCexp et SCres.**
+
+    ![](images/clipboard-2061175937.png)
+
+3.  **Pourquoi le test F est-il identique dans les deux approches ?**
+
+    Vì hai cách tiếp cận dùng cùng decomposition của tổng biến thiên và cùng so sánh variance expliquée với variance résiduelle.
 
 ## 2 - Exercices R
 
@@ -531,6 +749,8 @@ Une étude explore la relation entre la consommation quotidienne de sel (en gram
 
     ```
 
+    *Dữ liệu có 240 quan sát và 2 biến: `Sel_g_jour` và `PAS_mmHg`. Sel trung bình 7.90 g/ngày, SD 2.37, dao động từ 3 đến 13.9. Đây là cấu trúc chuẩn cho hồi quy đơn. Notebook không trích text về missing values sau `str()`, nên cách trả lời an toàn là: **không thấy bằng chứng text của valeurs manquantes trong notebook; cần kiểm trực tiếp bằng `sum(is.na(...))` nếu muốn khẳng định tuyệt đối**.*
+
 3.  Représentez la relation entre les deux variables à l’aide d’un graphique adapté. Décrivez la ten- dance observée.
 
     ```{r}
@@ -546,6 +766,12 @@ Une étude explore la relation entre la consommation quotidienne de sel (en gram
     ## 4. Calcul du coefficient de corrélation
     cor(sel_tension$Sel_g_jour, sel_tension$PAS_mmHg)
     ```
+
+    ***VN:**\
+    Correlation `r=0.3799` cho thấy **liên hệ dương mức vừa, không mạnh** giữa lượng muối và PAS. Muối nhiều hơn đi kèm HA tâm thu cao hơn, nhưng mối liên hệ không chặt. Đây là kiểu kết quả hay bị sinh viên overclaim thành “giải thích tốt”, trong khi thật ra chỉ là tín hiệu có thật nhưng vừa phải.*
+
+    ***FR:**\
+    Le coefficient `r=0.3799` indique une **association linéaire positive modérée** entre la consommation de sel et la pression artérielle systolique. La relation existe, mais elle n’est pas très forte.* 
 
 5.  Estimez un modèle permettant d’expliquer la pression artérielle en fonction de la consommation de sel.
 
@@ -585,6 +811,18 @@ Une étude explore la relation entre la consommation quotidienne de sel (en gram
     # la pression artérielle systolique augmente de 1.3418 mmHg.
     ```
 
+    ***Modèle et significativité***
+
+    *![](images/clipboard-553745980.png)*
+
+    *Mỗi tăng 1 g muối/ngày làm PAS tăng trung bình khoảng **1.34 mmHg**.*
+
+    *Slope rất có ý nghĩa thống kê (`t = 6.335`, `p = 1.18e-09`), và test F toàn cục cũng có ý nghĩa.*
+
+    *Nhưng* R*2=0.1443, nên mô hình chỉ giải thích khoảng **14.4% biến thiên của PAS**.*
+
+    *Kết luận đúng là: effect có thật, nhưng **khả năng giải thích còn hạn chế**, còn nhiều yếu tố khác quyết định HA.*
+
 9.  Fournissez des prédictions pour une consommation faible (par ex. 5 g/j) et élevée (par ex. 12 g/j). Interprétez ces résultats.
 
     ```{r}
@@ -592,6 +830,14 @@ Une étude explore la relation entre la consommation quotidienne de sel (en gram
     Xpred <- data.frame(Sel_g_jour = c(5, 12)) 
     predict(modele1, newdata = Xpred)
     ```
+
+    *Notebook dự đoán:*
+
+    -   *5 g/jour → **106.55 mmHg***
+
+    -   *12 g/jour → **115.94 mmHg***
+
+    *Chênh khoảng 9.39 mmHg giữa hai mức tiêu thụ. Đây là cách đưa slope về lâm sàng/thực hành: không nói bằng “β1”, mà nói bằng khác biệt dự đoán giữa hai mức phơi nhiễm cụ thể.* 
 
 10. Discutez l’effet du sel et les limites éventuelles de l’analyse.
 
@@ -629,6 +875,10 @@ Une étude examine la relation entre l’âge (en années) et le temps de réact
 
     ```
 
+    ***Descriptif***
+
+    *Dữ liệu có 300 participants. Tuổi trung bình 48.49 năm, SD 15.96; temps de réaction trung bình 366.73 ms, SD 60.79. Cấu trúc hoàn toàn phù hợp để làm hồi quy đơn âge → temps de réaction.*
+
 3.  Représentez la relation entre l’âge et le temps de réaction à l’aide d’un graphique pertinent. La tendance semble-t-elle linéaire ? Justifiez votre réponse.
 
     ```{r}
@@ -645,6 +895,10 @@ Une étude examine la relation entre l’âge (en années) et le temps de réact
     cor(age_temps_reaction$Age_annees, age_temps_reaction$TempsReaction_ms)
 
     ```
+
+    ***Relation et corrélation***
+
+    *Correlation `r=0.7725` cho thấy **liên hệ dương khá mạnh**: tuổi càng cao thì temps de réaction càng dài, tức phản ứng chậm hơn. Nếu thi, câu này nên nói bằng ngôn ngữ của outcome: “allongement du temps de réaction avec l’âge”.* 
 
 5.  Ajustez un modèle pour étudier l’effet de l’âge sur le temps de réaction. Expliquez la signification des paramètres obtenus.
 
@@ -682,6 +936,16 @@ Une étude examine la relation entre l’âge (en années) et le temps de réact
     predict(modele2, newdata = Xpred)
     ```
 
+    ***Prédictions :***
+
+    *Notebook cho:*
+
+    -   *30 ans → **312.33 ms***
+
+    -   *70 ans → **430.01 ms***
+
+    *Chênh lệch khoảng **117.68 ms**, khá lớn. Đây là cách rất đẹp để chuyển slope 2.94 ms/an thành thông điệp thực hành dễ hiểu hơn: qua 40 năm, thời gian phản ứng dự đoán tăng gần 118 ms.*
+
 9.  Formulez une conclusion sur la relation âge–temps de réaction.
 
     ```{r}
@@ -691,3 +955,35 @@ Une étude examine la relation entre l’âge (en années) et le temps de réact
     # beta_age = 2.9420, ce qui signifie que pour toute augmentation de l'âge d'une année, le temps 
     # de réaction augemente de 2.9420 ms.
     ```
+
+    ***Modèle estimé:***
+
+    *![](images/clipboard-396700802.png)*
+
+    *Mỗi tăng 1 tuổi làm temps de réaction tăng trung bình khoảng **2.94 ms**.*
+
+    *Slope có ý nghĩa rất mạnh (`t = 21.00`, `p < 2e-16`).* R*2=0.5968, nghĩa là tuổi giải thích khoảng **59.7%** biến thiên của thời gian phản ứng.*
+
+    *Đây là mức khá tốt nhưng chưa hoàn hảo, tức còn nhiều yếu tố khác ảnh hưởng.* 
+
+## Interpretation en français :)
+
+-   La régression linéaire simple étudie le lien entre une variable explicative quantitative et une variable réponse quantitative.
+
+-   Le coefficient de pente représente la variation moyenne de Y pour une augmentation d’une unité de X.
+
+-   Une p-valeur faible pour β1 indique une association linéaire statistiquement significative entre X et Y.
+
+-   Le R2 correspond à la proportion de variabilité de Y expliquée par le modèle.
+
+-   La corrélation mesure l’intensité du lien, tandis que la régression fournit une équation de prédiction.
+
+-   Les hypothèses principales sont la linéarité, l’indépendance, la normalité des résidus et l’homoscédasticité.
+
+-   Le QQ-plot est un outil central pour apprécier la normalité des résidus.
+
+-   Un graphique résidus-valeurs ajustées aide à détecter une non-linéarité ou une hétéroscédasticité.
+
+-   En cas de violation des hypothèses, une transformation de la variable réponse peut améliorer le modèle.
+
+-   L’ANOVA à un facteur est un cas particulier du modèle linéaire avec variable explicative qualitative.

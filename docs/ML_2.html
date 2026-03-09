@@ -13,7 +13,7 @@
 
 <meta name="date" content="2026-03-08" />
 
-<title>ML_2</title>
+<title>Régression linéaire simple</title>
 
 <script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -359,7 +359,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">ML_2</h1>
+<h1 class="title toc-ignore">Régression linéaire simple</h1>
 <h4 class="author">PHAM Huong</h4>
 <h4 class="date">2026-03-08</h4>
 
@@ -394,9 +394,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 2
 </p>
 <p>
 <strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
@@ -419,18 +419,21 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
@@ -547,15 +550,15 @@ relative
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree1a1fff3a5b744d26180708bb2dd07bd1749f2c2ftargetblank1a1fff3a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree98b3a9d2af1c50d0263e4a187d234c1f7709cda1targetblank98b3a9da">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/1a1fff3a5b744d26180708bb2dd07bd1749f2c2f" target="_blank">1a1fff3</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/98b3a9d2af1c50d0263e4a187d234c1f7709cda1" target="_blank">98b3a9d</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree1a1fff3a5b744d26180708bb2dd07bd1749f2c2ftargetblank1a1fff3a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree98b3a9d2af1c50d0263e4a187d234c1f7709cda1targetblank98b3a9da"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -565,7 +568,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/1a1fff3a5b744d26180708bb2dd07bd1749f2c2f" target="_blank">1a1fff3</a>.
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/98b3a9d2af1c50d0263e4a187d234c1f7709cda1" target="_blank">98b3a9d</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -585,8 +588,12 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/.Rhistory
 
+Untracked files:
+    Untracked:  analysis/images/
+
 Unstaged changes:
     Modified:   analysis/ML_1.Rmd
+    Modified:   analysis/ML_2.Rmd
 
 </code></pre>
 <p>
@@ -630,6 +637,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/tthanhhuong/Data_Analysis/98b3a9d2af1c50d0263e4a187d234c1f7709cda1/docs/ML_2.html" target="_blank">98b3a9d</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -722,10 +746,61 @@ Huong PHAM
 </div>
 </div>
 </div>
+<div id="régression-linéaire-simple" class="section level1">
+<h1>RÉGRESSION LINÉAIRE SIMPLE</h1>
+</div>
 <div id="td2-r---régression-linéaire-simple" class="section level1">
 <h1><strong>TD2 R - Régression linéaire simple</strong></h1>
-<div id="exercice-1---exemple-du-cours" class="section level2">
-<h2><strong>Exercice 1 - Exemple du cours</strong></h2>
+<p><img src="images/clipboard-1149420379.png" /></p>
+<p><img src="images/clipboard-580881902.png" /></p>
+<div id="différence-entre-corrélation-et-régression"
+class="section level3">
+<h3>Différence entre corrélation et régression</h3>
+<ul>
+<li><p><strong>Corrélation</strong> đo <strong>cường độ và
+chiều</strong> của liên hệ tuyến tính, đối xứng giữa X và Y.</p></li>
+<li><p><strong>Régression</strong> đặt hướng phân tích rõ ràng:
+dùng X để <strong>giải thích hoặc dự đoán</strong> Y.</p></li>
+<li><p>Corrélation không cho phương trình dự đoán; régression thì có.
+Đây cũng là lý do “không được dừng ở r” trong bài thi.</p></li>
+</ul>
+</div>
+<div id="ước-lượng-moindres-carrés-ordinaires" class="section level3">
+<h3>Ước lượng moindres carrés ordinaires</h3>
+<p><img src="images/clipboard-598795064.png" /></p>
+</div>
+<div id="ý-nghĩa-các-chỉ-số-trong-summarylm" class="section level3">
+<h3>Ý nghĩa các chỉ số trong <code>summary(lm())</code></h3>
+<p><img src="images/clipboard-3988885783.png" /></p>
+</div>
+<div id="giả-định-của-hồi-quy-tuyến-tính-đơn" class="section level3">
+<h3>Giả định của hồi quy tuyến tính đơn</h3>
+<ul>
+<li><p><strong>L</strong>inearité: trung bình của Y thay đổi tuyến tính
+theo X</p></li>
+<li><p><strong>I</strong>ndependence: sai số độc lập</p></li>
+<li><p><strong>N</strong>ormality: sai số phân phối gần chuẩn</p></li>
+<li><p><strong>E</strong>qual variance: phương sai sai số không đổi, tức
+homoscédasticité.</p></li>
+</ul>
+</div>
+<div id="kiểm-tra-giả-định-như-thế-nào" class="section level3">
+<h3>Kiểm tra giả định như thế nào?</h3>
+<p><img src="images/clipboard-1191025101.png" /></p>
+</div>
+<div id="quan-hệ-giữa-régression-và-anova" class="section level3">
+<h3>Quan hệ giữa régression và ANOVA</h3>
+<p>Trong notebook, exercice 3 cho thấy mô
+hình <code>lm(Pression_arterielle ~ Traitement)</code> với biến định
+tính cho ra <strong>cùng F-statistic = 1426</strong> như ANOVA cổ điển.
+Tức là ANOVA một yếu tố thực ra là một trường hợp đặc biệt của mô hình
+tuyến tính, chỉ khác cách mã hóa biến giải thích. Tổng bình phương vẫn
+phân rã thành:</p>
+<p><img src="images/clipboard-1444228596.png" /></p>
+</div>
+</div>
+<div id="exercice-1---exemple-du-cours" class="section level1">
+<h1><strong>Exercice 1 - Exemple du cours</strong></h1>
 <p>Dans le cadre d’une étude de santé publique, nous cherchons à évaluer
 le lien qui pourrait exister entre la proportion de lipides contenue
 dans l’alimentation et le taux de cholestérol chez les adultes âgés de
@@ -848,6 +923,19 @@ Huong PHAM
 </table>
 </div>
 </div>
+<p><strong><em>Interprétation des statistiques
+descriptives</em></strong></p>
+<p><em><strong>FR :</strong> L’échantillon comprend 250 sujets. La
+proportion de lipides dans l’alimentation varie de 13.20% à 64.68%, avec
+une moyenne de 34.84% et un écart-type de 9.63. Le cholestérol varie de
+0.652 à 3.349 g/L, avec une moyenne de 1.984 g/L et un écart-type de
+0.511. Les deux variables présentent donc une variabilité suffisante
+pour étudier leur relation.</em></p>
+<p><em><strong>VN :</strong> Mẫu có 250 người. Tỷ lệ lipid trong khẩu
+phần dao động từ 13.20% đến 64.68%, trung bình 34.84%, SD 9.63.
+Cholestérol dao động từ 0.652 đến 3.349 g/L, trung bình 1.984 g/L, SD
+0.511. Hai biến có độ phân tán đủ lớn để khảo sát mối liên hệ tuyến
+tính.</em></p>
 <pre class="r"><code>#- Taux de cholesterol
 summary(exercice1$Y)</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -986,7 +1074,17 @@ Huong PHAM
 </div>
 </div>
 <pre class="r"><code>cor(x = exercice1$X, y = exercice1$Y)</code></pre>
-<pre><code>[1] 0.8177043</code></pre></li>
+<pre><code>[1] 0.8177043</code></pre>
+<p><strong><em>Interprétation du lien entre X et Y</em></strong></p>
+<p><em><strong>FR :</strong> Le nuage de points est adapté car il s’agit
+de deux variables quantitatives. Le coefficient de corrélation est</em>
+r=0.8177r<em>=0.8177, ce qui indique une forte corrélation linéaire
+positive: plus la proportion de lipides augmente, plus le cholestérol
+tend à augmenter.</em></p>
+<p><em><strong>VN :</strong> Dùng scatterplot là đúng vì đây là hai biến
+định lượng. Hệ số tương quan</em> r=0.8177r<em>=0.8177 cho
+thấy <strong>tương quan tuyến tính dương mạnh</strong>: tỷ lệ lipid ăn
+vào càng cao thì cholestérol càng có xu hướng cao.</em></p></li>
 <li><p>Pourquoi un modèle linéaire simple est la méthode statistique
 appropriée pour analyser l’effet de la proportion moyenne de lipides
 dans l’alimentation sur le taux de cholestérol ? Ecrivez l’équation du
@@ -1586,8 +1684,23 @@ Multiple R-squared:  0.6686,    Adjusted R-squared:  0.6673
 F-statistic: 500.4 on 1 and 248 DF,  p-value: &lt; 2.2e-16</code></pre>
 <pre class="r"><code>summary(modele1)$r.squared</code></pre>
 <pre><code>[1] 0.6686403</code></pre>
-<pre class="r"><code>(cor(exercice1$X, exercice1$Y))^2</code></pre>
-<pre><code>[1] 0.6686403</code></pre></li>
+<pre class="r"><code>(cor(exercice1$X, exercice1$Y))^2 </code></pre>
+<pre><code>[1] 0.6686403</code></pre>
+<p><strong><em>Interprétation du modèle estimé :</em></strong></p>
+<p><img src="images/clipboard-1004469372.png" /></p>
+<p><strong>FR :</strong> La pente 0.04337 signifie qu’une augmentation
+d’1 point de pourcentage des lipides alimentaires est associée à une
+augmentation moyenne de 0.043 g/L du cholestérol. L’ordonnée à
+l’origine 0.473 correspond au cholestérol théorique attendu pour X=0,
+mais son interprétation pratique est limitée. Les estimateurs obtenus à
+la main et avec <code>lm()</code> coïncident, ce qui valide le calcul
+par moindres carrés. </p>
+<p><strong>VN :</strong> Hệ số góc 0.04337 nghĩa là cứ tăng 1 điểm phần
+trăm lipid trong khẩu phần thì cholestérol trung bình tăng khoảng 0.043
+g/L. Intercept 0.473 là giá trị dự đoán khi X=0, chủ yếu có ý nghĩa toán
+học hơn là thực hành. Kết quả tính tay và kết quả
+từ <code>lm()</code> trùng nhau, chứng tỏ cách tính moindres carrés là
+đúng.</p></li>
 <li><p>Le modèle est-il significatif ? La proportion de lipides dans
 l’alimentation a-t-il un effet sginficatif sur le taux de cholestérol ?
 Comparez ces deux résultats. Que constatez-vous ?</p>
@@ -1610,7 +1723,22 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 
 Residual standard error: 0.2947 on 248 degrees of freedom
 Multiple R-squared:  0.6686,    Adjusted R-squared:  0.6673 
-F-statistic: 500.4 on 1 and 248 DF,  p-value: &lt; 2.2e-16</code></pre></li>
+F-statistic: 500.4 on 1 and 248 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><strong><em>Significativité et qualité du modèle</em></strong></p>
+<p><em><strong>FR :</strong> Le coefficient de pente est hautement
+significatif (<code>t = 22.370</code>, <code>p &lt; 2e-16</code>). Le
+test F global est aussi très significatif
+(<code>F = 500.4</code>, <code>p &lt; 2.2e-16</code>). On rejette
+donc</em> H<em>0​:</em>β<em>1​=0. Le modèle explique 66.86% de la
+variabilité du cholestérol (</em>R<em>2=0.6686), ce qui est élevé pour
+une régression simple.</em></p>
+<p><em><strong>VN :</strong> Hệ số slope có ý nghĩa thống kê rất mạnh
+(<code>t = 22.370</code>, <code>p &lt; 2e-16</code>). Test F toàn cục
+cũng rất có ý nghĩa
+(<code>F = 500.4</code>, <code>p &lt; 2.2e-16</code>). Vì vậy bác
+bỏ</em> H<em>0​:</em>β<em>1​=0. Mô hình giải thích khoảng 66.86% biến
+thiên của cholestérol, tức là khá mạnh đối với một hồi quy
+đơn.</em> </p></li>
 <li><p>Interprétez les résultats du modèle.</p></li>
 <li><p>Quelle est le taux de cholestérol prédit par le modèle pour une
 personne ayant une quantité moyenne de lipides dans son alimentation de
@@ -1633,8 +1761,8 @@ predict(modele1, newdata = Xpred)</code></pre>
 </ol>
 </div>
 <div id="exercice-2---etude-du-volume-expiratoire-forcé"
-class="section level2">
-<h2><strong>Exercice 2 - Etude du volume expiratoire forcé</strong></h2>
+class="section level1">
+<h1><strong>Exercice 2 - Etude du volume expiratoire forcé</strong></h1>
 <p>Une étude a été réalisée auprès de 650 enfants/adolescents âgés entre
 4 et 19 ans afin d’étudier le volume expiratoire forcée (VEF), mesuré en
 litres BTPS, un indice d’activité pulmonaire mesurant le volume d’air
@@ -1681,6 +1809,32 @@ summary(exercice2$VEF)</code></pre>
 <pre class="r"><code>hist(exercice2$VEF,
      xlab = &quot;VEF&quot;,
      main = &quot;Distribution du VEF&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-12-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>boxplot(exercice2$VEF, 
+        ylab = &quot;VEF&quot;,
+        main = &quot;Distribution du VEF&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-12-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#- Taille
+summary(exercice2$taille)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    112     128     146     149     170     191 </code></pre>
+<pre class="r"><code>sd(exercice2$taille)</code></pre>
+<pre><code>[1] 23.00886</code></pre>
+<pre class="r"><code>hist(exercice2$taille,
+     xlab = &quot;taille (cm)&quot;,
+     main = &quot;Distribution de la taille&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-12-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>boxplot(exercice2$taille, 
+        ylab = &quot;taille (cm)&quot;,
+        main = &quot;Distribution de la taille&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-12-4.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Représentez graphiquement la relation entre la taille et le VEF à
+partir des données recueillies et calculez le coefficient de corrélation
+linéaire. Que constatez-vous ?</p>
+<pre class="r"><code>## 3. Représentation graphique relation VEF vs. taille et coefficient de corrélation
+plot(exercice2$VEF ~ exercice2$taille,
+     xlab = &quot;Taille (cm)&quot;,
+     ylab = &quot;Volume expiratoire forcé&quot;)</code></pre>
 <p><img src="figure/ML_2.Rmd/unnamed-chunk-13-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
@@ -1719,182 +1873,15 @@ Huong PHAM
 </table>
 </div>
 </div>
-<pre class="r"><code>boxplot(exercice2$VEF, 
-        ylab = &quot;VEF&quot;,
-        main = &quot;Distribution du VEF&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-13-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-2">
-<p>Past versions of unnamed-chunk-13-2.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-13-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-13-2.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>#- Taille
-summary(exercice2$taille)</code></pre>
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    112     128     146     149     170     191 </code></pre>
-<pre class="r"><code>sd(exercice2$taille)</code></pre>
-<pre><code>[1] 23.00886</code></pre>
-<pre class="r"><code>hist(exercice2$taille,
-     xlab = &quot;taille (cm)&quot;,
-     main = &quot;Distribution de la taille&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-13-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-3">
-<p>Past versions of unnamed-chunk-13-3.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-13-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-13-3.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>boxplot(exercice2$taille, 
-        ylab = &quot;taille (cm)&quot;,
-        main = &quot;Distribution de la taille&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-13-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-4">
-<p>Past versions of unnamed-chunk-13-4.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-13-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-13-4.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div></li>
-<li><p>Représentez graphiquement la relation entre la taille et le VEF à
-partir des données recueillies et calculez le coefficient de corrélation
-linéaire. Que constatez-vous ?</p>
-<pre class="r"><code>## 3. Représentation graphique relation VEF vs. taille et coefficient de corrélation
-plot(exercice2$VEF ~ exercice2$taille,
-     xlab = &quot;Taille (cm)&quot;,
-     ylab = &quot;Volume expiratoire forcé&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-14-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
-<p>Past versions of unnamed-chunk-14-1.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-14-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-14-1.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
 <pre class="r"><code>cor(exercice2$taille, exercice2$VEF)</code></pre>
-<pre><code>[1] 0.9394317</code></pre></li>
+<pre><code>[1] 0.9394317</code></pre>
+<p><strong><em>Corrélation</em></strong></p>
+<p><em><strong>FR :</strong> La corrélation entre la taille et le VEF
+est très forte (</em>r=0.9394r<em>=0.9394), donc le VEF augmente
+nettement avec la taille.</em></p>
+<p><em><strong>VN :</strong> Tương quan giữa chiều cao và VEF rất mạnh
+(</em>r=0.9394r<em>=0.9394), nghĩa là chiều cao tăng thì VEF tăng rất
+rõ</em></p></li>
 <li><p>Ecrivez l’équation du modèle, puis estimez-le à l’aide du
 logiciel R.</p>
 <pre class="r"><code>## 4. Estimation du modèle avec R
@@ -1918,13 +1905,105 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 
 Residual standard error: 0.3822 on 648 degrees of freedom
 Multiple R-squared:  0.8825,    Adjusted R-squared:  0.8824 
-F-statistic:  4868 on 1 and 648 DF,  p-value: &lt; 2.2e-16</code></pre></li>
+F-statistic:  4868 on 1 and 648 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><strong><em>Modèle brut :</em></strong></p>
+<p><em>Mô hình đầu tiên là:</em></p>
+<p><em><img src="images/clipboard-176940514.png"
+width="1164" /></em></p>
+<p><em><strong>FR :</strong> Une augmentation d’1 cm de taille est
+associée à une augmentation moyenne de 0.0455 unité de VEF. La pente est
+hautement significative
+(<code>t = 69.77</code>, <code>p &lt; 2e-16</code>) et le modèle
+explique 88.25% de la variabilité du VEF. C’est un excellent ajustement
+sur le plan quantitatif.</em></p>
+<p><em><strong>VN :</strong> Cứ tăng 1 cm chiều cao thì VEF trung bình
+tăng khoảng 0.0455 đơn vị. Hệ số slope rất có ý nghĩa thống kê
+(<code>t = 69.77</code>, <code>p &lt; 2e-16</code>) và mô hình giải
+thích 88.25% biến thiên của VEF. Xét riêng về mức độ phù hợp số học thì
+mô hình rất tốt.</em></p></li>
 <li><p>Vérifiez les hypothèses du modèle. Que peut-on conclure ? Quelle
 transformation pourrait-on faire pour que le modèle soit valide ?</p>
 <pre class="r"><code>## 5. Vérification des hypothèses du modèle
 residus2 &lt;- resid(modele2)
 ### Linéarité de la fonction de régression : Résidus en fonction de la variable explicative
 plot(residus2 ~ exercice2$taille, 
+     xlab = &quot;Taille (cm)&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Normalité des résidus
+qqPlot(residus2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>[1] 111 262</code></pre>
+<pre class="r"><code>hist(residus2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Homoscedasticité
+# Deux façons possibles :
+plot(residus2 ~ exercice2$taille, 
+     xlab = &quot;Taille (cm)&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># - Valeurs prédites :
+exercice2$prediction2 &lt;- predict(modele2, newdata = exercice2)
+plot(residus2 ~ exercice2$prediction2, 
+     xlab = &quot;VEF prédit par le modèle&quot;,
+     ylab = &quot;Résidus&quot;)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-5.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(modele2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-6.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-15-7.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-15-8.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-15-9.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># - Test de transformation
+hist(exercice2$VEF)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-10.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(log(exercice2$VEF))</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-11.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist((exercice2$VEF)^2)</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-12.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(sqrt(exercice2$VEF))</code></pre>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-15-13.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p><strong><em>Hypothèses du modèle brut</em></strong></p>
+<p><em><strong>FR :</strong> Le notebook montre une étude des résidus
+puis propose une transformation logarithmique de la réponse. Cela
+suggère que, malgré un très bon</em> R2R<em>2, les hypothèses du modèle
+brut n’étaient pas jugées suffisamment satisfaisantes, probablement en
+termes de normalité et/ou d’homoscédasticité. Deux observations
+atypiques potentielles sont signalées par le QQ-plot (111 et
+262).</em></p>
+<p><em><strong>VN :</strong> Notebook kiểm tra residuals rồi mới chuyển
+sang log-transform của biến đáp ứng. Điều đó gợi ý rằng dù</em>
+R<em>2 rất cao, mô hình thô vẫn chưa thật sự sạch về giả định, nhiều khả
+năng do normalité hoặc homoscédasticité chưa tốt. QQ-plot còn gợi ý hai
+quan sát lệch là 111 và 262.</em> </p></li>
+<li><p>Estimez un modèle dans lequel vous appliquez cette
+transformation. Vérifiez les hypothèses sous- jacentes.</p>
+<pre class="r"><code>## 6. Modèle avec transformation
+# - Transformation log de la variable réponse
+exercice2$logVEF &lt;- log(exercice2$VEF)
+
+# - Estimation du nouveau modèle
+modele2b &lt;- lm(logVEF ~ taille,
+               data = exercice2)
+summary(modele2b)</code></pre>
+<pre><code>
+Call:
+lm(formula = logVEF ~ taille, data = exercice2)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.26224 -0.07340 -0.00499  0.07062  0.37090 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -0.7467194  0.0259668  -28.76   &lt;2e-16 ***
+taille       0.0130596  0.0001723   75.80   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.101 on 648 degrees of freedom
+Multiple R-squared:  0.8987,    Adjusted R-squared:  0.8985 
+F-statistic:  5746 on 1 and 648 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#- Vérification des hypothèses
+residus2b &lt;- resid(modele2b)
+### Linéarité de la fonction de régression : Résidus en fonction de la variable explicative
+plot(residus2b ~ exercice2$taille, 
      xlab = &quot;Taille (cm)&quot;,
      ylab = &quot;Résidus&quot;)</code></pre>
 <p><img src="figure/ML_2.Rmd/unnamed-chunk-16-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
@@ -1966,7 +2045,7 @@ Huong PHAM
 </div>
 </div>
 <pre class="r"><code>### Normalité des résidus
-qqPlot(residus2)</code></pre>
+qqPlot(residus2b)</code></pre>
 <p><img src="figure/ML_2.Rmd/unnamed-chunk-16-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-2">
@@ -2005,8 +2084,8 @@ Huong PHAM
 </table>
 </div>
 </div>
-<pre><code>[1] 111 262</code></pre>
-<pre class="r"><code>hist(residus2)</code></pre>
+<pre><code>[1] 422 460</code></pre>
+<pre class="r"><code>hist(residus2b)</code></pre>
 <p><img src="figure/ML_2.Rmd/unnamed-chunk-16-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-3">
@@ -2047,7 +2126,7 @@ Huong PHAM
 </div>
 <pre class="r"><code>### Homoscedasticité
 # Deux façons possibles :
-plot(residus2 ~ exercice2$taille, 
+plot(residus2b ~ exercice2$taille, 
      xlab = &quot;Taille (cm)&quot;,
      ylab = &quot;Résidus&quot;)</code></pre>
 <p><img src="figure/ML_2.Rmd/unnamed-chunk-16-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
@@ -2089,8 +2168,8 @@ Huong PHAM
 </div>
 </div>
 <pre class="r"><code># - Valeurs prédites :
-exercice2$prediction2 &lt;- predict(modele2, newdata = exercice2)
-plot(residus2 ~ exercice2$prediction2, 
+exercice2$prediction2b &lt;- predict(modele2b, newdata = exercice2)
+plot(residus2b ~ exercice2$prediction2b, 
      xlab = &quot;VEF prédit par le modèle&quot;,
      ylab = &quot;Résidus&quot;)</code></pre>
 <p><img src="figure/ML_2.Rmd/unnamed-chunk-16-5.png" alt="" width="672" style="display: block; margin: auto;" /></p>
@@ -2131,7 +2210,7 @@ Huong PHAM
 </table>
 </div>
 </div>
-<pre class="r"><code>plot(modele2)</code></pre>
+<pre class="r"><code>plot(modele2b)</code></pre>
 <p><img src="figure/ML_2.Rmd/unnamed-chunk-16-6.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-6">
@@ -2284,554 +2363,19 @@ Huong PHAM
 </table>
 </div>
 </div>
-<pre class="r"><code># - Test de transformation
-hist(exercice2$VEF)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-10.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-10">
-<p>Past versions of unnamed-chunk-16-10.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-16-10" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-16-10.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>hist(log(exercice2$VEF))</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-11.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-11">
-<p>Past versions of unnamed-chunk-16-11.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-16-11" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-16-11.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>hist((exercice2$VEF)^2)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-12.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-12">
-<p>Past versions of unnamed-chunk-16-12.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-16-12" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-16-12.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>hist(sqrt(exercice2$VEF))</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-16-13.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-13">
-<p>Past versions of unnamed-chunk-16-13.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-16-13" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-16-13.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div></li>
-<li><p>Estimez un modèle dans lequel vous appliquez cette
-transformation. Vérifiez les hypothèses sous- jacentes.</p>
-<pre class="r"><code>## 6. Modèle avec transformation
-# - Transformation log de la variable réponse
-exercice2$logVEF &lt;- log(exercice2$VEF)
-
-# - Estimation du nouveau modèle
-modele2b &lt;- lm(logVEF ~ taille,
-               data = exercice2)
-summary(modele2b)</code></pre>
-<pre><code>
-Call:
-lm(formula = logVEF ~ taille, data = exercice2)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.26224 -0.07340 -0.00499  0.07062  0.37090 
-
-Coefficients:
-              Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) -0.7467194  0.0259668  -28.76   &lt;2e-16 ***
-taille       0.0130596  0.0001723   75.80   &lt;2e-16 ***
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 0.101 on 648 degrees of freedom
-Multiple R-squared:  0.8987,    Adjusted R-squared:  0.8985 
-F-statistic:  5746 on 1 and 648 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>#- Vérification des hypothèses
-residus2b &lt;- resid(modele2b)
-### Linéarité de la fonction de régression : Résidus en fonction de la variable explicative
-plot(residus2b ~ exercice2$taille, 
-     xlab = &quot;Taille (cm)&quot;,
-     ylab = &quot;Résidus&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
-<p>Past versions of unnamed-chunk-17-1.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-17-1.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>### Normalité des résidus
-qqPlot(residus2b)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-2">
-<p>Past versions of unnamed-chunk-17-2.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-17-2.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre><code>[1] 422 460</code></pre>
-<pre class="r"><code>hist(residus2b)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-3">
-<p>Past versions of unnamed-chunk-17-3.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-17-3.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>### Homoscedasticité
-# Deux façons possibles :
-plot(residus2b ~ exercice2$taille, 
-     xlab = &quot;Taille (cm)&quot;,
-     ylab = &quot;Résidus&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-4">
-<p>Past versions of unnamed-chunk-17-4.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-17-4.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code># - Valeurs prédites :
-exercice2$prediction2b &lt;- predict(modele2b, newdata = exercice2)
-plot(residus2b ~ exercice2$prediction2b, 
-     xlab = &quot;VEF prédit par le modèle&quot;,
-     ylab = &quot;Résidus&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-5.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-5">
-<p>Past versions of unnamed-chunk-17-5.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-17-5.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>plot(modele2b)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-6.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-6">
-<p>Past versions of unnamed-chunk-17-6.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-17-6.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-7.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-7">
-<p>Past versions of unnamed-chunk-17-7.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-7" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-17-7.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-8.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-8">
-<p>Past versions of unnamed-chunk-17-8.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-8" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-17-8.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-17-9.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-9">
-<p>Past versions of unnamed-chunk-17-9.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-9" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-17-9.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div></li>
+<p><strong><em>Modèle transformé :</em></strong></p>
+<p><em>Mô hình sau biến đổi là:</em></p>
+<p><em><img src="images/clipboard-3168697251.png" /></em></p>
+<p><em><strong>FR :</strong> Après transformation logarithmique, la
+pente reste très significative
+(<code>t = 75.80</code>, <code>p &lt; 2e-16</code>) et</em>
+R<em>2 augmente à 0.8987. Le modèle sur l’échelle logarithmique semble
+donc mieux adapté.</em></p>
+<p><em><strong>VN :</strong> Sau khi log-transform biến đáp ứng, slope
+vẫn rất có ý nghĩa thống kê
+(<code>t = 75.80</code>, <code>p &lt; 2e-16</code>) và</em> R<em>2 tăng
+lên 0.8987. Vì vậy mô hình trên thang log có vẻ phù hợp hơn mô hình
+thô.</em> </p></li>
 <li><p>Interprétez les résultats du modèle.</p>
 <pre class="r"><code>## 7. Résultats du modèle
 summary(modele2b)</code></pre>
@@ -2854,12 +2398,19 @@ Residual standard error: 0.101 on 648 degrees of freedom
 Multiple R-squared:  0.8987,    Adjusted R-squared:  0.8985 
 F-statistic:  5746 on 1 and 648 DF,  p-value: &lt; 2.2e-16</code></pre></li>
 </ol>
+<p><strong><em>Conclusion de l’exercice :</em></strong></p>
+<p><em><strong>FR :</strong> La taille a un effet très important sur le
+VEF. Le modèle brut est déjà fort, mais le modèle avec</em> log⁡(VEF)
+<em>semble plus valide et plus performant.<br />
+<strong>VN :</strong> Chiều cao ảnh hưởng rất mạnh lên VEF. Mô hình thô
+đã mạnh, nhưng mô hình với log(</em>VEF<em>) có vẻ hợp lệ và tốt
+hơn.</em></p>
 </div>
 <div
 id="exercice-3---lien-entre-régression-linéaire-et-analyse-de-la-variance-à-un-facteur"
-class="section level2">
-<h2><strong>Exercice 3 - Lien entre régression linéaire et analyse de la
-variance à un facteur</strong></h2>
+class="section level1">
+<h1><strong>Exercice 3 - Lien entre régression linéaire et analyse de la
+variance à un facteur</strong></h1>
 <p>Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une
 étude clinique portant sur la com- paraison de l’effet de deux
 anti-hypertenseurs et d’un placebo sur la pression artérielle. Nous
@@ -2984,7 +2535,16 @@ pwc_pvalues</code></pre>
 * &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;       
 1 Pression_ar… A      B         15    15 7.70e-19 ****     7.70e-19 ****        
 2 Pression_ar… A      Place…    15    15 1.69e-33 ****     2.53e-33 ****        
-3 Pression_ar… B      Place…    15    15 9.44e-40 ****     2.83e-39 ****        </code></pre></li>
+3 Pression_ar… B      Place…    15    15 9.44e-40 ****     2.83e-39 ****        </code></pre>
+<p><strong><em>Résultat ANOVA :</em></strong></p>
+<p><em><strong>FR :</strong> L’ANOVA
+donne <code>F = 1426</code>, <code>p &lt; 2e-16</code>. On conclut qu’il
+existe une différence très significative de pression artérielle moyenne
+entre les trois groupes de traitement.</em></p>
+<p><em><strong>VN :</strong> ANOVA
+cho <code>F = 1426</code>, <code>p &lt; 2e-16</code>, nên có sự khác
+biệt rất có ý nghĩa thống kê giữa huyết áp trung bình của ba nhóm điều
+trị.</em></p></li>
 <li><p>Nous souhaitons retrouver les résultats obtenus à la question
 suivante en formalisant le problème sous la forme d’une régression
 linéaire. Ecrivez l’équation du modèle puis estimez-la avec R.</p>
@@ -3097,7 +2657,18 @@ $contrasts
  Placebo - B     35.9 0.69 42  51.976 &lt;0.0001
  A - B           10.6 0.69 42  15.361 &lt;0.0001
 
-P value adjustment: holm method for 3 tests </code></pre></li>
+P value adjustment: holm method for 3 tests </code></pre>
+<p><strong><em>Comparaisons entre groupes :</em></strong></p>
+<p><em><strong>FR :</strong> Les comparaisons multiples montrent que
+toutes les différences entre groupes sont significatives: A diffère de
+B, A diffère du placebo, et B diffère du placebo, toutes
+avec <code>p &lt; 0.0001</code>. Les écarts estimés sont de 10.6 mmHg
+entre A et B, 25.3 mmHg entre A et placebo, et 35.9 mmHg entre B et
+placebo.</em></p>
+<p><em><strong>VN :</strong> So sánh từng cặp cho thấy <strong>mọi cặp
+đều khác nhau có ý nghĩa</strong>: A khác B, A khác placebo, và B khác
+placebo, tất cả đều <code>p &lt; 0.0001</code>. Chênh lệch trung bình
+ước lượng lần lượt là 10.6 mmHg, 25.3 mmHg và 35.9 mmHg.</em> </p></li>
 <li><p>Retrouvez la moyenne de la pression artérielle de chaque groupe à
 partir de la régression linéaire estimée, puis les différences de
 moyennes, à la main, puis avec R.</p>
@@ -3107,244 +2678,24 @@ residus3 &lt;- resid(modele3)
 
 library(&quot;car&quot;)
 qqPlot(residus3)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-22-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
-<p>Past versions of unnamed-chunk-22-1.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-22-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-22-1.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-21-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <pre><code>[1] 16 18</code></pre>
 <pre class="r"><code># Homoscédasticité = égalité des variances
 plot(residus3 ~ data_aov$Pression_arterielle, 
      xlab = &quot;Pression_arterielle (mmHg)&quot;,
      ylab = &quot;Résidus&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-22-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-2">
-<p>Past versions of unnamed-chunk-22-2.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-22-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-22-2.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-21-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot(modele3)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-22-3.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-3">
-<p>Past versions of unnamed-chunk-22-3.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-22-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-22-3.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-22-4.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-4">
-<p>Past versions of unnamed-chunk-22-4.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-22-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-22-4.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-22-5.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-5">
-<p>Past versions of unnamed-chunk-22-5.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-22-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-22-5.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-22-6.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-6">
-<p>Past versions of unnamed-chunk-22-6.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-22-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-22-6.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div></li>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-21-3.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-21-4.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-21-5.png" alt="" width="672" style="display: block; margin: auto;" /><img src="figure/ML_2.Rmd/unnamed-chunk-21-6.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p><strong><em>Lecture clinique/statistique :</em></strong></p>
+<p><em><strong>FR :</strong> Le groupe B obtient la pression la plus
+basse, puis A, puis placebo. Donc B semble le traitement le plus
+efficace.<br />
+<strong>VN :</strong> Nhóm B có huyết áp thấp nhất, sau đó là A, rồi
+placebo cao nhất. Do đó B có vẻ là điều trị hiệu quả nhất.</em></p></li>
 <li><p>Vérifiez les hypothèses sous-jacentes au modèle à partir des
 résidus.</p></li>
 </ol>
-</div>
 </div>
 <div id="exercices-supplémentaires" class="section level1">
 <h1>Exercices supplémentaires</h1>
@@ -3353,69 +2704,158 @@ résidus.</p></li>
 <div id="concepts-généraux" class="section level3">
 <h3>Concepts généraux</h3>
 <ol style="list-style-type: decimal">
-<li>Quel est l’objectif principal de la régression linéaire simple
-?</li>
-<li>Vrai ou Faux : La régression linéaire simple permet d’expliquer une
-variable qualitative par une variable quantitative.</li>
-<li>Quelle est la différence entre corrélation et régression ?</li>
-<li>Donnez un exemple de contexte où la régression linéaire simple est
-appropriée.</li>
-<li>Pourquoi ne pas se contenter du coefficient de corrélation pour
-prédire Y à partir de X ?</li>
+<li><p><strong>Quel est l’objectif principal de la régression linéaire
+simple ?</strong></p>
+<p>Dùng một biến định lượng X để <strong>mô tả, lượng hóa và dự
+đoán</strong> giá trị trung bình của một biến định lượng Y. </p></li>
+<li><p><strong>Vrai ou Faux : La régression linéaire simple permet
+d’expliquer une variable qualitative par une variable
+quantitative.</strong></p>
+<p><strong>Faux.</strong> Régression linéaire simple cổ điển là
+cho <strong>Y định lượng</strong>, X thường là định lượng trong khuôn
+khổ bài này.</p></li>
+<li><p><strong>Quelle est la différence entre corrélation et régression
+?</strong></p>
+<p>Corrélation đo force/direction của liên hệ tuyến tính; régression cho
+phương trình dự đoán và phân biệt rõ predictor với response. </p></li>
+<li><p><strong>Donnez un exemple de contexte où la régression linéaire
+simple est appropriée.</strong></p>
+<p>Ví dụ trong notebook: proportion de lipides → taux de cholestérol;
+taille → VEF; âge → temps de réaction. </p></li>
+<li><p><strong>Pourquoi ne pas se contenter du coefficient de
+corrélation pour prédire Y à partir de X ?</strong></p>
+<p>Vì r không cho slope, intercept, dự đoán, kiểm định tham số, hay phân
+tích residuals. Nói cách khác: corrélation chỉ báo “có dây”, régression
+mới nói dây kéo đi đâu và mạnh cỡ nào.</p></li>
 </ol>
 </div>
 <div id="définition-du-modèle" class="section level3">
 <h3>Définition du modèle</h3>
 <ol style="list-style-type: decimal">
-<li>Écrivez l’équation d’un modèle linéaire simple.</li>
-<li>Que représentent les paramètres β0 et β1 ?</li>
-<li>Que signifie le terme d’erreur ε dans le modèle ?</li>
-<li>Sous quelles conditions peut-on utiliser une régression linéaire
-simple ?</li>
-<li>Vrai ou Faux : La variable explicative peut être qualitative dans un
-modèle linéaire simple.</li>
+<li><p><strong>Écrivez l’équation d’un modèle linéaire
+simple.</strong></p>
+<p><img src="images/clipboard-195845525.png" /></p></li>
+<li><p><strong>Que représentent les paramètres β0 et β1 ?</strong></p>
+<p><img src="images/clipboard-3276515724.png" /></p></li>
+<li><p><strong>Que signifie le terme d’erreur ε dans le modèle
+?</strong></p>
+<p>Phần sai số không giải thích được bởi đường hồi quy, gom ảnh hưởng
+của biến không đo, biến thiên sinh học, sai số đo lường, ngẫu
+nhiên.</p></li>
+<li><p><strong>Sous quelles conditions peut-on utiliser une régression
+linéaire simple ?</strong></p>
+<p>Khi có một predictor định lượng, một response định lượng, quan hệ
+trung bình gần tuyến tính, residuals độc lập, gần chuẩn và có phương sai
+xấp xỉ không đổi.</p></li>
+<li><p><strong>Vrai ou Faux : La variable explicative peut être
+qualitative dans un modèle linéaire simple.</strong></p>
+<p>Khi có một predictor định lượng, một response định lượng, quan hệ
+trung bình gần tuyến tính, residuals độc lập, gần chuẩn và có phương sai
+xấp xỉ không đổi.</p></li>
 </ol>
 </div>
 <div id="estimation-et-interprétation" class="section level3">
 <h3>Estimation et interprétation</h3>
 <ol style="list-style-type: decimal">
-<li>Quelle méthode est utilisée pour estimer β0 et β1 ?</li>
-<li>Donnez la formule de l’estimateur de β1.</li>
-<li>Donnez la formule de l’estimateur de β0.</li>
-<li>Que représente un résidu dans le modèle ?</li>
-<li>Pourquoi minimise-t-on la somme des carrés des résidus ?</li>
+<li><p><strong>Quelle méthode est utilisée pour estimer β0 et β1
+?</strong></p>
+<p>Méthode des moindres carrés ordinaires, tức chọn đường làm tổng bình
+phương residuals là nhỏ nhất. </p></li>
+<li><p><strong>Donnez la formule de l’estimateur de β1.</strong></p>
+<p>X tăng thì Y có xu hướng tăng trung bình.</p></li>
+<li><p><strong>Donnez la formule de l’estimateur de β0.</strong></p>
+<p>X tăng thì Y có xu hướng giảm trung bình.</p></li>
+<li><p><strong>Que représente un résidu dans le modèle ?</strong></p>
+<p>Giá trị trung bình dự đoán của Y khi X=0; chỉ có ý nghĩa thực tế
+nếu X=0 hợp lý trong bối cảnh dữ liệu. </p></li>
+<li><p><strong>Pourquoi minimise-t-on la somme des carrés des résidus
+?</strong></p>
+<p>Kiểm định H0​:β1​=0, tức không có liên hệ tuyến tính
+giữa X và Y</p></li>
 </ol>
 </div>
 <div id="qualité-et-tests" class="section level3">
 <h3>Qualité et tests</h3>
 <ol style="list-style-type: decimal">
-<li>Que mesure le coefficient de détermination R2 ?</li>
-<li>Donnez la formule de R2.</li>
-<li>Quelle est la relation entre R2 et le coefficient de corrélation
-dans le cas simple ?</li>
-<li>Quel test permet d’évaluer la significativité globale du modèle
-?</li>
-<li>Écrivez les hypothèses du test F global.</li>
-<li>Que conclure si Fobs &gt; Fcritique ?</li>
+<li><p><strong>Que mesure le coefficient de détermination R2
+?</strong></p>
+<p>Tỷ lệ biến thiên của Y được giải thích bởi mô hình.</p></li>
+<li><p><strong>Donnez la formule de R2.</strong></p>
+<p><strong>Non.</strong> Mô hình giải thích tốt không đồng nghĩa quan hệ
+nhân quả. Hồi quy mô tả association trong dữ liệu quan sát hoặc thực
+nghiệm theo thiết kế có sẵn.</p></li>
+<li><p><strong>Quelle est la relation entre R2 et le coefficient de
+corrélation dans le cas simple ?</strong></p>
+<p>P-value nhỏ cho biết effect khó do ngẫu nhiên; importance pratique
+phụ thuộc cỡ slope và bối cảnh lâm sàng/khoa học.</p>
+<p>Ví dụ r sel-PAS có ý nghĩa thống kê nhưng R2 chỉ 0.144, nên không nên
+thổi nó thành “mô hình tuyệt vời”. </p></li>
+<li><p><strong>Quel test permet d’évaluer la significativité globale du
+modèle ?</strong></p>
+<p>Residuals phân tán nhiều quanh đường hồi quy, nên dự đoán kém chính
+xác hơn.</p></li>
+<li><p><strong>Écrivez les hypothèses du test F global.</strong></p>
+<p>Trong hồi quy tuyến tính đơn:</p>
+<ul>
+<li><p>H0​: β1=0<br />
+Nghĩa là mô hình không giải thích được gì thêm so với mô hình chỉ có
+intercept, tức <strong>không có liên hệ tuyến tính giữa</strong>
+X và Y.</p></li>
+<li><p>H1​: β1≠0<br />
+Nghĩa là <strong>có liên hệ tuyến tính</strong> giữa X và Y.</p></li>
+</ul>
+<p>Nếu viết trong bối cảnh ANOVA hay hồi quy nhiều nhóm, dạng tổng quát
+hơn là:</p>
+<ul>
+<li><p>H0​: tất cả các hiệu ứng giải thích đều bằng 0</p></li>
+<li><p>H1​: ít nhất một hiệu ứng khác 0</p></li>
+</ul></li>
+<li><p><strong>Que conclure si Fobs &gt; Fcritique ?</strong></p>
+<p>Nếu Fobs&gt;Fcritique​, ta <strong>rejette</strong> H0​ ở mức ý
+nghĩa α.</p>
+<p>Kết luận bằng lời:</p>
+<ul>
+<li><p><strong>Le modèle global est statistiquement
+significatif</strong></p></li>
+<li><p>Biến giải thích mang lại thông tin có ích để giải thích biến đáp
+ứng</p></li>
+<li><p>Trong hồi quy đơn: có bằng chứng cho thấy β1≠0, tức là có liên hệ
+tuyến tính có ý nghĩa thống kê giữa X và Y</p></li>
+</ul></li>
 </ol>
 </div>
 <div id="hypothèses-et-diagnostics" class="section level3">
 <h3>Hypothèses et diagnostics</h3>
 <ol style="list-style-type: decimal">
-<li>Citez les hypothèses sur les résidus dans un modèle linéaire
-simple.</li>
-<li>Comment vérifier la normalité des résidus ?</li>
-<li>Comment vérifier l’homoscédasticité ?</li>
-<li>Que faire en cas de non-linéarité ?</li>
+<li><p><strong>Citez les hypothèses sur les résidus dans un modèle
+linéaire simple.</strong></p>
+<p>Linéarité de la moyenne, indépendance, normalité approximative,
+homoscédasticité. </p></li>
+<li><p><strong>Comment vérifier la normalité des résidus ?</strong></p>
+<p>QQ-plot là công cụ mạnh nhất; histogram residuals là bổ
+trợ. </p></li>
+<li><p><strong>Comment vérifier l’homoscédasticité ?</strong></p>
+<p>Residuals vs fitted hoặc residuals vs predictor, xem độ phân tán có
+gần như hằng định không.</p></li>
+<li><p><strong>Que faire en cas de non-linéarité ?</strong></p>
+<p>Cân nhắc transformation của Y hoặc X, hoặc thêm dạng phi tuyến.
+Notebook VEF đã chọn log-transform de la réponse.</p></li>
 </ol>
 </div>
 <div id="lien-avec-lanova" class="section level3">
-<h3>Lien avec l’ANOVA</h3>
+<h3><strong>Lien avec l’ANOVA</strong></h3>
 <ol style="list-style-type: decimal">
-<li>Quelle est la relation entre ANOVA et régression linéaire simple
-?</li>
-<li>Donnez la relation fondamentale entre SCtot, SCexp et SCres.</li>
-<li>Pourquoi le test F est-il identique dans les deux approches ?</li>
+<li><p><strong>Quelle est la relation entre ANOVA et régression linéaire
+simple ?</strong></p>
+<p>Đều là trường hợp của mô hình tuyến tính; ANOVA là khi predictor là
+facteur.</p></li>
+<li><p><strong>Donnez la relation fondamentale entre SCtot, SCexp et
+SCres.</strong></p>
+<p><img src="images/clipboard-2061175937.png" /></p></li>
+<li><p><strong>Pourquoi le test F est-il identique dans les deux
+approches ?</strong></p>
+<p>Vì hai cách tiếp cận dùng cùng decomposition của tổng biến thiên và
+cùng so sánh variance expliquée với variance résiduelle.</p></li>
 </ol>
 </div>
 </div>
@@ -3466,57 +2906,39 @@ sel_tension %&gt;%
     Maximum_PAS = max(PAS_mmHg)
   )</code></pre>
 <pre><code>  Moyenne_PAS   SD_PAS Minimum_PAS Maximum_PAS
-1    110.4417 8.369396          90         135</code></pre></li>
+1    110.4417 8.369396          90         135</code></pre>
+<p><em>Dữ liệu có 240 quan sát và 2
+biến: <code>Sel_g_jour</code> và <code>PAS_mmHg</code>. Sel trung bình
+7.90 g/ngày, SD 2.37, dao động từ 3 đến 13.9. Đây là cấu trúc chuẩn cho
+hồi quy đơn. Notebook không trích text về missing values
+sau <code>str()</code>, nên cách trả lời an toàn là: <strong>không thấy
+bằng chứng text của valeurs manquantes trong notebook; cần kiểm trực
+tiếp bằng <code>sum(is.na(...))</code> nếu muốn khẳng định tuyệt
+đối</strong>.</em></p></li>
 <li><p>Représentez la relation entre les deux variables à l’aide d’un
 graphique adapté. Décrivez la ten- dance observée.</p>
 <pre class="r"><code>## 3. Représentation graphique de la relation entre la consommation de sel et la pression artérielle
 plot(x = sel_tension$Sel_g_jour, y = sel_tension$PAS_mmHg,
      xlab = &quot;consommation de sel (g/jour)&quot;,
      ylab = &quot;Pression artérielle systolique (mmHg)&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-25-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-25-1">
-<p>Past versions of unnamed-chunk-25-1.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-25-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-25-1.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div></li>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-24-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Calculez un indicateur numérique qui mesure la force et la
 direction de la relation entre les deux variables. Interprétez sa
 valeur.</p>
 <pre class="r"><code>## 4. Calcul du coefficient de corrélation
 cor(sel_tension$Sel_g_jour, sel_tension$PAS_mmHg)</code></pre>
-<pre><code>[1] 0.379858</code></pre></li>
+<pre><code>[1] 0.379858</code></pre>
+<p><em><strong>VN:</strong><br />
+Correlation <code>r=0.3799</code> cho thấy <strong>liên hệ dương mức
+vừa, không mạnh</strong> giữa lượng muối và PAS. Muối nhiều hơn đi kèm
+HA tâm thu cao hơn, nhưng mối liên hệ không chặt. Đây là kiểu kết quả
+hay bị sinh viên overclaim thành “giải thích tốt”, trong khi thật ra chỉ
+là tín hiệu có thật nhưng vừa phải.</em></p>
+<p><em><strong>FR:</strong><br />
+Le coefficient <code>r=0.3799</code> indique une <strong>association
+linéaire positive modérée</strong> entre la consommation de sel et la
+pression artérielle systolique. La relation existe, mais elle n’est pas
+très forte.</em> </p></li>
 <li><p>Estimez un modèle permettant d’expliquer la pression artérielle
 en fonction de la consommation de sel.</p>
 <pre class="r"><code>## 5. Estimation d&#39;une régression linéaire simple
@@ -3528,84 +2950,10 @@ diagnostics vous utilisez et ce que vous constatez.</p>
 <pre class="r"><code>## 6. Vérification des hypothèses du modèle
 ### Homoscédasticité et linéarité de la fonction de régression
 plot(modele1, which = 1)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-28-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-1">
-<p>Past versions of unnamed-chunk-28-1.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-28-1.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-27-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>### Normalité
 plot(modele1, which = 2)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-28-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-2">
-<p>Past versions of unnamed-chunk-28-2.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-28-2.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div></li>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-27-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Évaluez la capacité du modèle à expliquer la variabilité
 observée. Commentez la valeur obtenue.</p>
 <pre class="r"><code>## 7. Qualité du modèle : R2
@@ -3638,14 +2986,34 @@ F-statistic: 40.13 on 1 and 238 DF,  p-value: 1.175e-09</code></pre>
 # de l&#39;effet du sel est égal à 0. Le sel a donc un effet sginficiatif sur la pression artérielle.
 
 # Interprétation : beta = 1.3418, pour toute augmentation d&#39;une gramme de la consommation de sel
-# la pression artérielle systolique augmente de 1.3418 mmHg.</code></pre></li>
+# la pression artérielle systolique augmente de 1.3418 mmHg.</code></pre>
+<p><strong><em>Modèle et significativité</em></strong></p>
+<p><em><img src="images/clipboard-553745980.png" /></em></p>
+<p><em>Mỗi tăng 1 g muối/ngày làm PAS tăng trung bình
+khoảng <strong>1.34 mmHg</strong>.</em></p>
+<p><em>Slope rất có ý nghĩa thống kê
+(<code>t = 6.335</code>, <code>p = 1.18e-09</code>), và test F toàn cục
+cũng có ý nghĩa.</em></p>
+<p><em>Nhưng</em> R<em>2=0.1443, nên mô hình chỉ giải thích
+khoảng <strong>14.4% biến thiên của PAS</strong>.</em></p>
+<p><em>Kết luận đúng là: effect có thật, nhưng <strong>khả năng giải
+thích còn hạn chế</strong>, còn nhiều yếu tố khác quyết định
+HA.</em></p></li>
 <li><p>Fournissez des prédictions pour une consommation faible (par ex.
 5 g/j) et élevée (par ex. 12 g/j). Interprétez ces résultats.</p>
 <pre class="r"><code>## 9. Prédiction
 Xpred &lt;- data.frame(Sel_g_jour = c(5, 12)) 
 predict(modele1, newdata = Xpred)</code></pre>
 <pre><code>       1        2 
-106.5516 115.9442 </code></pre></li>
+106.5516 115.9442 </code></pre>
+<p><em>Notebook dự đoán:</em></p>
+<ul>
+<li><p><em>5 g/jour → <strong>106.55 mmHg</strong></em></p></li>
+<li><p><em>12 g/jour → <strong>115.94 mmHg</strong></em></p></li>
+</ul>
+<p><em>Chênh khoảng 9.39 mmHg giữa hai mức tiêu thụ. Đây là cách đưa
+slope về lâm sàng/thực hành: không nói bằng “β1”, mà nói bằng khác biệt
+dự đoán giữa hai mức phơi nhiễm cụ thể.</em> </p></li>
 <li><p>Discutez l’effet du sel et les limites éventuelles de
 l’analyse.</p></li>
 </ol>
@@ -3684,7 +3052,11 @@ age_temps_reaction %&gt;%
     SD_age = sd(TempsReaction_ms)
   )</code></pre>
 <pre><code>  Moyenne_age   SD_age
-1    366.7333 60.78755</code></pre></li>
+1    366.7333 60.78755</code></pre>
+<p><strong><em>Descriptif</em></strong></p>
+<p><em>Dữ liệu có 300 participants. Tuổi trung bình 48.49 năm, SD 15.96;
+temps de réaction trung bình 366.73 ms, SD 60.79. Cấu trúc hoàn toàn phù
+hợp để làm hồi quy đơn âge → temps de réaction.</em></p></li>
 <li><p>Représentez la relation entre l’âge et le temps de réaction à
 l’aide d’un graphique pertinent. La tendance semble-t-elle linéaire ?
 Justifiez votre réponse.</p>
@@ -3692,49 +3064,17 @@ Justifiez votre réponse.</p>
 plot(x = age_temps_reaction$Age_annees, y = age_temps_reaction$TempsReaction_ms,
      xlab = &quot;Âge (années)&quot;,
      ylab = &quot;Temps de réaction (ms)&quot;)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-34-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-1">
-<p>Past versions of unnamed-chunk-34-1.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-34-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-34-1.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div></li>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-33-1.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Calculez un indicateur qui résume la force et la direction de la
 relation. Interprétez sa valeur.</p>
 <pre class="r"><code>## 4. Coefficient de corrélation
 cor(age_temps_reaction$Age_annees, age_temps_reaction$TempsReaction_ms)</code></pre>
-<pre><code>[1] 0.7725096</code></pre></li>
+<pre><code>[1] 0.7725096</code></pre>
+<p><strong><em>Relation et corrélation</em></strong></p>
+<p><em>Correlation <code>r=0.7725</code> cho thấy <strong>liên hệ dương
+khá mạnh</strong>: tuổi càng cao thì temps de réaction càng dài, tức
+phản ứng chậm hơn. Nếu thi, câu này nên nói bằng ngôn ngữ của outcome:
+“allongement du temps de réaction avec l’âge”.</em> </p></li>
 <li><p>Ajustez un modèle pour étudier l’effet de l’âge sur le temps de
 réaction. Expliquez la signification des paramètres obtenus.</p>
 <pre class="r"><code>## 5. Estimation d&#39;une régression linéaire simple
@@ -3770,91 +3110,27 @@ proposez une amélioration possible et justifiez-la.</p>
 <pre class="r"><code>## 7. Vérification des hypothèses du modèle
 ### Homoscédasiticité et linéaire de la fonction de régression
 plot(modele2, which = 1)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-38-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-1">
-<p>Past versions of unnamed-chunk-38-1.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-38-1.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-37-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>### Normalité
 plot(modele2, which = 2)</code></pre>
-<p><img src="figure/ML_2.Rmd/unnamed-chunk-38-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-2">
-<p>Past versions of unnamed-chunk-38-2.png</p>
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/tthanhhuong/Data_Analysis/blob/ef88e31d5cc85d03e5d95bf390d25480c1df70eb/docs/figure/ML_2.Rmd/unnamed-chunk-38-2.png" target="_blank">ef88e31</a>
-</td>
-<td>
-Huong PHAM
-</td>
-<td>
-2026-03-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div></li>
+<p><img src="figure/ML_2.Rmd/unnamed-chunk-37-2.png" alt="" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Comparez les prédictions pour un âge jeune (par ex. 30 ans) et un
 âge avancé (par ex. 70 ans). Commentez la différence.</p>
 <pre class="r"><code>## 8. Calcul de prédictions
 Xpred &lt;- data.frame(Age_annees = c(30, 70))
 predict(modele2, newdata = Xpred)</code></pre>
 <pre><code>       1        2 
-312.3260 430.0059 </code></pre></li>
+312.3260 430.0059 </code></pre>
+<p><strong><em>Prédictions :</em></strong></p>
+<p><em>Notebook cho:</em></p>
+<ul>
+<li><p><em>30 ans → <strong>312.33 ms</strong></em></p></li>
+<li><p><em>70 ans → <strong>430.01 ms</strong></em></p></li>
+</ul>
+<p><em>Chênh lệch khoảng <strong>117.68 ms</strong>, khá lớn. Đây là
+cách rất đẹp để chuyển slope 2.94 ms/an thành thông điệp thực hành dễ
+hiểu hơn: qua 40 năm, thời gian phản ứng dự đoán tăng gần 118
+ms.</em></p></li>
 <li><p>Formulez une conclusion sur la relation âge–temps de
 réaction.</p>
 <pre class="r"><code>## 9. Interprétation de l&#39;effet de l&#39;âge
@@ -3879,8 +3155,44 @@ Multiple R-squared:  0.5968,    Adjusted R-squared:  0.5954
 F-statistic:   441 on 1 and 298 DF,  p-value: &lt; 2.2e-16</code></pre>
 <pre class="r"><code># L&#39;effet de l&#39;âge est significativement différent de 0 puisque la p-valeur &lt; 0.05.
 # beta_age = 2.9420, ce qui signifie que pour toute augmentation de l&#39;âge d&#39;une année, le temps 
-# de réaction augemente de 2.9420 ms.</code></pre></li>
+# de réaction augemente de 2.9420 ms.</code></pre>
+<p><strong><em>Modèle estimé:</em></strong></p>
+<p><em><img src="images/clipboard-396700802.png" /></em></p>
+<p><em>Mỗi tăng 1 tuổi làm temps de réaction tăng trung bình
+khoảng <strong>2.94 ms</strong>.</em></p>
+<p><em>Slope có ý nghĩa rất mạnh
+(<code>t = 21.00</code>, <code>p &lt; 2e-16</code>).</em> R<em>2=0.5968,
+nghĩa là tuổi giải thích khoảng <strong>59.7%</strong> biến thiên của
+thời gian phản ứng.</em></p>
+<p><em>Đây là mức khá tốt nhưng chưa hoàn hảo, tức còn nhiều yếu tố khác
+ảnh hưởng.</em> </p></li>
 </ol>
+</div>
+</div>
+<div id="interpretation-en-français" class="section level2">
+<h2>Interpretation en français :)</h2>
+<ul>
+<li><p>La régression linéaire simple étudie le lien entre une variable
+explicative quantitative et une variable réponse quantitative.</p></li>
+<li><p>Le coefficient de pente représente la variation moyenne de Y pour
+une augmentation d’une unité de X.</p></li>
+<li><p>Une p-valeur faible pour β1 indique une association linéaire
+statistiquement significative entre X et Y.</p></li>
+<li><p>Le R2 correspond à la proportion de variabilité de Y expliquée
+par le modèle.</p></li>
+<li><p>La corrélation mesure l’intensité du lien, tandis que la
+régression fournit une équation de prédiction.</p></li>
+<li><p>Les hypothèses principales sont la linéarité, l’indépendance, la
+normalité des résidus et l’homoscédasticité.</p></li>
+<li><p>Le QQ-plot est un outil central pour apprécier la normalité des
+résidus.</p></li>
+<li><p>Un graphique résidus-valeurs ajustées aide à détecter une
+non-linéarité ou une hétéroscédasticité.</p></li>
+<li><p>En cas de violation des hypothèses, une transformation de la
+variable réponse peut améliorer le modèle.</p></li>
+<li><p>L’ANOVA à un facteur est un cas particulier du modèle linéaire
+avec variable explicative qualitative.</p></li>
+</ul>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -3912,27 +3224,25 @@ other attached packages:
  [5] survival_3.8-6  mvtnorm_1.3-3   rstatix_0.7.3   lubridate_1.9.5
  [9] forcats_1.0.1   stringr_1.6.0   dplyr_1.2.0     purrr_1.2.1    
 [13] readr_2.1.6     tidyr_1.3.2     tibble_3.3.1    ggplot2_4.0.2  
-[17] tidyverse_2.0.0 car_3.1-5       carData_3.0-6   workflowr_1.7.2
+[17] tidyverse_2.0.0 car_3.1-5       carData_3.0-6  
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.6       xfun_0.56          bslib_0.10.0       processx_3.8.6    
- [5] lattice_0.22-9     callr_3.7.6        tzdb_0.5.0         vctrs_0.7.1       
- [9] tools_4.4.2        ps_1.9.1           generics_0.1.4     sandwich_3.1-1    
-[13] pkgconfig_2.0.3    Matrix_1.7-4       RColorBrewer_1.1-3 S7_0.2.1          
-[17] lifecycle_1.0.5    compiler_4.4.2     farver_2.1.2       git2r_0.36.2      
-[21] codetools_0.2-20   getPass_0.2-4      httpuv_1.6.16      htmltools_0.5.9   
-[25] sass_0.4.10        yaml_2.3.12        Formula_1.2-5      later_1.4.6       
-[29] pillar_1.11.1      jquerylib_0.1.4    whisker_0.4.1      cachem_1.1.0      
-[33] abind_1.4-8        tidyselect_1.2.1   digest_0.6.39      stringi_1.8.7     
-[37] splines_4.4.2      rprojroot_2.1.1    fastmap_1.2.0      grid_4.4.2        
-[41] cli_3.6.5          magrittr_2.0.4     utf8_1.2.6         broom_1.0.12      
-[45] withr_3.0.2        scales_1.4.0       promises_1.5.0     backports_1.5.0   
-[49] estimability_1.5.1 timechange_0.4.0   rmarkdown_2.30     httr_1.4.8        
-[53] otel_0.2.0         zoo_1.8-15         hms_1.1.4          coda_0.19-4.1     
-[57] evaluate_1.0.5     knitr_1.51         rlang_1.1.7        Rcpp_1.1.1        
-[61] glue_1.8.0         rstudioapi_0.18.0  jsonlite_2.0.0     R6_2.6.1          
-[65] fs_1.6.6          </code></pre>
-</div>
+ [1] gtable_0.3.6       xfun_0.56          bslib_0.10.0       lattice_0.22-9    
+ [5] tzdb_0.5.0         vctrs_0.7.1        tools_4.4.2        generics_0.1.4    
+ [9] sandwich_3.1-1     pkgconfig_2.0.3    Matrix_1.7-4       RColorBrewer_1.1-3
+[13] S7_0.2.1           lifecycle_1.0.5    compiler_4.4.2     farver_2.1.2      
+[17] git2r_0.36.2       codetools_0.2-20   httpuv_1.6.16      htmltools_0.5.9   
+[21] sass_0.4.10        yaml_2.3.12        Formula_1.2-5      later_1.4.6       
+[25] pillar_1.11.1      jquerylib_0.1.4    whisker_0.4.1      cachem_1.1.0      
+[29] abind_1.4-8        tidyselect_1.2.1   digest_0.6.39      stringi_1.8.7     
+[33] splines_4.4.2      rprojroot_2.1.1    fastmap_1.2.0      grid_4.4.2        
+[37] cli_3.6.5          magrittr_2.0.4     utf8_1.2.6         broom_1.0.12      
+[41] withr_3.0.2        scales_1.4.0       promises_1.5.0     backports_1.5.0   
+[45] estimability_1.5.1 timechange_0.4.0   rmarkdown_2.30     otel_0.2.0        
+[49] workflowr_1.7.2    zoo_1.8-15         hms_1.1.4          coda_0.19-4.1     
+[53] evaluate_1.0.5     knitr_1.51         rlang_1.1.7        Rcpp_1.1.1        
+[57] glue_1.8.0         rstudioapi_0.18.0  jsonlite_2.0.0     R6_2.6.1          
+[61] fs_1.6.6          </code></pre>
 </div>
 </div>
 </div>

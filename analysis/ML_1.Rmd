@@ -1,5 +1,5 @@
 ---
-title: "ML_1"
+title: "Analyse de la variance à un facteur (ANOVA I)"
 author: "PHAM Huong"
 date: "2026-03-08"
 output: html_document
@@ -9,9 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Analyse de la variance à un facteur (ANOVA I)
-
-## **Exercice 1 - Exemple du cours**
+# **Exercice 1 - Exemple du cours**
 
 Considérons les résultats d’une étude clinique portant sur la comparaison de l’effet de deux anti- hypertenseurs et d’un placebo sur la pression artérielle. Nous disponsons d’un échantillon de 45 patients choisis au hasard, parmi lesquels 15 patients ont reçu l’anti-hypertenseur A, 15 patients ont reçu l’anti- hypertenseur B et 15 patients ont reçu le placebo. Pour chaque patient nous disposons de la pression artérielle systolique (en mmHg) 3 mois après l’initiation du traitement.
 
@@ -138,7 +136,7 @@ Considérons les résultats d’une étude clinique portant sur la comparaison d
 
 Les conditions d’application de l’ANOVA sont globalement satisfaites. L’analyse montre un effet très significatif du traitement sur la pression artérielle systolique (F(2,42)=1426.0, p\<0.001). Les comparaisons post-hoc montrent que les trois groupes diffèrent significativement entre eux. Le traitement B est associé à la pression artérielle moyenne la plus basse, suivi du traitement A, tandis que le placebo présente la moyenne la plus élevée.
 
-## **Exercice 2**
+# **Exercice 2**
 
 La même étude a été réalisé sur des patients présentant des caractéristiques différentes. Nous dis- posons, là aussi, d’un échantillon de 45 patients choisis au hasard, parmi lesquels 15 patients ont reçu l’anti-hypertenseur A, 15 patients ont reçu l’anti-hypertenseur B et 15 patients ont reçu le placebo. Pour chaque patient nous disposons de la pression artérielle systolique (en mmHg) 3 mois après l’initiation du traitement.
 
@@ -213,7 +211,7 @@ La même étude a été réalisé sur des patients présentant des caractéristi
 
     *Les moyennes observées dans les trois groupes sont très proches. Les hypothèses de normalité et d’homogénéité des variances sont respectées. L’ANOVA ne met pas en évidence d’effet significatif du traitement sur la pression artérielle systolique (F(2,133)=0.286, p=0.752). On ne peut donc pas conclure à une différence entre les groupes.*
 
-## **Exercice 3 - Arthrose du genou**
+# **Exercice 3 - Arthrose du genou**
 
 Nous souhaitons évaluer l’effet d’un nouveau traitement contre l’arthrose du genou comparativement à un placebo. Deux doses de ce traitement sont investiguées ainsi qu’un placebo. Pour chaque patient, la douleur causée par l’arthrose est évaluée sur base d’une échelle visuelle analogique (VAS) avant la prise du traitement et 1 mois après. Nous disposons de la différence avant-après du niveau de douleur pour chaque patient. Les données sont disponible dans le fichier knee_arthrosis.csv.
 
