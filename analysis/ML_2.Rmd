@@ -670,7 +670,7 @@ Reprenons l’exercice 1 du TD 1 : considérons les résultats d’une étude cl
 
 6.  **Que conclure si Fobs \> Fcritique ?**
 
-    Nếu Fobs>Fcritique​, ta **rejette** H0​ ở mức ý nghĩa α.
+    Nếu Fobs\>Fcritique​, ta **rejette** H0​ ở mức ý nghĩa α.
 
     Kết luận bằng lời:
 

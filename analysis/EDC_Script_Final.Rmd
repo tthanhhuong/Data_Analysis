@@ -1,0 +1,778 @@
+---
+title: "ETUDE DE CAS 1 - Gym Members Exercise Dataset"
+author: "Votre nom"
+date: "2026-03-17"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 8,
+  fig.height = 5
+)
+```
+
+# Introduction
+
+Cette étude porte sur le jeu de données **Gym Members Exercise Dataset**.\
+L’objectif est de suivre une démarche d’analyse structurée permettant :
+
+1.  de préparer et nettoyer les données ;
+2.  de décrire les caractéristiques de l’échantillon ;
+3.  d’explorer la structure des variables quantitatives par ACP ;
+4.  de réaliser une classification non supervisée par CAH ;
+5.  de construire des modèles de classification pour prédire une **classe de dépense calorique** ;
+6.  de construire des modèles de régression pour prédire directement **Calories_Burned**.
+
+La stratégie retenue combine ainsi une approche **descriptive**, **exploratoire**, **non supervisée** et **supervisée**.
+
+# 1. Chargement des packages et importation des données
+
+## 1.1. Packages nécessaires
+
+```{r packages}
+packages <- c("corrplot", "MASS", "rpart", "rpart.plot", "randomForest", "pls")
+to_install <- packages[!packages %in% rownames(installed.packages())]
+if (length(to_install) > 0) install.packages(to_install)
+
+library(corrplot)
+library(MASS)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+library(pls)
+```
+
+## 1.2. Importation du jeu de données
+
+Le fichier est importé depuis le répertoire de travail.\
+On vérifie ensuite sa structure, sa dimension et un premier résumé global afin d’identifier la nature des variables.
+
+```{r importation}
+# Adapter le chemin si besoin
+setwd("/Users/thanhhuong/Downloads/M1/Etude de cas")
+
+gym <- read.csv(
+  "gym_members_exercise_tracking.csv",
+  sep = ",",
+  dec = ".",
+  header = TRUE
+)
+
+str(gym)
+dim(gym)
+head(gym)
+summary(gym)
+```
+
+# 2. Préparation et nettoyage des données
+
+## 2.1. Typage des variables qualitatives
+
+Certaines variables doivent être explicitement converties en facteurs afin d’être traitées correctement dans les analyses descriptives et les modèles supervisés.
+
+```{r typage-variables}
+gym$Gender <- as.factor(gym$Gender)
+gym$Workout_Type <- as.factor(gym$Workout_Type)
+gym$Experience_Level <- as.factor(gym$Experience_Level)
+```
+
+## 2.2. Vérification des valeurs manquantes et des doublons
+
+Avant toute analyse, il est nécessaire de vérifier la qualité globale des données, notamment la présence de valeurs manquantes et de doublons.
+
+```{r verif-na-doublons}
+na_counts <- colSums(is.na(gym))
+dup_count <- sum(duplicated(gym))
+
+na_counts
+dup_count
+```
+
+Les sorties précédentes permettent de confirmer si le jeu de données nécessite un traitement complémentaire.\
+En l’absence de valeurs manquantes importantes ou de doublons, l’analyse peut être poursuivie directement.
+
+## 2.3. Choix des variables retenues
+
+Le nettoyage ne se limite pas à supprimer des observations. Il consiste aussi à limiter les redondances entre variables.
+
+Dans cette étude :
+
+-   `BMI` est une variable dérivée de `Weight` et `Height` et peut donc introduire une redondance ;
+-   `Max_BPM` et `Resting_BPM` semblent a priori moins informatifs que `Avg_BPM` pour expliquer la dépense calorique ;
+-   les analyses principales sont donc réalisées sur un sous-ensemble de variables quantitatives jugées plus pertinentes.
+
+```{r selection-variables}
+vars_quanti_full <- c(
+  "Age",
+  "Weight..kg.",
+  "Height..m.",
+  "Max_BPM",
+  "Avg_BPM",
+  "Resting_BPM",
+  "Session_Duration..hours.",
+  "Fat_Percentage",
+  "Water_Intake..liters.",
+  "Workout_Frequency..days.week.",
+  "BMI"
+)
+
+vars_quanti <- c(
+  "Age",
+  "Weight..kg.",
+  "Height..m.",
+  "Avg_BPM",
+  "Session_Duration..hours.",
+  "Fat_Percentage",
+  "Water_Intake..liters.",
+  "Workout_Frequency..days.week."
+)
+
+vars_quali <- c("Gender", "Workout_Type", "Experience_Level")
+
+gym_quanti_full <- gym[, vars_quanti_full]
+gym_quanti <- gym[, vars_quanti]
+gym_quali <- gym[, vars_quali]
+
+calories <- gym$Calories_Burned
+```
+
+## 2.4. Vérifications méthodologiques utiles
+
+Les corrélations suivantes servent à justifier le choix des variables conservées ou écartées.
+
+```{r verif-corr-methodo}
+corr_bpm <- cor(gym[, c("Max_BPM", "Avg_BPM", "Resting_BPM")])
+corr_bpm_cal <- cor(gym[, c("Max_BPM", "Avg_BPM", "Resting_BPM", "Calories_Burned")])[, "Calories_Burned"]
+corr_bmi <- cor(gym[, c("BMI", "Weight..kg.", "Height..m.")])
+
+round(corr_bpm, 3)
+round(corr_bpm_cal, 3)
+round(corr_bmi, 3)
+```
+
+Ces résultats permettent d’évaluer :
+
+-   la proximité entre les différentes mesures de fréquence cardiaque ;
+-   leur lien avec `Calories_Burned` ;
+-   la redondance potentielle entre `BMI`, `Weight` et `Height`.
+
+Si `BMI` est fortement corrélé à ses composantes, il est logique de ne pas l’inclure dans les analyses principales afin d’éviter une information répétée.
+
+## 2.5. Création de la variable cible de classification
+
+Afin de réaliser des modèles de classification, on transforme la variable continue `Calories_Burned` en trois classes de niveau de dépense calorique : **Faible**, **Modérée** et **Haute**, à partir des terciles.
+
+```{r creation-classe-calories}
+burned_cal <- quantile(
+  gym$Calories_Burned,
+  probs = c(0, 1/3, 2/3, 1),
+  na.rm = TRUE
+)
+
+gym$Classe_Calories <- cut(
+  gym$Calories_Burned,
+  breaks = burned_cal,
+  include.lowest = TRUE,
+  labels = c("Faible", "Moderee", "Haute")
+)
+
+gym$Classe_Calories <- as.factor(gym$Classe_Calories)
+
+tab_classe <- table(gym$Classe_Calories)
+prop_classe <- round(prop.table(tab_classe), 3)
+
+tab_classe
+prop_classe
+```
+
+La répartition obtenue permet de vérifier que les classes sont globalement équilibrées, ce qui est souhaitable pour les modèles de classification.
+
+# 3. Analyse descriptive
+
+## 3.1. Description des variables quantitatives
+
+On commence par résumer les variables quantitatives retenues à l’aide des moyennes, écarts-types et statistiques usuelles.
+
+```{r stats-descriptives}
+moyennes <- round(apply(gym_quanti, 2, mean), 2)
+ecarts_types <- round(apply(gym_quanti, 2, sd), 2)
+resume_quanti <- summary(gym_quanti)
+
+moyennes
+ecarts_types
+resume_quanti
+```
+
+Cette étape permet d’apprécier l’ordre de grandeur des variables, leur dispersion et d’éventuelles asymétries ou valeurs extrêmes.
+
+## 3.2. Distribution des variables qualitatives
+
+On examine ensuite la distribution des variables qualitatives du jeu de données.
+
+```{r distributions-quali}
+table(gym$Gender)
+table(gym$Workout_Type)
+table(gym$Experience_Level)
+table(gym$Classe_Calories)
+```
+
+Cette description donne une première idée de la composition de l’échantillon selon le sexe, le type d’entraînement, le niveau d’expérience et la classe de dépense calorique.
+
+## 3.3. Visualisation des distributions
+
+Les boxplots permettent d’identifier la dispersion et d’éventuelles observations atypiques.
+
+```{r boxplots}
+par(mfrow = c(2, 2))
+boxplot(gym$Calories_Burned, main = "Calories_Burned")
+boxplot(gym$Session_Duration..hours., main = "Session_Duration")
+boxplot(gym$Fat_Percentage, main = "Fat_Percentage")
+boxplot(gym$Workout_Frequency..days.week., main = "Workout_Frequency")
+par(mfrow = c(1, 1))
+```
+
+Ces graphiques sont utiles pour repérer rapidement les variables les plus hétérogènes et vérifier si certaines distributions présentent des valeurs extrêmes.
+
+## 3.4. Corrélations entre variables quantitatives
+
+L’étude des corrélations permet de repérer les dépendances linéaires entre les variables quantitatives retenues.
+
+```{r corr-quanti}
+cor_matrix <- cor(gym_quanti, use = "pairwise.complete.obs")
+
+round(cor_matrix, 2)
+
+corrplot(
+  cor_matrix,
+  method = "color",
+  tl.col = "black",
+  tl.cex = 0.7
+)
+```
+
+Une forte corrélation entre deux variables suggère qu’elles véhiculent une information proche.\
+À l’inverse, des corrélations faibles traduisent des dimensions plus indépendantes du comportement physique étudié.
+
+## 3.5. Corrélations avec la variable cible continue
+
+On examine ici les liens entre les variables explicatives quantitatives et `Calories_Burned`.
+
+```{r corr-cible}
+cor_target <- cor(
+  cbind(gym_quanti, Calories_Burned = gym$Calories_Burned),
+  use = "pairwise.complete.obs"
+)
+
+round(cor_target[, "Calories_Burned"], 2)
+```
+
+Cette étape permet d’identifier les variables quantitatives les plus directement associées à la dépense calorique, ce qui sera utile pour l’interprétation des modèles prédictifs.
+
+# 4. Analyse en composantes principales (ACP)
+
+## 4.1. Centrage et réduction
+
+L’ACP est réalisée sur des variables quantitatives centrées-réduites, afin d’éviter qu’une variable à grande variance domine artificiellement l’analyse.
+
+```{r centrage-reduction}
+gymCR <- scale(gym_quanti, center = TRUE, scale = TRUE)
+
+round(apply(gymCR, 2, mean), 5)
+round(apply(gymCR, 2, sd), 5)
+```
+
+Les moyennes proches de 0 et les écarts-types proches de 1 confirment que la standardisation a bien été effectuée.
+
+## 4.2. Réalisation de l’ACP
+
+On utilise ici `prcomp`, plus stable numériquement que `princomp`.
+
+```{r acp}
+resAcpGym <- prcomp(gym_quanti, center = TRUE, scale. = TRUE)
+
+scores_acp <- resAcpGym$x
+vp <- resAcpGym$sdev^2
+
+round(vp, 3)
+round(vp / sum(vp) * 100, 2)
+round(cumsum(vp) / sum(vp) * 100, 2)
+```
+
+Les valeurs propres et pourcentages de variance expliquée permettent de mesurer combien d’information est capturée par chaque composante principale.
+
+## 4.3. Choix du nombre d’axes
+
+Deux critères sont utilisés ici : le critère de **Kaiser** et le seuil de **Saporta**.
+
+```{r choix-nb-axes}
+n <- nrow(gym_quanti)
+p <- ncol(gym_quanti)
+
+kaiser_n <- sum(vp > 1)
+saporta_threshold <- 1 + 2 * sqrt((p - 1) / (n - 1))
+saporta_n <- sum(vp > saporta_threshold)
+
+kaiser_n
+round(saporta_threshold, 3)
+saporta_n
+```
+
+Le critère de Kaiser retient les axes dont la valeur propre est supérieure à 1.\
+Le critère de Saporta est plus exigeant et permet parfois une sélection plus prudente des dimensions réellement informatives.
+
+## 4.4. Représentation des valeurs propres
+
+```{r graphiques-vp}
+par(mfrow = c(1, 2))
+barplot(
+  vp,
+  main = "Valeurs propres",
+  ylab = "Valeur propre",
+  las = 2
+)
+abline(h = 1, col = "red", lty = 2)
+
+plot(
+  vp, type = "b", pch = 19,
+  main = "Scree plot",
+  xlab = "Composante",
+  ylab = "Valeur propre"
+)
+abline(h = 1, col = "red", lty = 2)
+par(mfrow = c(1, 1))
+```
+
+Le scree plot permet de visualiser le décrochement des valeurs propres et d’aider au choix du nombre d’axes à interpréter.
+
+## 4.5. Variance expliquée par les premiers axes
+
+```{r variance-expliquee}
+pct1 <- round(vp[1] / sum(vp) * 100, 2)
+pct2 <- round(vp[2] / sum(vp) * 100, 2)
+pct3 <- round(vp[3] / sum(vp) * 100, 2)
+
+pct1
+pct2
+pct3
+```
+
+Les deux premiers axes expliquent ensemble `r round(pct1 + pct2, 2)` % de la variance totale, ce qui donne une idée de la qualité de la représentation plane de l’ACP.
+
+## 4.6. Représentation des individus
+
+On construit d’abord une fonction utilitaire pour colorer les individus selon une variable qualitative.
+
+```{r fonction-acp}
+plot_acp_groups <- function(group_var, main_title) {
+  cols <- as.numeric(group_var)
+  plot(
+    scores_acp[, 1], scores_acp[, 2],
+    main = main_title,
+    xlab = paste0("Axe 1 (", pct1, "%)"),
+    ylab = paste0("Axe 2 (", pct2, "%)"),
+    col = cols,
+    pch = 16
+  )
+  abline(h = 0, v = 0, lty = 2, col = "grey")
+  legend(
+    "topright",
+    legend = levels(as.factor(group_var)),
+    col = 1:length(levels(as.factor(group_var))),
+    pch = 16,
+    bty = "n",
+    cex = 0.8
+  )
+}
+```
+
+### Individus sur le plan factoriel
+
+```{r individus-acp}
+par(mfrow = c(1, 2))
+plot(
+  scores_acp[, 1], scores_acp[, 2],
+  main = "ACP - Individus",
+  xlab = paste0("Axe 1 (", pct1, "%)"),
+  ylab = paste0("Axe 2 (", pct2, "%)"),
+  pch = 16
+)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+
+plot_acp_groups(gym$Gender, "ACP - Individus colorés par Gender")
+par(mfrow = c(1, 1))
+
+plot_acp_groups(gym$Workout_Type, "ACP - Individus colorés par Workout_Type")
+plot_acp_groups(gym$Experience_Level, "ACP - Individus colorés par Experience_Level")
+plot_acp_groups(gym$Classe_Calories, "ACP - Individus colorés par Classe_Calories")
+```
+
+Ces graphiques permettent d’observer si certains groupes se distinguent visuellement sur les premiers axes de l’ACP.\
+Une séparation partielle ou nette suggère que la structure multidimensionnelle des données est liée aux variables qualitatives étudiées.
+
+## 4.7. Cercle des corrélations
+
+Le cercle des corrélations permet d’interpréter les axes en fonction des variables quantitatives.
+
+```{r cercle-corr}
+corvar <- cor(gymCR, scores_acp[, 1:2])
+
+plot(
+  corvar[, 1], corvar[, 2],
+  xlim = c(-1, 1), ylim = c(-1, 1),
+  xlab = paste0("Axe 1 (", pct1, "%)"),
+  ylab = paste0("Axe 2 (", pct2, "%)"),
+  main = "Cercle des corrélations",
+  type = "n", asp = 1
+)
+
+symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = "blue", lty = 2)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+text(
+  corvar[, 1], corvar[, 2],
+  labels = colnames(gym_quanti),
+  col = "red",
+  cex = 0.8
+)
+
+arrows(
+  0, 0,
+  corvar[, 1] * 0.95,
+  corvar[, 2] * 0.95,
+  length = 0.1,
+  angle = 15,
+  code = 2
+)
+
+round(corvar, 3)
+```
+
+Les variables proches du cercle et fortement projetées sur un axe contribuent davantage à la définition de cet axe.\
+Des variables orientées dans la même direction sont positivement associées, tandis que des directions opposées traduisent une opposition.
+
+# 5. Classification ascendante hiérarchique (CAH)
+
+## 5.1. Construction de la CAH sur les scores ACP
+
+La CAH est réalisée sur les trois premiers axes de l’ACP afin de résumer l’information essentielle tout en réduisant le bruit.
+
+```{r cah}
+scores_cah <- scores_acp[, 1:3]
+
+d_acp <- dist(scores_cah, method = "euclidean")
+cah_ward <- hclust(d_acp, method = "ward.D2")
+
+plot(
+  cah_ward,
+  hang = -1,
+  main = "CAH sur scores ACP - Ward.D2",
+  sub = "",
+  xlab = ""
+)
+rect.hclust(cah_ward, k = 3, border = "red")
+
+groupes_cah <- cutree(cah_ward, k = 3)
+gym$Cluster_CAH <- as.factor(groupes_cah)
+
+table(gym$Cluster_CAH)
+```
+
+Le dendrogramme permet d’identifier une partition en groupes relativement homogènes.\
+Ici, on retient une solution à **3 classes**.
+
+## 5.2. Projection des clusters sur le plan ACP
+
+```{r cah-projection}
+plot(
+  scores_acp[, 1], scores_acp[, 2],
+  xlab = paste0("Axe 1 (", pct1, "%)"),
+  ylab = paste0("Axe 2 (", pct2, "%)"),
+  col = gym$Cluster_CAH,
+  pch = 19,
+  cex = 0.7,
+  main = "Groupes CAH sur le plan 1-2 de l'ACP"
+)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+legend(
+  "topright",
+  legend = levels(gym$Cluster_CAH),
+  col = 1:length(levels(gym$Cluster_CAH)),
+  pch = 19,
+  bty = "n"
+)
+```
+
+La représentation sur le plan factoriel aide à visualiser la séparation entre les groupes construits par la CAH.
+
+## 5.3. Profil des clusters
+
+```{r profil-clusters}
+aggregate(gym_quanti, by = list(Cluster = gym$Cluster_CAH), mean)
+
+table(gym$Cluster_CAH, gym$Gender)
+table(gym$Cluster_CAH, gym$Workout_Type)
+table(gym$Cluster_CAH, gym$Experience_Level)
+table(gym$Cluster_CAH, gym$Classe_Calories)
+```
+
+L’étude des moyennes et des tableaux croisés permet d’interpréter chaque cluster :\
+certains groupes peuvent par exemple correspondre à des individus plus endurants, plus intensifs, ou à plus forte dépense calorique.
+
+# 6. Préparation des bases pour la modélisation
+
+## 6.1. Constitution des jeux d’apprentissage et de test
+
+On fixe une graine aléatoire pour garantir la reproductibilité, puis on réalise un découpage **70 % apprentissage / 30 % test**.
+
+```{r preparation-modeles}
+set.seed(123)
+
+vars_model_class <- c(vars_quanti, vars_quali, "Classe_Calories")
+vars_model_reg   <- c(vars_quanti, vars_quali, "Calories_Burned")
+
+data_class <- gym[, vars_model_class]
+data_reg   <- gym[, vars_model_reg]
+
+data_lda <- gym[, c(vars_quanti, "Classe_Calories")]
+
+n_all <- nrow(gym)
+index_train <- sample(1:n_all, size = floor(0.7 * n_all))
+index_test  <- setdiff(1:n_all, index_train)
+
+train_class <- data_class[index_train, ]
+test_class  <- data_class[index_test, ]
+
+train_reg <- data_reg[index_train, ]
+test_reg  <- data_reg[index_test, ]
+
+train_lda <- data_lda[index_train, ]
+test_lda  <- data_lda[index_test, ]
+```
+
+Ce découpage permet d’évaluer les performances des modèles sur des données non utilisées pendant l’apprentissage.
+
+# 7. Modèles de classification de `Classe_Calories`
+
+## 7.1. Analyse discriminante linéaire (LDA)
+
+La LDA est ici appliquée uniquement aux variables quantitatives retenues.
+
+```{r lda}
+lda_classe <- lda(Classe_Calories ~ ., data = train_lda)
+
+pred_lda <- predict(lda_classe, newdata = test_lda)$class
+
+tab_lda <- table(Observe = test_lda$Classe_Calories, Pred = pred_lda)
+acc_lda <- mean(pred_lda == test_lda$Classe_Calories)
+
+tab_lda
+round(acc_lda, 4)
+```
+
+La matrice de confusion permet d’identifier quelles classes sont les mieux reconnues.\
+L’accuracy mesure la proportion globale de bonnes classifications sur l’échantillon test.
+
+## 7.2. Arbre de décision CART
+
+Le modèle CART est d’abord construit de manière large, puis élagué selon la règle du **1-SE** pour limiter le surapprentissage.
+
+```{r cart-class}
+cart_full <- rpart(
+  Classe_Calories ~ .,
+  data = train_class,
+  method = "class",
+  control = rpart.control(cp = 0.001, minsplit = 20, xval = 10)
+)
+
+printcp(cart_full)
+plotcp(cart_full)
+
+cptab_class <- cart_full$cptable
+i_min_class <- which.min(cptab_class[, "xerror"])
+xerr_min_class <- cptab_class[i_min_class, "xerror"]
+xstd_min_class <- cptab_class[i_min_class, "xstd"]
+
+i_1se_class <- min(which(cptab_class[, "xerror"] <= xerr_min_class + xstd_min_class))
+cp_1se_class <- cptab_class[i_1se_class, "CP"]
+
+cart_classe <- prune(cart_full, cp = cp_1se_class)
+
+rpart.plot(
+  cart_classe,
+  type = 2,
+  extra = 104,
+  fallen.leaves = TRUE,
+  main = "CART élagué - Classe de dépense calorique"
+)
+
+pred_cart <- predict(cart_classe, newdata = test_class, type = "class")
+
+tab_cart <- table(Observe = test_class$Classe_Calories, Pred = pred_cart)
+acc_cart <- mean(pred_cart == test_class$Classe_Calories)
+
+tab_cart
+round(acc_cart, 4)
+```
+
+L’intérêt de CART est son caractère facilement interprétable.\
+Les variables apparaissant haut dans l’arbre sont souvent les plus discriminantes pour la classification.
+
+## 7.3. Random Forest
+
+La Random Forest agrège un grand nombre d’arbres et fournit généralement de meilleures performances prédictives qu’un arbre unique.
+
+```{r random-forest}
+rf_classe <- randomForest(
+  Classe_Calories ~ .,
+  data = train_class,
+  ntree = 500,
+  importance = TRUE
+)
+
+rf_classe
+plot(rf_classe, main = "Erreur OOB - Random Forest")
+
+importance(rf_classe)
+varImpPlot(rf_classe, main = "Importance des variables - Random Forest")
+
+pred_rf <- predict(rf_classe, newdata = test_class, type = "class")
+
+tab_rf <- table(Observe = test_class$Classe_Calories, Pred = pred_rf)
+acc_rf <- mean(pred_rf == test_class$Classe_Calories)
+
+tab_rf
+round(acc_rf, 4)
+```
+
+L’erreur OOB fournit une estimation interne de la performance du modèle.\
+Le graphique d’importance permet d’identifier les variables les plus utiles pour prédire la classe de dépense calorique.
+
+# 8. Modèles de régression pour `Calories_Burned`
+
+## 8.1. Régression CART
+
+Comme pour la classification, on construit d’abord un arbre large puis on l’élague.
+
+```{r cart-regression}
+cart_reg_full <- rpart(
+  Calories_Burned ~ .,
+  data = train_reg,
+  method = "anova",
+  control = rpart.control(cp = 0.001, minsplit = 20, xval = 10)
+)
+
+printcp(cart_reg_full)
+plotcp(cart_reg_full)
+
+cptab_reg <- cart_reg_full$cptable
+i_min_reg <- which.min(cptab_reg[, "xerror"])
+xerr_min_reg <- cptab_reg[i_min_reg, "xerror"]
+xstd_min_reg <- cptab_reg[i_min_reg, "xstd"]
+
+i_1se_reg <- min(which(cptab_reg[, "xerror"] <= xerr_min_reg + xstd_min_reg))
+cp_1se_reg <- cptab_reg[i_1se_reg, "CP"]
+
+cart_reg <- prune(cart_reg_full, cp = cp_1se_reg)
+
+rpart.plot(
+  cart_reg,
+  type = 2,
+  extra = 101,
+  fallen.leaves = TRUE,
+  main = "CART régression - Calories_Burned"
+)
+
+pred_cart_reg <- predict(cart_reg, newdata = test_reg)
+
+r2_cart_reg <- cor(test_reg$Calories_Burned, pred_cart_reg)^2
+rmse_cart_reg <- sqrt(mean((test_reg$Calories_Burned - pred_cart_reg)^2))
+
+round(r2_cart_reg, 4)
+round(rmse_cart_reg, 2)
+```
+
+Le coefficient de détermination $R^2$ évalue la part de variabilité expliquée sur l’échantillon test, tandis que le RMSE mesure l’erreur moyenne de prédiction en unités de calories.
+
+## 8.2. Régression PLS
+
+La régression PLS est particulièrement utile lorsque les variables quantitatives sont potentiellement corrélées entre elles.
+
+```{r pls}
+data_pls <- gym[, c(vars_quanti, "Calories_Burned")]
+train_pls <- data_pls[index_train, ]
+test_pls  <- data_pls[index_test, ]
+
+modele_pls <- plsr(
+  Calories_Burned ~ .,
+  data = train_pls,
+  scale = TRUE,
+  validation = "CV"
+)
+
+summary(modele_pls)
+
+plot(
+  RMSEP(modele_pls, estimate = "CV"),
+  legendpos = "topright",
+  main = "RMSEP - PLS"
+)
+
+rmsep_cv <- drop(RMSEP(modele_pls, estimate = "CV")$val[1, 1, -1])
+n_comp_opt <- which.min(rmsep_cv)
+
+n_comp_opt
+
+pred_pls <- predict(modele_pls, newdata = test_pls, ncomp = n_comp_opt)
+pred_pls <- as.vector(pred_pls)
+
+r2_pls <- cor(test_pls$Calories_Burned, pred_pls)^2
+rmse_pls <- sqrt(mean((test_pls$Calories_Burned - pred_pls)^2))
+
+round(r2_pls, 4)
+round(rmse_pls, 2)
+```
+
+Le nombre optimal de composantes est choisi automatiquement à partir du RMSEP en validation croisée.\
+La comparaison du $R^2$ et du RMSE avec ceux de CART permet de déterminer le modèle de régression le plus performant.
+
+# 9. Comparaison finale des performances
+
+## 9.1. Résumé des modèles de classification
+
+```{r resume-classification}
+resume_classification <- data.frame( Modele = c("LDA", "CART classification", "Random Forest"), Accuracy_test = c(acc_lda, acc_cart, acc_rf) )
+
+resume_classification
+```
+
+## 9.2. Résumé des modèles de régression
+
+```{r resume-regression}
+resume_regression <- data.frame(
+  Modele = c("CART régression", "PLS"),
+  R2_test = c(r2_cart_reg, r2_pls),
+  RMSE_test = c(rmse_cart_reg, rmse_pls)
+)
+
+data.frame(
+  Modele = resume_regression$Modele,
+  R2_test = round(resume_regression$R2_test, 4),
+  RMSE_test = round(resume_regression$RMSE_test, 2)
+)
+```
+
+# Conclusion
+
+Enfin, les modèles supervisés ont permis d’évaluer la capacité prédictive des variables étudiées :
+
+-   pour la **classification** de la dépense calorique (`Classe_Calories`) ;
+-   pour la **régression** directe de `Calories_Burned`.
+
+Le modèle de classification le plus performant est celui dont l’accuracy test est la plus élevée, tandis que pour la régression, le meilleur compromis correspond à un **R² élevé** et un **RMSE faible**.

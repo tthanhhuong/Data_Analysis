@@ -8,8 +8,15 @@ editor_options:
   chunk_output_type: console
 ---
 
+# **Étude de cas**
 
-# **Les tests statistiques à l'aide de R - Gael**
+### [Script de Jade](EDC_Jade.html)
+
+### [Script de Huong](EDC_Huong.html)
+
+### [Script](EDC_Script_Final.html)
+
+# **Les tests statistiques à l'aide de R **
 
 ### [Chapitre 1 - Preservation de R](Gael_1.html)
 

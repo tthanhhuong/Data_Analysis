@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="" />
+
+
+<title>Étude de cas - Analyse individuelle pour comparaison des résultats</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data_Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/tthanhhuong/Data_Analysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Étude de cas - Analyse individuelle pour
+comparaison des résultats</h1>
+<h4 class="author"></h4>
+<h4 class="date">17/03/2026</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-03-17
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 2
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20260226code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20260226)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20260226code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20260226)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it
+difficult for you and others to run your code on a different machine.
+Change the absolute path(s) below to the suggested relative path(s) to
+make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/Users/thanhhuong/R/Data_Analysis
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree090db42c2463eb5bf0ac55f59dd7743f9e57b48btargetblank090db42a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/090db42c2463eb5bf0ac55f59dd7743f9e57b48b" target="_blank">090db42</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree090db42c2463eb5bf0ac55f59dd7743f9e57b48btargetblank090db42a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/090db42c2463eb5bf0ac55f59dd7743f9e57b48b" target="_blank">090db42</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/images/
+
+Untracked files:
+    Untracked:  DataMiningwithR/
+    Untracked:  analysis/EDC_Huong.Rmd
+    Untracked:  analysis/EDC_Jade.Rmd
+    Untracked:  stats_python_theorie_a_pratique_duverier_djifack_zebaze/
+
+Unstaged changes:
+    Modified:   analysis/ML_2.Rmd
+    Modified:   analysis/index.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="contexte" class="section level1">
+<h1>Contexte</h1>
+<p>La logique retenue est la suivante :</p>
+<ul>
+<li>importation et préparation des données ;</li>
+<li>analyse descriptive ;</li>
+<li>ACP sur les variables quantitatives ;</li>
+<li>AFCM sur les variables qualitatives ;</li>
+<li>CAH sur les scores de l’ACP ;</li>
+<li>CART et Random Forest pour la prédiction de la classe de dépense
+calorique.</li>
+</ul>
+</div>
+<div id="préparation-de-lenvironnement" class="section level1">
+<h1>1. Préparation de l’environnement</h1>
+<pre class="r"><code>library(corrplot)
+library(FactoMineR)
+library(factoextra)
+library(rpart)
+library(rpart.plot)
+library(randomForest)</code></pre>
+</div>
+<div id="importation-des-données" class="section level1">
+<h1>2. Importation des données</h1>
+<pre class="r"><code>setwd(&quot;/Users/thanhhuong/R/Data_Analysis&quot;)
+gym &lt;- read.table(&quot;/Users/thanhhuong/Downloads/M1/Etude de cas/gym_members_exercise_tracking.csv&quot;, sep = &quot;,&quot;, dec = &quot;.&quot;, header = T)
+
+str(gym)</code></pre>
+<pre><code>&#39;data.frame&#39;:   973 obs. of  15 variables:
+ $ Age                          : int  56 46 32 25 38 56 36 40 28 28 ...
+ $ Gender                       : chr  &quot;Male&quot; &quot;Female&quot; &quot;Female&quot; &quot;Male&quot; ...
+ $ Weight..kg.                  : num  88.3 74.9 68.1 53.2 46.1 ...
+ $ Height..m.                   : num  1.71 1.53 1.66 1.7 1.79 1.68 1.72 1.51 1.94 1.84 ...
+ $ Max_BPM                      : int  180 179 167 190 188 168 174 189 185 169 ...
+ $ Avg_BPM                      : int  157 151 122 164 158 156 169 141 127 136 ...
+ $ Resting_BPM                  : int  60 66 54 56 68 74 73 64 52 64 ...
+ $ Session_Duration..hours.     : num  1.69 1.3 1.11 0.59 0.64 1.59 1.49 1.27 1.03 1.08 ...
+ $ Calories_Burned              : num  1313 883 677 532 556 ...
+ $ Workout_Type                 : chr  &quot;Yoga&quot; &quot;HIIT&quot; &quot;Cardio&quot; &quot;Strength&quot; ...
+ $ Fat_Percentage               : num  12.6 33.9 33.4 28.8 29.2 15.5 21.3 30.6 28.9 29.7 ...
+ $ Water_Intake..liters.        : num  3.5 2.1 2.3 2.1 2.8 2.7 2.3 1.9 2.6 2.7 ...
+ $ Workout_Frequency..days.week.: int  4 4 4 3 3 5 3 3 4 3 ...
+ $ Experience_Level             : int  3 2 2 1 1 3 2 2 2 1 ...
+ $ BMI                          : num  30.2 32 24.7 18.4 14.4 ...</code></pre>
+<pre class="r"><code>dim(gym)</code></pre>
+<pre><code>[1] 973  15</code></pre>
+<pre class="r"><code>summary(gym)</code></pre>
+<pre><code>      Age           Gender           Weight..kg.       Height..m.   
+ Min.   :18.00   Length:973         Min.   : 40.00   Min.   :1.500  
+ 1st Qu.:28.00   Class :character   1st Qu.: 58.10   1st Qu.:1.620  
+ Median :40.00   Mode  :character   Median : 70.00   Median :1.710  
+ Mean   :38.68                      Mean   : 73.85   Mean   :1.723  
+ 3rd Qu.:49.00                      3rd Qu.: 86.00   3rd Qu.:1.800  
+ Max.   :59.00                      Max.   :129.90   Max.   :2.000  
+    Max_BPM         Avg_BPM       Resting_BPM    Session_Duration..hours.
+ Min.   :160.0   Min.   :120.0   Min.   :50.00   Min.   :0.500           
+ 1st Qu.:170.0   1st Qu.:131.0   1st Qu.:56.00   1st Qu.:1.040           
+ Median :180.0   Median :143.0   Median :62.00   Median :1.260           
+ Mean   :179.9   Mean   :143.8   Mean   :62.22   Mean   :1.256           
+ 3rd Qu.:190.0   3rd Qu.:156.0   3rd Qu.:68.00   3rd Qu.:1.460           
+ Max.   :199.0   Max.   :169.0   Max.   :74.00   Max.   :2.000           
+ Calories_Burned  Workout_Type       Fat_Percentage  Water_Intake..liters.
+ Min.   : 303.0   Length:973         Min.   :10.00   Min.   :1.500        
+ 1st Qu.: 720.0   Class :character   1st Qu.:21.30   1st Qu.:2.200        
+ Median : 893.0   Mode  :character   Median :26.20   Median :2.600        
+ Mean   : 905.4                      Mean   :24.98   Mean   :2.627        
+ 3rd Qu.:1076.0                      3rd Qu.:29.30   3rd Qu.:3.100        
+ Max.   :1783.0                      Max.   :35.00   Max.   :3.700        
+ Workout_Frequency..days.week. Experience_Level      BMI       
+ Min.   :2.000                 Min.   :1.00     Min.   :12.32  
+ 1st Qu.:3.000                 1st Qu.:1.00     1st Qu.:20.11  
+ Median :3.000                 Median :2.00     Median :24.16  
+ Mean   :3.322                 Mean   :1.81     Mean   :24.91  
+ 3rd Qu.:4.000                 3rd Qu.:2.00     3rd Qu.:28.56  
+ Max.   :5.000                 Max.   :3.00     Max.   :49.84  </code></pre>
+</div>
+<div id="préparation-et-nettoyage-des-données" class="section level1">
+<h1>3. Préparation et nettoyage des données</h1>
+<p>La variable cible continue est <strong>Calories_Burned</strong>. Dans
+cette version de l’analyse, l’IMC (<strong>BMI</strong>) n’est pas
+retenu comme variable quantitative active, car il s’agit d’une variable
+calculée à partir du poids et de la taille, donc potentiellement
+redondante.</p>
+<div id="création-des-objets-danalyse" class="section level2">
+<h2>3.1 Création des objets d’analyse</h2>
+<pre class="r"><code># Variable cible continue
+calories &lt;- gym$Calories_Burned
+
+# Mise en forme des variables qualitatives
+gym$Gender &lt;- as.factor(gym$Gender)
+gym$Workout_Type &lt;- as.factor(gym$Workout_Type)
+gym$Experience_Level &lt;- as.factor(gym$Experience_Level)
+
+# Variables quantitatives actives pour ACP / CAH
+gym_quanti &lt;- gym[, c(
+  &quot;Age&quot;, &quot;Weight..kg.&quot;, &quot;Height..m.&quot;, &quot;Max_BPM&quot;, &quot;Avg_BPM&quot;,
+  &quot;Resting_BPM&quot;, &quot;Session_Duration..hours.&quot;, &quot;Fat_Percentage&quot;,
+  &quot;Water_Intake..liters.&quot;, &quot;Workout_Frequency..days.week.&quot;
+)]
+
+# Variables qualitatives pour AFCM
+gym_quali &lt;- gym[, c(&quot;Gender&quot;, &quot;Workout_Type&quot;, &quot;Experience_Level&quot;)]
+
+str(gym_quanti)</code></pre>
+<pre><code>&#39;data.frame&#39;:   973 obs. of  10 variables:
+ $ Age                          : int  56 46 32 25 38 56 36 40 28 28 ...
+ $ Weight..kg.                  : num  88.3 74.9 68.1 53.2 46.1 ...
+ $ Height..m.                   : num  1.71 1.53 1.66 1.7 1.79 1.68 1.72 1.51 1.94 1.84 ...
+ $ Max_BPM                      : int  180 179 167 190 188 168 174 189 185 169 ...
+ $ Avg_BPM                      : int  157 151 122 164 158 156 169 141 127 136 ...
+ $ Resting_BPM                  : int  60 66 54 56 68 74 73 64 52 64 ...
+ $ Session_Duration..hours.     : num  1.69 1.3 1.11 0.59 0.64 1.59 1.49 1.27 1.03 1.08 ...
+ $ Fat_Percentage               : num  12.6 33.9 33.4 28.8 29.2 15.5 21.3 30.6 28.9 29.7 ...
+ $ Water_Intake..liters.        : num  3.5 2.1 2.3 2.1 2.8 2.7 2.3 1.9 2.6 2.7 ...
+ $ Workout_Frequency..days.week.: int  4 4 4 3 3 5 3 3 4 3 ...</code></pre>
+<pre class="r"><code>str(gym_quali)</code></pre>
+<pre><code>&#39;data.frame&#39;:   973 obs. of  3 variables:
+ $ Gender          : Factor w/ 2 levels &quot;Female&quot;,&quot;Male&quot;: 2 1 1 2 2 1 2 1 2 2 ...
+ $ Workout_Type    : Factor w/ 4 levels &quot;Cardio&quot;,&quot;HIIT&quot;,..: 4 2 1 3 3 2 1 1 3 1 ...
+ $ Experience_Level: Factor w/ 3 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 3 2 2 1 1 3 2 2 2 1 ...</code></pre>
+</div>
+<div id="création-de-la-classe-de-dépense-calorique"
+class="section level2">
+<h2>3.2 Création de la classe de dépense calorique</h2>
+<p>Les classes de dépense calorique sont construites à partir des
+tertiles de <strong>Calories_Burned</strong>.</p>
+<pre class="r"><code>burned_cal &lt;- quantile(
+  gym$Calories_Burned,
+  probs = c(0, 1/3, 2/3, 1),
+  na.rm = TRUE
+)
+
+burned_cal</code></pre>
+<pre><code>       0% 33.33333% 66.66667%      100% 
+      303       784      1006      1783 </code></pre>
+<pre class="r"><code>gym$Classe_Calories &lt;- cut(
+  gym$Calories_Burned,
+  breaks = burned_cal,
+  include.lowest = TRUE,
+  labels = c(&quot;Faible&quot;, &quot;Moderee&quot;, &quot;Haute&quot;)
+)
+
+gym$Classe_Calories &lt;- as.factor(gym$Classe_Calories)
+
+table(gym$Classe_Calories)</code></pre>
+<pre><code>
+ Faible Moderee   Haute 
+    325     324     324 </code></pre>
+<pre class="r"><code>prop.table(table(gym$Classe_Calories))</code></pre>
+<pre><code>
+   Faible   Moderee     Haute 
+0.3340185 0.3329908 0.3329908 </code></pre>
+</div>
+</div>
+<div id="analyse-descriptive" class="section level1">
+<h1>4. Analyse descriptive</h1>
+<p>Cette étape permet d’obtenir une première lecture du comportement des
+variables clés et de leurs corrélations.</p>
+<div id="boxplots-de-quelques-variables-importantes"
+class="section level2">
+<h2>4.1 Boxplots de quelques variables importantes</h2>
+<pre class="r"><code>par(mfrow = c(2, 2))
+boxplot(gym$Calories_Burned, main = &quot;Calories_Burned&quot;)
+boxplot(gym$Session_Duration..hours., main = &quot;Session_Duration&quot;)
+boxplot(gym$Fat_Percentage, main = &quot;Fat_Percentage&quot;)
+boxplot(gym$Workout_Frequency..days.week., main = &quot;Workout_Frequency&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/boxplots_descriptifs-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+</div>
+<div id="corrélations-entre-variables-quantitatives"
+class="section level2">
+<h2>4.2 Corrélations entre variables quantitatives</h2>
+<pre class="r"><code>cor_matrix &lt;- cor(gym_quanti, use = &quot;pairwise.complete.obs&quot;)
+round(cor_matrix, 2)</code></pre>
+<pre><code>                                Age Weight..kg. Height..m. Max_BPM Avg_BPM
+Age                            1.00       -0.04      -0.03   -0.02    0.04
+Weight..kg.                   -0.04        1.00       0.37    0.06    0.01
+Height..m.                    -0.03        0.37       1.00   -0.02   -0.01
+Max_BPM                       -0.02        0.06      -0.02    1.00   -0.04
+Avg_BPM                        0.04        0.01      -0.01   -0.04    1.00
+Resting_BPM                    0.00       -0.03      -0.01    0.04    0.06
+Session_Duration..hours.      -0.02       -0.01      -0.01    0.01    0.02
+Fat_Percentage                 0.00       -0.23      -0.24   -0.01   -0.01
+Water_Intake..liters.          0.04        0.39       0.39    0.03    0.00
+Workout_Frequency..days.week.  0.01       -0.01      -0.01   -0.03   -0.01
+                              Resting_BPM Session_Duration..hours.
+Age                                  0.00                    -0.02
+Weight..kg.                         -0.03                    -0.01
+Height..m.                          -0.01                    -0.01
+Max_BPM                              0.04                     0.01
+Avg_BPM                              0.06                     0.02
+Resting_BPM                          1.00                    -0.02
+Session_Duration..hours.            -0.02                     1.00
+Fat_Percentage                      -0.02                    -0.58
+Water_Intake..liters.                0.01                     0.28
+Workout_Frequency..days.week.       -0.01                     0.64
+                              Fat_Percentage Water_Intake..liters.
+Age                                     0.00                  0.04
+Weight..kg.                            -0.23                  0.39
+Height..m.                             -0.24                  0.39
+Max_BPM                                -0.01                  0.03
+Avg_BPM                                -0.01                  0.00
+Resting_BPM                            -0.02                  0.01
+Session_Duration..hours.               -0.58                  0.28
+Fat_Percentage                          1.00                 -0.59
+Water_Intake..liters.                  -0.59                  1.00
+Workout_Frequency..days.week.          -0.54                  0.24
+                              Workout_Frequency..days.week.
+Age                                                    0.01
+Weight..kg.                                           -0.01
+Height..m.                                            -0.01
+Max_BPM                                               -0.03
+Avg_BPM                                               -0.01
+Resting_BPM                                           -0.01
+Session_Duration..hours.                               0.64
+Fat_Percentage                                        -0.54
+Water_Intake..liters.                                  0.24
+Workout_Frequency..days.week.                          1.00</code></pre>
+<pre class="r"><code>corrplot(
+  cor_matrix,
+  method = &quot;color&quot;,
+  type = &quot;upper&quot;,
+  tl.col = &quot;black&quot;,
+  tl.cex = 0.7
+)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/corrplot_quanti-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="corrélations-avec-la-variable-cible" class="section level2">
+<h2>4.3 Corrélations avec la variable cible</h2>
+<pre class="r"><code>cor_target &lt;- cor(
+  cbind(gym_quanti, Calories_Burned = gym$Calories_Burned),
+  use = &quot;pairwise.complete.obs&quot;
+)
+
+cor_target</code></pre>
+<pre><code>                                       Age  Weight..kg.   Height..m.
+Age                            1.000000000 -0.036339635 -0.027837495
+Weight..kg.                   -0.036339635  1.000000000  0.365321203
+Height..m.                    -0.027837495  0.365321203  1.000000000
+Max_BPM                       -0.017072597  0.057061130 -0.017659884
+Avg_BPM                        0.035969143  0.009717478 -0.014776288
+Resting_BPM                    0.004353714 -0.032138091 -0.005089864
+Session_Duration..hours.      -0.019911904 -0.013665561 -0.010205897
+Fat_Percentage                 0.002370051 -0.225511640 -0.235520936
+Water_Intake..liters.          0.041528359  0.394275710  0.393532902
+Workout_Frequency..days.week.  0.008055163 -0.011769328 -0.011269883
+Calories_Burned               -0.154678760  0.095443473  0.086348051
+                                   Max_BPM      Avg_BPM  Resting_BPM
+Age                           -0.017072597  0.035969143  0.004353714
+Weight..kg.                    0.057061130  0.009717478 -0.032138091
+Height..m.                    -0.017659884 -0.014776288 -0.005089864
+Max_BPM                        1.000000000 -0.039751443  0.036647481
+Avg_BPM                       -0.039751443  1.000000000  0.059635502
+Resting_BPM                    0.036647481  0.059635502  1.000000000
+Session_Duration..hours.       0.010050981  0.016014438 -0.016648808
+Fat_Percentage                -0.009055731 -0.007301655 -0.016834389
+Water_Intake..liters.          0.031620643 -0.002910637  0.007725998
+Workout_Frequency..days.week. -0.029099066 -0.010680798 -0.007966891
+Calories_Burned                0.002090016  0.339658667  0.016517951
+                              Session_Duration..hours. Fat_Percentage
+Age                                        -0.01991190    0.002370051
+Weight..kg.                                -0.01366556   -0.225511640
+Height..m.                                 -0.01020590   -0.235520936
+Max_BPM                                     0.01005098   -0.009055731
+Avg_BPM                                     0.01601444   -0.007301655
+Resting_BPM                                -0.01664881   -0.016834389
+Session_Duration..hours.                    1.00000000   -0.581519771
+Fat_Percentage                             -0.58151977    1.000000000
+Water_Intake..liters.                       0.28341098   -0.588682834
+Workout_Frequency..days.week.               0.64414037   -0.537059548
+Calories_Burned                             0.90814038   -0.597615248
+                              Water_Intake..liters.
+Age                                     0.041528359
+Weight..kg.                             0.394275710
+Height..m.                              0.393532902
+Max_BPM                                 0.031620643
+Avg_BPM                                -0.002910637
+Resting_BPM                             0.007725998
+Session_Duration..hours.                0.283410977
+Fat_Percentage                         -0.588682834
+Water_Intake..liters.                   1.000000000
+Workout_Frequency..days.week.           0.238562571
+Calories_Burned                         0.356930683
+                              Workout_Frequency..days.week. Calories_Burned
+Age                                             0.008055163    -0.154678760
+Weight..kg.                                    -0.011769328     0.095443473
+Height..m.                                     -0.011269883     0.086348051
+Max_BPM                                        -0.029099066     0.002090016
+Avg_BPM                                        -0.010680798     0.339658667
+Resting_BPM                                    -0.007966891     0.016517951
+Session_Duration..hours.                        0.644140366     0.908140376
+Fat_Percentage                                 -0.537059548    -0.597615248
+Water_Intake..liters.                           0.238562571     0.356930683
+Workout_Frequency..days.week.                   1.000000000     0.576150125
+Calories_Burned                                 0.576150125     1.000000000</code></pre>
+<pre class="r"><code>round(cor_target[, &quot;Calories_Burned&quot;], 2)</code></pre>
+<pre><code>                          Age                   Weight..kg. 
+                        -0.15                          0.10 
+                   Height..m.                       Max_BPM 
+                         0.09                          0.00 
+                      Avg_BPM                   Resting_BPM 
+                         0.34                          0.02 
+     Session_Duration..hours.                Fat_Percentage 
+                         0.91                         -0.60 
+        Water_Intake..liters. Workout_Frequency..days.week. 
+                         0.36                          0.58 
+              Calories_Burned 
+                         1.00 </code></pre>
+</div>
+</div>
+<div id="acp-sur-les-variables-quantitatives" class="section level1">
+<h1>5. ACP sur les variables quantitatives</h1>
+<p>L’ACP est réalisée sur les variables quantitatives actives afin de
+résumer la structure du nuage des individus et d’identifier les
+principales dimensions de variation.</p>
+<div id="centrage-réduction" class="section level2">
+<h2>5.1 Centrage-réduction</h2>
+<pre class="r"><code>gymCR &lt;- scale(gym_quanti, center = TRUE, scale = TRUE)
+apply(gymCR, 2, mean)</code></pre>
+<pre><code>                          Age                   Weight..kg. 
+                 1.186672e-16                  1.106115e-15 
+                   Height..m.                       Max_BPM 
+                 1.307165e-14                 -7.496573e-16 
+                      Avg_BPM                   Resting_BPM 
+                -7.076103e-16                 -1.370378e-16 
+     Session_Duration..hours.                Fat_Percentage 
+                 1.201049e-15                  8.797348e-16 
+        Water_Intake..liters. Workout_Frequency..days.week. 
+                 1.077818e-15                 -1.289365e-16 </code></pre>
+<pre class="r"><code>apply(gymCR, 2, sd)</code></pre>
+<pre><code>                          Age                   Weight..kg. 
+                            1                             1 
+                   Height..m.                       Max_BPM 
+                            1                             1 
+                      Avg_BPM                   Resting_BPM 
+                            1                             1 
+     Session_Duration..hours.                Fat_Percentage 
+                            1                             1 
+        Water_Intake..liters. Workout_Frequency..days.week. 
+                            1                             1 </code></pre>
+</div>
+<div id="réalisation-de-lacp" class="section level2">
+<h2>5.2 Réalisation de l’ACP</h2>
+<pre class="r"><code>resAcpGym &lt;- princomp(gym_quanti, cor = TRUE, scores = TRUE)
+summary(resAcpGym)</code></pre>
+<pre><code>Importance of components:
+                          Comp.1    Comp.2    Comp.3    Comp.4     Comp.5
+Standard deviation     1.6131312 1.2558300 1.0375022 1.0201389 0.99289265
+Proportion of Variance 0.2602192 0.1577109 0.1076411 0.1040683 0.09858358
+Cumulative Proportion  0.2602192 0.4179301 0.5255712 0.6296395 0.72822312
+                           Comp.6     Comp.7     Comp.8     Comp.9    Comp.10
+Standard deviation     0.95752060 0.78980617 0.72701354 0.59043179 0.54769604
+Proportion of Variance 0.09168457 0.06237938 0.05285487 0.03486097 0.02999709
+Cumulative Proportion  0.81990769 0.88228707 0.93514194 0.97000291 1.00000000</code></pre>
+<pre class="r"><code>resAcpGym$loadings</code></pre>
+<pre><code>
+Loadings:
+                              Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6 Comp.7
+Age                                          0.447  0.260  0.839  0.108       
+Weight..kg.                   -0.238 -0.538                      -0.115  0.700
+Height..m.                    -0.241 -0.529                       0.118 -0.689
+Max_BPM                                     -0.203 -0.754  0.401 -0.445 -0.151
+Avg_BPM                                      0.703        -0.302 -0.638       
+Resting_BPM                                  0.507 -0.593 -0.173  0.592       
+Session_Duration..hours.      -0.446  0.403                                   
+Fat_Percentage                 0.542                                          
+Water_Intake..liters.         -0.459 -0.294                                   
+Workout_Frequency..days.week. -0.426  0.414                                   
+                              Comp.8 Comp.9 Comp.10
+Age                            0.109               
+Weight..kg.                    0.380               
+Height..m.                     0.395               
+Max_BPM                                            
+Avg_BPM                                            
+Resting_BPM                                        
+Session_Duration..hours.       0.169  0.694 -0.349 
+Fat_Percentage                 0.268        -0.789 
+Water_Intake..liters.         -0.639 -0.205 -0.490 
+Workout_Frequency..days.week.  0.418 -0.676 -0.117 
+
+               Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6 Comp.7 Comp.8 Comp.9
+SS loadings       1.0    1.0    1.0    1.0    1.0    1.0    1.0    1.0    1.0
+Proportion Var    0.1    0.1    0.1    0.1    0.1    0.1    0.1    0.1    0.1
+Cumulative Var    0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9
+               Comp.10
+SS loadings        1.0
+Proportion Var     0.1
+Cumulative Var     1.0</code></pre>
+<pre class="r"><code>vp &lt;- resAcpGym$sdev^2
+vp</code></pre>
+<pre><code>   Comp.1    Comp.2    Comp.3    Comp.4    Comp.5    Comp.6    Comp.7    Comp.8 
+2.6021922 1.5771090 1.0764109 1.0406833 0.9858358 0.9168457 0.6237938 0.5285487 
+   Comp.9   Comp.10 
+0.3486097 0.2999709 </code></pre>
+</div>
+<div id="inertie-expliquée-et-choix-du-nombre-daxes"
+class="section level2">
+<h2>5.3 Inertie expliquée et choix du nombre d’axes</h2>
+<pre class="r"><code>round(vp / sum(vp) * 100, 2)</code></pre>
+<pre><code> Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7  Comp.8  Comp.9 Comp.10 
+  26.02   15.77   10.76   10.41    9.86    9.17    6.24    5.29    3.49    3.00 </code></pre>
+<pre class="r"><code>round(cumsum(vp) / sum(vp) * 100, 2)</code></pre>
+<pre><code> Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7  Comp.8  Comp.9 Comp.10 
+  26.02   41.79   52.56   62.96   72.82   81.99   88.23   93.51   97.00  100.00 </code></pre>
+<pre class="r"><code># Critère de Kaiser
+sum(vp &gt; 1)</code></pre>
+<pre><code>[1] 4</code></pre>
+<pre class="r"><code># Critère de Saporta
+1 + 2 * sqrt((ncol(gym_quanti) - 1) / (nrow(gym_quanti) - 1))</code></pre>
+<pre><code>[1] 1.19245</code></pre>
+<pre class="r"><code># Inertie cumulée
+round(cumsum(vp) / sum(vp) * 100, 2)</code></pre>
+<pre><code> Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7  Comp.8  Comp.9 Comp.10 
+  26.02   41.79   52.56   62.96   72.82   81.99   88.23   93.51   97.00  100.00 </code></pre>
+<pre class="r"><code>par(mfrow = c(1, 2))
+barplot(vp, main = &quot;Valeurs propres&quot;, las = 2)
+abline(h = 1, col = &quot;red&quot;, lty = 2)
+plot(resAcpGym, main = &quot;Scree plot&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/graphique_valeurs_propres-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+</div>
+<div id="représentation-des-individus-sur-le-plan-factoriel-1-2"
+class="section level2">
+<h2>5.4 Représentation des individus sur le plan factoriel 1-2</h2>
+<pre class="r"><code>pct1 &lt;- round(vp[1] / sum(vp) * 100, 2)
+pct2 &lt;- round(vp[2] / sum(vp) * 100, 2)</code></pre>
+<div id="sans-habillage" class="section level3">
+<h3>Sans habillage</h3>
+<pre class="r"><code>plot(
+  resAcpGym$scores[, 1:2],
+  main = &quot;ACP - Individus&quot;,
+  xlab = paste0(&quot;Axe 1 (&quot;, pct1, &quot;%)&quot;),
+  ylab = paste0(&quot;Axe 2 (&quot;, pct2, &quot;%)&quot;),
+  pch = 16
+)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/acp_individus-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="habillage-par-genre" class="section level3">
+<h3>Habillage par genre</h3>
+<pre class="r"><code>col_gender &lt;- as.numeric(gym$Gender)
+
+plot(
+  resAcpGym$scores[, 1:2],
+  main = &quot;ACP - Individus colorés par Gender&quot;,
+  xlab = paste0(&quot;Axe 1 (&quot;, pct1, &quot;%)&quot;),
+  ylab = paste0(&quot;Axe 2 (&quot;, pct2, &quot;%)&quot;),
+  col = col_gender,
+  pch = 16
+)
+legend(
+  &quot;topright&quot;,
+  legend = levels(gym$Gender),
+  col = 1:length(levels(gym$Gender)),
+  pch = 16,
+  bty = &quot;n&quot;
+)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/acp_gender-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="habillage-par-type-dentraînement" class="section level3">
+<h3>Habillage par type d’entraînement</h3>
+<pre class="r"><code>col_workout &lt;- as.numeric(gym$Workout_Type)
+
+plot(
+  resAcpGym$scores[, 1:2],
+  main = &quot;ACP - Individus colorés par Workout_Type&quot;,
+  xlab = paste0(&quot;Axe 1 (&quot;, pct1, &quot;%)&quot;),
+  ylab = paste0(&quot;Axe 2 (&quot;, pct2, &quot;%)&quot;),
+  col = col_workout,
+  pch = 16
+)
+legend(
+  &quot;topright&quot;,
+  legend = levels(gym$Workout_Type),
+  col = 1:length(levels(gym$Workout_Type)),
+  pch = 16,
+  bty = &quot;n&quot;,
+  cex = 0.8
+)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/acp_workout-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="habillage-par-niveau-dexpérience" class="section level3">
+<h3>Habillage par niveau d’expérience</h3>
+<pre class="r"><code>col_exp &lt;- as.numeric(gym$Experience_Level)
+
+plot(
+  resAcpGym$scores[, 1:2],
+  main = &quot;ACP - Individus colorés par Experience_Level&quot;,
+  xlab = paste0(&quot;Axe 1 (&quot;, pct1, &quot;%)&quot;),
+  ylab = paste0(&quot;Axe 2 (&quot;, pct2, &quot;%)&quot;),
+  col = col_exp,
+  pch = 16
+)
+legend(
+  &quot;topright&quot;,
+  legend = levels(gym$Experience_Level),
+  col = 1:length(levels(gym$Experience_Level)),
+  pch = 16,
+  bty = &quot;n&quot;
+)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/acp_experience-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="habillage-par-classe-de-calories" class="section level3">
+<h3>Habillage par classe de calories</h3>
+<pre class="r"><code>col_cal &lt;- as.numeric(gym$Classe_Calories)
+
+plot(
+  resAcpGym$scores[, 1:2],
+  main = &quot;ACP - Individus colorés par Classe_Calories&quot;,
+  xlab = paste0(&quot;Axe 1 (&quot;, pct1, &quot;%)&quot;),
+  ylab = paste0(&quot;Axe 2 (&quot;, pct2, &quot;%)&quot;),
+  col = col_cal,
+  pch = 16
+)
+legend(
+  &quot;topright&quot;,
+  legend = levels(gym$Classe_Calories),
+  col = 1:length(levels(gym$Classe_Calories)),
+  pch = 16,
+  bty = &quot;n&quot;
+)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/acp_classes_calories-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="cercle-des-corrélations" class="section level2">
+<h2>5.5 Cercle des corrélations</h2>
+<pre class="r"><code>corvar &lt;- cor(gym_quanti, resAcpGym$scores[, 1:2])
+
+plot(
+  corvar[, 1], corvar[, 2],
+  xlim = c(-1, 1), ylim = c(-1, 1),
+  xlab = paste0(&quot;Axe 1 (&quot;, pct1, &quot;%)&quot;),
+  ylab = paste0(&quot;Axe 2 (&quot;, pct2, &quot;%)&quot;),
+  main = &quot;Cercle des corrélations&quot;,
+  type = &quot;n&quot;, asp = 1
+)
+symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = &quot;blue&quot;, lty = 2)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)
+text(corvar[, 1], corvar[, 2], labels = colnames(gym_quanti), col = &quot;red&quot;, cex = 0.8)
+arrows(
+  0, 0, corvar[, 1] * 0.95, corvar[, 2] * 0.95,
+  length = 0.1, angle = 15, code = 2
+)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/cercle_correlation-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="afcm-sur-les-variables-qualitatives" class="section level1">
+<h1>6. AFCM sur les variables qualitatives</h1>
+<p>L’AFCM permet d’explorer la structure des modalités qualitatives et
+d’observer leur éventuelle proximité avec la classe de dépense
+calorique.</p>
+<pre class="r"><code>gym_quali_afcm &lt;- gym[, c(&quot;Gender&quot;, &quot;Workout_Type&quot;, &quot;Experience_Level&quot;, &quot;Classe_Calories&quot;)]
+str(gym_quali_afcm)</code></pre>
+<pre><code>&#39;data.frame&#39;:   973 obs. of  4 variables:
+ $ Gender          : Factor w/ 2 levels &quot;Female&quot;,&quot;Male&quot;: 2 1 1 2 2 1 2 1 2 2 ...
+ $ Workout_Type    : Factor w/ 4 levels &quot;Cardio&quot;,&quot;HIIT&quot;,..: 4 2 1 3 3 2 1 1 3 1 ...
+ $ Experience_Level: Factor w/ 3 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 3 2 2 1 1 3 2 2 2 1 ...
+ $ Classe_Calories : Factor w/ 3 levels &quot;Faible&quot;,&quot;Moderee&quot;,..: 3 2 1 1 1 3 3 2 1 2 ...</code></pre>
+<pre class="r"><code>resMCA &lt;- MCA(gym_quali_afcm, graph = FALSE)
+
+resMCA$eig</code></pre>
+<pre><code>      eigenvalue percentage of variance cumulative percentage of variance
+dim 1 0.41439035              20.719518                          20.71952
+dim 2 0.32843479              16.421740                          37.14126
+dim 3 0.25821236              12.910618                          50.05188
+dim 4 0.24939604              12.469802                          62.52168
+dim 5 0.24837325              12.418663                          74.94034
+dim 6 0.24337071              12.168535                          87.10888
+dim 7 0.17152834               8.576417                          95.68529
+dim 8 0.08629415               4.314708                         100.00000</code></pre>
+<pre class="r"><code>resMCA$var$contrib</code></pre>
+<pre><code>              Dim 1        Dim 2        Dim 3        Dim 4        Dim 5
+Female    1.5158299  0.040722863 20.919099432 7.594768e-02  0.009052221
+Male      1.3704763  0.036817931 18.913158391 6.866502e-02  0.008184200
+Cardio    0.2033367  0.266034530  8.813724759 5.685173e+01  2.438090530
+HIIT      0.2544124  0.008211987 14.971945377 4.092151e+01  7.697869432
+Strength  0.1271978  1.215087335  1.170344087 1.030353e+00 69.002982285
+Yoga      0.1234144  0.276020590 32.073557201 3.390496e-01 18.921102654
+1        11.5889288 18.417734929  0.006141503 5.336064e-02  0.170075466
+2         0.5978465 27.881470148  0.713787291 4.323660e-02  0.406899164
+3        34.8534908  2.812647769  1.800234192 4.387507e-04  0.123473775
+Faible   14.9558560 17.961576157  0.396369452 3.392149e-01  0.080296002
+Moderee   2.9976124 29.643763515  0.178205276 3.726899e-03  0.781623465
+Haute    31.4115978  1.439912247  0.043433038 2.727673e-01  0.360350807</code></pre>
+<pre class="r"><code>resMCA$var$coord</code></pre>
+<pre><code>               Dim 1       Dim 2       Dim 3        Dim 4       Dim 5
+Female   -0.23003583 -0.03356674  0.67456753  0.039945462  0.01376244
+Male      0.20797760  0.03034801 -0.60988297 -0.036115075 -0.01244275
+Cardio   -0.11340417  0.11548083  0.58936532 -1.471068638  0.30401405
+HIIT      0.13625870  0.02179410  0.82512151  1.340636059  0.58026712
+Strength -0.08917051 -0.24536064 -0.21351179  0.196885766 -1.60791433
+Yoga      0.09125891  0.12150182 -1.16131368  0.117344796  0.87480871
+1        -0.70504845  0.79128910 -0.01281204  0.037114856 -0.06612501
+2        -0.15410725 -0.93692713 -0.13292183 -0.032150959  0.09842812
+3         1.71552753  0.43386237  0.30776749 -0.004721972 -0.07905139
+Faible   -0.86149982  0.84050739 -0.11070910  0.100653053 -0.04887020
+Moderee  -0.38628378 -1.08144680  0.07434687 -0.010566533  0.15270917
+Haute     1.25044255  0.23834525  0.03670393 -0.090397177 -0.10368814</code></pre>
+<pre class="r"><code>fviz_mca_var(
+  resMCA,
+  repel = TRUE,
+  ggtheme = theme_minimal(),
+  title = &quot;AFCM - Modalités qualitatives&quot;
+)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/afcm_modalites-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>fviz_mca_ind(
+  resMCA,
+  habillage = &quot;Classe_Calories&quot;,
+  addEllipses = TRUE,
+  repel = FALSE,
+  ggtheme = theme_minimal(),
+  title = &quot;AFCM - Individus colorés par classe de dépense&quot;
+)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/afcm_individus-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cah-sur-les-scores-de-lacp" class="section level1">
+<h1>7. CAH sur les scores de l’ACP</h1>
+<p>La classification ascendante hiérarchique est réalisée sur les scores
+des trois premiers axes de l’ACP.</p>
+<div id="construction-de-la-cah" class="section level2">
+<h2>7.1 Construction de la CAH</h2>
+<pre class="r"><code>scores_acp &lt;- resAcpGym$scores[, 1:3]
+
+d_acp &lt;- dist(scores_acp, method = &quot;euclidean&quot;)
+cah_ward &lt;- hclust(d_acp, method = &quot;ward.D2&quot;)
+
+plot(cah_ward, hang = -1, main = &quot;CAH sur scores ACP - Ward.D2&quot;, sub = &quot;&quot;, xlab = &quot;&quot;)
+rect.hclust(cah_ward, k = 3, border = &quot;red&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/cah_construction-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="découpage-en-3-groupes" class="section level2">
+<h2>7.2 Découpage en 3 groupes</h2>
+<pre class="r"><code>groupes_cah &lt;- cutree(cah_ward, k = 3)
+table(groupes_cah)</code></pre>
+<pre><code>groupes_cah
+  1   2   3 
+191 450 332 </code></pre>
+<pre class="r"><code>gym$Cluster_CAH &lt;- as.factor(groupes_cah)</code></pre>
+</div>
+<div id="projection-des-groupes-sur-le-plan-1-2-de-lacp"
+class="section level2">
+<h2>7.3 Projection des groupes sur le plan 1-2 de l’ACP</h2>
+<pre class="r"><code>plot(
+  resAcpGym$scores[, 1:2],
+  xlab = paste0(&quot;Axe 1 (&quot;, pct1, &quot;%)&quot;),
+  ylab = paste0(&quot;Axe 2 (&quot;, pct2, &quot;%)&quot;),
+  col = gym$Cluster_CAH,
+  pch = 19,
+  cex = 0.7,
+  main = &quot;Groupes CAH sur le plan 1-2 de l&#39;ACP&quot;
+)
+legend(
+  &quot;topright&quot;,
+  legend = levels(gym$Cluster_CAH),
+  col = 1:length(levels(gym$Cluster_CAH)),
+  pch = 19,
+  bty = &quot;n&quot;
+)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/cah_projection-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="description-sommaire-des-clusters" class="section level2">
+<h2>7.4 Description sommaire des clusters</h2>
+<pre class="r"><code>aggregate(gym_quanti, by = list(Cluster = gym$Cluster_CAH), mean)</code></pre>
+<pre><code>  Cluster      Age Weight..kg. Height..m.  Max_BPM  Avg_BPM Resting_BPM
+1       1 38.37696    73.48743   1.724660 180.2880 143.2304    62.47120
+2       2 39.04889    60.85911   1.655933 178.8556 145.0289    62.72889
+3       3 38.36446    91.68042   1.811717 181.0452 142.3645    61.39458
+  Session_Duration..hours. Fat_Percentage Water_Intake..liters.
+1                 1.758325       14.80524              3.127749
+2                 1.140333       29.13200              2.192667
+3                 1.125030       25.19639              2.926506
+  Workout_Frequency..days.week.
+1                      4.534031
+2                      3.046667
+3                      2.996988</code></pre>
+<pre class="r"><code>table(gym$Cluster_CAH, gym$Gender)</code></pre>
+<pre><code>   
+    Female Male
+  1     89  102
+  2    361   89
+  3     12  320</code></pre>
+<pre class="r"><code>table(gym$Cluster_CAH, gym$Workout_Type)</code></pre>
+<pre><code>   
+    Cardio HIIT Strength Yoga
+  1     44   49       45   53
+  2    120  101      131   98
+  3     91   71       82   88</code></pre>
+<pre class="r"><code>table(gym$Cluster_CAH, gym$Experience_Level)</code></pre>
+<pre><code>   
+      1   2   3
+  1   0   1 190
+  2 214 236   0
+  3 162 169   1</code></pre>
+<pre class="r"><code>table(gym$Cluster_CAH, gym$Classe_Calories)</code></pre>
+<pre><code>   
+    Faible Moderee Haute
+  1      0      16   175
+  2    197     179    74
+  3    128     129    75</code></pre>
+</div>
+</div>
+<div id="cart" class="section level1">
+<h1>8. CART</h1>
+<p>Le CART est utilisé ici pour prédire la <strong>classe de dépense
+calorique</strong>.</p>
+<div id="préparation-de-la-base-de-modélisation" class="section level2">
+<h2>8.1 Préparation de la base de modélisation</h2>
+<p>Dans cette version, on retire <strong>Calories_Burned</strong>
+(variable continue cible initiale) et <strong>BMI</strong> (variable
+redondante) de la base utilisée pour la classification.</p>
+<pre class="r"><code>set.seed(123)
+
+data_cart &lt;- subset(gym, select = -c(Calories_Burned, BMI))
+str(data_cart)</code></pre>
+<pre><code>&#39;data.frame&#39;:   973 obs. of  15 variables:
+ $ Age                          : int  56 46 32 25 38 56 36 40 28 28 ...
+ $ Gender                       : Factor w/ 2 levels &quot;Female&quot;,&quot;Male&quot;: 2 1 1 2 2 1 2 1 2 2 ...
+ $ Weight..kg.                  : num  88.3 74.9 68.1 53.2 46.1 ...
+ $ Height..m.                   : num  1.71 1.53 1.66 1.7 1.79 1.68 1.72 1.51 1.94 1.84 ...
+ $ Max_BPM                      : int  180 179 167 190 188 168 174 189 185 169 ...
+ $ Avg_BPM                      : int  157 151 122 164 158 156 169 141 127 136 ...
+ $ Resting_BPM                  : int  60 66 54 56 68 74 73 64 52 64 ...
+ $ Session_Duration..hours.     : num  1.69 1.3 1.11 0.59 0.64 1.59 1.49 1.27 1.03 1.08 ...
+ $ Workout_Type                 : Factor w/ 4 levels &quot;Cardio&quot;,&quot;HIIT&quot;,..: 4 2 1 3 3 2 1 1 3 1 ...
+ $ Fat_Percentage               : num  12.6 33.9 33.4 28.8 29.2 15.5 21.3 30.6 28.9 29.7 ...
+ $ Water_Intake..liters.        : num  3.5 2.1 2.3 2.1 2.8 2.7 2.3 1.9 2.6 2.7 ...
+ $ Workout_Frequency..days.week.: int  4 4 4 3 3 5 3 3 4 3 ...
+ $ Experience_Level             : Factor w/ 3 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 3 2 2 1 1 3 2 2 2 1 ...
+ $ Classe_Calories              : Factor w/ 3 levels &quot;Faible&quot;,&quot;Moderee&quot;,..: 3 2 1 1 1 3 3 2 1 2 ...
+ $ Cluster_CAH                  : Factor w/ 3 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 1 2 2 2 2 1 2 2 3 3 ...</code></pre>
+</div>
+<div id="échantillons-dapprentissage-et-de-test" class="section level2">
+<h2>8.2 Échantillons d’apprentissage et de test</h2>
+<pre class="r"><code>n &lt;- nrow(data_cart)
+index_train &lt;- sample(1:n, size = 0.7 * n)
+train_cart &lt;- data_cart[index_train, ]
+test_cart  &lt;- data_cart[-index_train, ]
+
+dim(train_cart)</code></pre>
+<pre><code>[1] 681  15</code></pre>
+<pre class="r"><code>dim(test_cart)</code></pre>
+<pre><code>[1] 292  15</code></pre>
+</div>
+<div id="construction-de-larbre-de-classification"
+class="section level2">
+<h2>8.3 Construction de l’arbre de classification</h2>
+<pre class="r"><code>cart_classe &lt;- rpart(
+  Classe_Calories ~ .,
+  data = train_cart,
+  method = &quot;class&quot;,
+  control = rpart.control(cp = 0.01, minsplit = 20)
+)
+
+printcp(cart_classe)</code></pre>
+<pre><code>
+Classification tree:
+rpart(formula = Classe_Calories ~ ., data = train_cart, method = &quot;class&quot;, 
+    control = rpart.control(cp = 0.01, minsplit = 20))
+
+Variables actually used in tree construction:
+[1] Age                      Avg_BPM                  Gender                  
+[4] Height..m.               Session_Duration..hours.
+
+Root node error: 448/681 = 0.65786
+
+n= 681 
+
+        CP nsplit rel error  xerror     xstd
+1 0.441964      0   1.00000 1.06696 0.026645
+2 0.110491      1   0.55804 0.56250 0.028124
+3 0.036830      3   0.33705 0.32366 0.023846
+4 0.021205      5   0.26339 0.29241 0.022960
+5 0.017857      7   0.22098 0.29688 0.023092
+6 0.010045      9   0.18527 0.25670 0.021823
+7 0.010000     13   0.14509 0.25670 0.021823</code></pre>
+<pre class="r"><code>plotcp(cart_classe)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/cart_modele-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>rpart.plot(
+  cart_classe,
+  type = 2,
+  extra = 104,
+  fallen.leaves = TRUE,
+  main = &quot;CART - Classe de dépense calorique&quot;
+)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/cart_plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="évaluation-sur-léchantillon-test" class="section level2">
+<h2>8.4 Évaluation sur l’échantillon test</h2>
+<pre class="r"><code>pred_cart &lt;- predict(cart_classe, newdata = test_cart, type = &quot;class&quot;)
+
+tab_cart &lt;- table(Observe = test_cart$Classe_Calories, Pred = pred_cart)
+tab_cart</code></pre>
+<pre><code>         Pred
+Observe   Faible Moderee Haute
+  Faible      95       9     0
+  Moderee      6      75    16
+  Haute        0       7    84</code></pre>
+<pre class="r"><code>acc_cart &lt;- mean(pred_cart == test_cart$Classe_Calories)
+acc_cart</code></pre>
+<pre><code>[1] 0.869863</code></pre>
+</div>
+</div>
+<div id="random-forest" class="section level1">
+<h1>9. Random Forest</h1>
+<p>La Random Forest est utilisée ici comme méthode d’ensemble pour
+comparer les performances prédictives avec celles du CART.</p>
+<div id="ajustement-du-modèle" class="section level2">
+<h2>9.1 Ajustement du modèle</h2>
+<pre class="r"><code>set.seed(123)
+
+rf_classe &lt;- randomForest(
+  Classe_Calories ~ .,
+  data = train_cart,
+  ntree = 500,
+  importance = TRUE
+)
+
+print(rf_classe)</code></pre>
+<pre><code>
+Call:
+ randomForest(formula = Classe_Calories ~ ., data = train_cart,      ntree = 500, importance = TRUE) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 3
+
+        OOB estimate of  error rate: 12.19%
+Confusion matrix:
+        Faible Moderee Haute class.error
+Faible     204      17     0  0.07692308
+Moderee     17     194    16  0.14537445
+Haute        0      33   200  0.14163090</code></pre>
+<pre class="r"><code>plot(rf_classe, main = &quot;Erreur OOB - Random Forest&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/rf_modele-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="importance-des-variables" class="section level2">
+<h2>9.2 Importance des variables</h2>
+<pre class="r"><code>importance(rf_classe)</code></pre>
+<pre><code>                                  Faible    Moderee      Haute
+Age                           11.1424145 10.6970451  9.9118853
+Gender                         8.4858462  7.5644363  6.1284768
+Weight..kg.                    4.8457638  8.1643147  5.7224415
+Height..m.                     1.4328563  5.8513222  0.1207956
+Max_BPM                       -1.1625285 -1.6946781  1.3480803
+Avg_BPM                       27.9536960 35.5739222 41.5697517
+Resting_BPM                   -0.9423334  1.0619599  0.3536187
+Session_Duration..hours.      84.1330391 41.7003794 32.4126344
+Workout_Type                  -0.8449579  1.0208316  1.1852416
+Fat_Percentage                14.8470383  5.3953813 15.5190724
+Water_Intake..liters.          8.2750671  4.2256949 10.5412335
+Workout_Frequency..days.week. 11.1543607  0.1185649  7.1309893
+Experience_Level              19.7309957  5.9571962 14.0542002
+Cluster_CAH                   11.1922273  5.5943747 15.2002268
+                              MeanDecreaseAccuracy MeanDecreaseGini
+Age                                     17.1187443        27.188120
+Gender                                  12.2355731         4.493046
+Weight..kg.                             10.2283783        22.805466
+Height..m.                               4.7618743        19.450731
+Max_BPM                                 -0.9566239        17.609030
+Avg_BPM                                 50.5189697        61.730649
+Resting_BPM                              0.4118244        16.822420
+Session_Duration..hours.                66.7364880       141.404730
+Workout_Type                             0.8176540        11.066809
+Fat_Percentage                          17.4521648        41.684851
+Water_Intake..liters.                   12.1727549        21.894750
+Workout_Frequency..days.week.           10.9953488        14.435258
+Experience_Level                        18.0355449        30.938525
+Cluster_CAH                             16.1579950        20.897697</code></pre>
+<pre class="r"><code>varImpPlot(rf_classe, main = &quot;Importance des variables - Random Forest&quot;)</code></pre>
+<p><img src="figure/EDC_Huong.Rmd/rf_importance-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="évaluation-sur-léchantillon-test-1" class="section level2">
+<h2>9.3 Évaluation sur l’échantillon test</h2>
+<pre class="r"><code>pred_rf &lt;- predict(rf_classe, newdata = test_cart, type = &quot;class&quot;)
+
+tab_rf &lt;- table(Observe = test_cart$Classe_Calories, Pred = pred_rf)
+tab_rf</code></pre>
+<pre><code>         Pred
+Observe   Faible Moderee Haute
+  Faible      95       9     0
+  Moderee      8      81     8
+  Haute        0      10    81</code></pre>
+<pre class="r"><code>acc_rf &lt;- mean(pred_rf == test_cart$Classe_Calories)
+acc_rf</code></pre>
+<pre><code>[1] 0.880137</code></pre>
+</div>
+</div>
+<div id="synthèse-de-comparaison-des-modèles" class="section level1">
+<h1>10. Synthèse de comparaison des modèles</h1>
+<p>Cette dernière section permet d’afficher côte à côte les performances
+des deux approches de classification retenues.</p>
+<pre class="r"><code>performance_modeles &lt;- data.frame(
+  Modele = c(&quot;CART&quot;, &quot;Random Forest&quot;),
+  Accuracy_test = c(acc_cart, acc_rf)
+)
+
+performance_modeles</code></pre>
+<pre><code>         Modele Accuracy_test
+1          CART      0.869863
+2 Random Forest      0.880137</code></pre>
+</div>
+<div id="remarques-finales" class="section level1">
+<h1>11. Remarques finales</h1>
+<p>Ce document constitue une version propre et directement comparable de
+l’analyse individuelle. Il permet notamment de vérifier, entre deux
+travaux réalisés séparément :</p>
+<ul>
+<li>si les mêmes variables apparaissent comme structurantes ;</li>
+<li>si les axes de l’ACP sont interprétés de manière cohérente ;</li>
+<li>si la CAH produit des profils similaires ;</li>
+<li>si CART et Random Forest conduisent à des performances proches ou
+non.</li>
+</ul>
+<p>Autrement dit, une base convenable pour comparer des résultats sans
+se noyer dans un script brut de 400 lignes, ce qui reste un progrès
+modeste mais appréciable.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.3 (2026-03-11)
+Platform: aarch64-apple-darwin20
+Running under: macOS Ventura 13.6.3
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Paris
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] randomForest_4.7-1.2 rpart.plot_3.1.4     rpart_4.1.24        
+[4] factoextra_2.0.0     ggplot2_4.0.2        FactoMineR_2.13     
+[7] corrplot_0.95       
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.6         xfun_0.56            bslib_0.10.0        
+ [4] htmlwidgets_1.6.4    ggrepel_0.9.7        rstatix_0.7.3       
+ [7] lattice_0.22-9       vctrs_0.7.1          tools_4.5.3         
+[10] generics_0.1.4       tibble_3.3.1         cluster_2.1.8.2     
+[13] pkgconfig_2.0.3      RColorBrewer_1.1-3   S7_0.2.1            
+[16] scatterplot3d_0.3-45 lifecycle_1.0.5      compiler_4.5.3      
+[19] farver_2.1.2         stringr_1.6.0        git2r_0.36.2        
+[22] leaps_3.2            carData_3.0-6        httpuv_1.6.16       
+[25] htmltools_0.5.9      sass_0.4.10          yaml_2.3.12         
+[28] Formula_1.2-5        later_1.4.8          pillar_1.11.1       
+[31] car_3.1-5            ggpubr_0.6.3         jquerylib_0.1.4     
+[34] tidyr_1.3.2          MASS_7.3-65          flashClust_1.1-4    
+[37] DT_0.34.0            cachem_1.1.0         abind_1.4-8         
+[40] tidyselect_1.2.1     digest_0.6.39        mvtnorm_1.3-5       
+[43] stringi_1.8.7        dplyr_1.2.0          purrr_1.2.1         
+[46] labeling_0.4.3       rprojroot_2.1.1      fastmap_1.2.0       
+[49] grid_4.5.3           cli_3.6.5            magrittr_2.0.4      
+[52] broom_1.0.12         withr_3.0.2          scales_1.4.0        
+[55] promises_1.5.0       backports_1.5.0      estimability_1.5.1  
+[58] rmarkdown_2.30       emmeans_2.0.2        otel_0.2.0          
+[61] ggsignif_0.6.4       workflowr_1.7.2      evaluate_1.0.5      
+[64] knitr_1.51           rlang_1.1.7          Rcpp_1.1.1          
+[67] glue_1.8.0           rstudioapi_0.18.0    jsonlite_2.0.0      
+[70] R6_2.6.1             fs_1.6.7             multcompView_0.1-11 </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
