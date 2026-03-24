@@ -770,9 +770,19 @@ data.frame(
 
 # Conclusion
 
+Cette analyse a permis de mettre en place une démarche complète autour du jeu de données **Gym Members Exercise Dataset**.
+
+Dans un premier temps, la préparation des données a permis de sélectionner un ensemble cohérent de variables quantitatives et qualitatives, tout en limitant les redondances.\
+L’analyse descriptive a ensuite fourni une première lecture de la structure du jeu de données.
+
+L’ACP a permis de résumer l’information contenue dans les variables quantitatives et d’explorer les relations entre individus, variables et groupes.\
+La CAH a complété cette approche exploratoire en mettant en évidence des profils homogènes d’individus.
+
 Enfin, les modèles supervisés ont permis d’évaluer la capacité prédictive des variables étudiées :
 
 -   pour la **classification** de la dépense calorique (`Classe_Calories`) ;
 -   pour la **régression** directe de `Calories_Burned`.
 
 Le modèle de classification le plus performant est celui dont l’accuracy test est la plus élevée, tandis que pour la régression, le meilleur compromis correspond à un **R² élevé** et un **RMSE faible**.
+
+Cette démarche montre ainsi l’intérêt de combiner des méthodes descriptives, exploratoires et prédictives dans l’analyse d’un jeu de données multidimensionnel.

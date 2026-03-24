@@ -14,7 +14,7 @@ editor_options:
 
 ### [Script de Huong](EDC_Huong.html)
 
-### [Script](EDC_Script_Final.html)
+### [Script](EDC_RScript.html)
 
 # **Les tests statistiques à l'aide de R **
 
