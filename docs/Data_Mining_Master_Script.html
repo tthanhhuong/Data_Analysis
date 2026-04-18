@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Huong PHAM" />
+
+<meta name="date" content="2026-04-16" />
+
+<title>Data Mining - Script R Markdown tổng hợp</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data_Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/tthanhhuong/Data_Analysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Data Mining - Script R Markdown tổng
+hợp</h1>
+<h4 class="author">Huong PHAM</h4>
+<h4 class="date">2026-04-16</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-04-18
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20260226code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20260226)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20260226code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20260226)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreed421b75d3e44dc50ecaec6ddc1825cfe720da5b4targetblankd421b75a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/d421b75d3e44dc50ecaec6ddc1825cfe720da5b4" target="_blank">d421b75</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreed421b75d3e44dc50ecaec6ddc1825cfe720da5b4targetblankd421b75a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/d421b75d3e44dc50ecaec6ddc1825cfe720da5b4" target="_blank">d421b75</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    DataMiningwithR/.DS_Store
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/images/
+
+Untracked files:
+    Untracked:  analysis/Data_Mining_Master_Script.Rmd
+    Untracked:  stats_python_theorie_a_pratique_duverier_djifack_zebaze/
+
+Unstaged changes:
+    Deleted:    analysis/EDC_RScript.Rmd
+    Modified:   analysis/index.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<blockquote>
+
+</blockquote>
+<hr />
+<div id="workflow-chung-của-một-bài-data-mining" class="section level1">
+<h1>Workflow chung của một bài Data Mining</h1>
+<p>Trong đa số bài, nên nghĩ theo pipeline sau:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Importer / vérifier les données</strong><br />
+Kiểm tra kiểu dữ liệu, số dòng cột, missing values, biến định lượng hay
+định tính.</p></li>
+<li><p><strong>Exploration univariée et bivariée</strong><br />
+Xem phân phối, ngoại lệ, mức độ phân tán, tương quan, bảng
+chéo.</p></li>
+<li><p><strong>Prétraitement</strong><br />
+Centering, scaling, chọn biến, loại biến gần hằng, mã hóa biến định tính
+nếu cần.</p></li>
+<li><p><strong>Méthode principale</strong></p>
+<ul>
+<li>ACP nếu biến định lượng, mục tiêu mô tả / giảm chiều.</li>
+<li>AFC/AFCM nếu bảng chéo / biến định tính.</li>
+<li>CAH / k-means nếu phân cụm.</li>
+<li>LDA / kNN / CART nếu phân loại có giám sát.</li>
+<li>PLS nếu hồi quy với đa cộng tuyến hay nhiều biến giải thích.</li>
+</ul></li>
+<li><p><strong>Validation / choix du modèle</strong><br />
+Không được ngây thơ nhìn mỗi training accuracy. Phải xem CV, PRESS,
+xerror, stabilité.</p></li>
+<li><p><strong>Interprétation substantielle</strong><br />
+Cuối cùng phải trả lời được: trục nào mang ý nghĩa gì, nhóm nào tách
+nhau ra sao, mô hình nào đáng tin nhất.</p></li>
+</ol>
+<hr />
+</div>
+<div id="setup-général" class="section level1">
+<h1>Setup général</h1>
+<pre class="r"><code>knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+options(stringsAsFactors = FALSE)
+setwd(&quot;/Users/thanhhuong/Downloads/M1/Data mining/TD/TD1&quot;)</code></pre>
+<pre class="r"><code># Cài package nếu máy chưa có
+install.packages(c(&quot;MASS&quot;, &quot;class&quot;, &quot;rpart&quot;, &quot;rpart.plot&quot;, &quot;pls&quot;, &quot;NbClust&quot;, &quot;FactoMineR&quot;, &quot;rgl&quot;))</code></pre>
+<pre class="r"><code># Packages chính
+library(MASS)
+library(class)
+library(rpart)
+library(pls)
+
+# Helper cho panel pairs
+panel.hist &lt;- function(x, ...) {
+  usr &lt;- par(&quot;usr&quot;); on.exit(par(usr))
+  par(usr = c(usr[1:2], 0, 1.5))
+  h &lt;- hist(x, plot = FALSE)
+  breaks &lt;- h$breaks; nB &lt;- length(breaks)
+  y &lt;- h$counts; y &lt;- y / max(y)
+  rect(breaks[-nB], 0, breaks[-1], y, col = &quot;lightgray&quot;, ...)
+}
+
+panel.cor &lt;- function(x, y, digits = 2, prefix = &quot;r=&quot;, cex.cor, ...) {
+  usr &lt;- par(&quot;usr&quot;); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r &lt;- cor(x, y, use = &quot;pairwise.complete.obs&quot;)
+  txt &lt;- format(c(r, 0.123456789), digits = digits)[1]
+  txt &lt;- paste0(prefix, txt)
+  if (missing(cex.cor)) cex.cor &lt;- 1.2
+  text(0.5, 0.5, txt, cex = cex.cor)
+}
+
+# CV lặp lại cho kNN
+knn_cv_mean &lt;- function(X, y, k = 3, nbcv = 4, nbrun = 30, seed = 123) {
+  set.seed(seed)
+  X &lt;- as.matrix(X)
+  y &lt;- as.factor(y)
+  acc &lt;- numeric(nbrun)
+  n &lt;- nrow(X)
+
+  for (run in seq_len(nbrun)) {
+    folds &lt;- sample(rep(1:nbcv, length.out = n))
+    fold_acc &lt;- numeric(nbcv)
+
+    for (f in seq_len(nbcv)) {
+      test_id &lt;- which(folds == f)
+      train_id &lt;- setdiff(seq_len(n), test_id)
+      pred &lt;- knn(train = X[train_id, , drop = FALSE],
+                  test  = X[test_id, , drop = FALSE],
+                  cl    = y[train_id],
+                  k     = k)
+      fold_acc[f] &lt;- mean(pred == y[test_id])
+    }
+    acc[run] &lt;- mean(fold_acc)
+  }
+  mean(acc)
+}
+
+# CV lặp lại cho LDA
+lda_cv_mean &lt;- function(X, y, nbcv = 4, nbrun = 30, seed = 123) {
+  set.seed(seed)
+  X &lt;- as.matrix(X)
+  y &lt;- as.factor(y)
+  acc &lt;- numeric(nbrun)
+  n &lt;- nrow(X)
+
+  for (run in seq_len(nbrun)) {
+    folds &lt;- sample(rep(1:nbcv, length.out = n))
+    fold_acc &lt;- numeric(nbcv)
+
+    for (f in seq_len(nbcv)) {
+      test_id &lt;- which(folds == f)
+      train_id &lt;- setdiff(seq_len(n), test_id)
+      fit &lt;- lda(x = X[train_id, , drop = FALSE], grouping = y[train_id])
+      pred &lt;- predict(fit, newdata = X[test_id, , drop = FALSE])$class
+      fold_acc[f] &lt;- mean(pred == y[test_id])
+    }
+    acc[run] &lt;- mean(fold_acc)
+  }
+  mean(acc)
+}</code></pre>
+<p><strong>Interpretation setup</strong></p>
+<ul>
+<li><code>panel.hist</code> và <code>panel.cor</code> giúp
+<code>pairs()</code> dễ đọc hơn.</li>
+<li><code>knn_cv_mean()</code> và <code>lda_cv_mean()</code> thay cho
+các helper file rời rạc.<br />
+</li>
+<li>Đây là điểm nâng cấp quan trọng: script bớt phụ thuộc vào file
+ngoài, đỡ cảnh mở lại sau 3 tuần rồi không nhớ thiếu cái gì.</li>
+</ul>
+<hr />
+</div>
+<div id="exploration-de-données" class="section level1">
+<h1>1. Exploration de données</h1>
+<div id="données-quantitatives-crabes" class="section level2">
+<h2>1.1. Données quantitatives: <em>crabes</em></h2>
+<div id="mục-tiêu" class="section level3">
+<h3>Mục tiêu</h3>
+<ul>
+<li>Xác định kiểu dữ liệu.</li>
+<li>Xem phân phối từng biến.</li>
+<li>So sánh thang đo.</li>
+<li>Đánh giá tương quan giữa các biến morphométriques.</li>
+</ul>
+<pre class="r"><code>crabes &lt;- read.table(&quot;crabes.txt&quot;, header = TRUE, sep = &quot;&quot;, dec = &quot;.&quot;)
+class(crabes)
+str(crabes)
+summary(crabes)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li><code>class()</code> và <code>str()</code> cho biết ta đang làm việc
+với <code>data.frame</code>, biến nào là định tính, biến nào là định
+lượng.</li>
+<li><code>summary()</code> là bước đầu tiên để phát hiện:
+<ul>
+<li>giá trị bất thường,</li>
+<li>biến lệch mạnh,</li>
+<li>biến gần như không thay đổi,</li>
+<li>hoặc lỗi import.</li>
+</ul></li>
+</ul>
+<pre class="r"><code># Histogram cho RW
+hist(crabes$RW, freq = FALSE, xlab = &quot;RW&quot;, main = &quot;Distribution de RW&quot;)
+lines(density(crabes$RW), col = &quot;blue&quot;, lwd = 2, lty = 2)
+
+# Boxplot 1 biến
+boxplot(crabes$RW, main = &quot;Boxplot de RW&quot;)
+
+# Boxplot nhiều biến định lượng
+boxplot(crabes[, 4:8], main = &quot;Comparaison des variables quantitatives&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Histogram + density giúp xem biến có gần chuẩn không, lệch phải/lệch
+trái, có nhiều mode không.</li>
+<li>Boxplot giúp nhìn nhanh:
+<ul>
+<li>median,</li>
+<li>dispersion,</li>
+<li>outliers.</li>
+</ul></li>
+<li>Nếu boxplot giữa các biến rất khác nhau về độ rộng, thường là dấu
+hiệu cần <strong>centrer-réduire</strong> trước các phương pháp dựa trên
+distance hoặc variance.</li>
+</ul>
+<pre class="r"><code># Moyennes và écarts-types
+moy &lt;- apply(crabes[, 4:8], 2, mean)
+et  &lt;- apply(crabes[, 4:8], 2, sd)
+
+# Centré uniquement
+crabesC  &lt;- scale(crabes[, 4:8], center = TRUE, scale = FALSE)
+
+# Centré-réduit
+crabesCR &lt;- scale(crabes[, 4:8], center = TRUE, scale = TRUE)
+
+boxplot(crabesC,  main = &quot;Variables centrées&quot;)
+boxplot(crabesCR, main = &quot;Variables centrées-réduites&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li><strong>Centrer</strong>: đưa trung bình của mỗi biến về 0.</li>
+<li><strong>Réduire</strong>: chia cho độ lệch chuẩn để mọi biến có cùng
+đơn vị chuẩn hóa.</li>
+<li>Khi mục tiêu là ACP sur corrélations, kNN, CAH, k-means, LDA với
+biến khác thang đo, đây gần như là bước chuẩn.</li>
+</ul>
+<pre class="r"><code>matcor &lt;- cor(crabes[, 4:8])
+matcor
+
+image(matcor)
+
+pairs(crabes[, 4:8],
+      lower.panel = panel.smooth,
+      upper.panel = panel.cor,
+      diag.panel  = panel.hist)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Nếu nhiều cặp có <code>|r| &gt; 0.8</code>, có thể có
+<strong>multicolinéarité</strong> hoặc một nhân tố chung chi phối.</li>
+<li>Trong bối cảnh morphométrique, tương quan mạnh thường phản ánh
+<strong>facteur de taille globale</strong>.</li>
+<li>Đây chính là tín hiệu kinh điển cho ACP: nhiều biến mang thông tin
+chồng lấp.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="données-qualitatives-fisher" class="section level2">
+<h2>1.2. Données qualitatives: <em>Fisher</em></h2>
+<div id="mục-tiêu-1" class="section level3">
+<h3>Mục tiêu</h3>
+<ul>
+<li>Tóm tắt tần suất từng modalité.</li>
+<li>Lập bảng chéo giữa 2 biến định tính.</li>
+<li>Biểu diễn bằng barplot / pie chart.</li>
+</ul>
+<pre class="r"><code>fisher &lt;- read.table(&quot;Fishertot.txt&quot;, header = TRUE, sep = &quot;;&quot;)
+
+table(fisher$col_cheveux)
+table(fisher$col_yeux)
+
+tab_fisher &lt;- table(fisher$col_cheveux, fisher$col_yeux)
+tab_fisher
+
+barplot(table(fisher$col_yeux), main = &quot;Couleur des yeux&quot;)
+barplot(tab_fisher, col = rainbow(5), beside = FALSE, ylim = c(0, 3500))
+barplot(tab_fisher, col = rainbow(5), beside = TRUE)
+pie(table(fisher$col_cheveux))</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li><code>table()</code> là công cụ nền tảng cho biến định tính.</li>
+<li>Bảng chéo giúp thấy mối liên hệ thô giữa hai biến trước khi sang
+AFC.</li>
+<li><code>beside = TRUE</code> giúp so sánh nhóm trực tiếp hơn;
+<code>beside = FALSE</code> nhấn mạnh cấu trúc tổng thể.</li>
+</ul>
+<hr />
+</div>
+</div>
+</div>
+<div id="acp-analyse-en-composantes-principales" class="section level1">
+<h1>2. ACP (Analyse en composantes principales)</h1>
+<div id="ảnh-hưởng-của-centrage-réduction-trên-dữ-liệu-amiard"
+class="section level2">
+<h2>2.1. Ảnh hưởng của centrage / réduction trên dữ liệu
+<em>amiard</em></h2>
+<div id="mục-tiêu-2" class="section level3">
+<h3>Mục tiêu</h3>
+<ul>
+<li>So sánh dữ liệu brut, centré, centré-réduit.</li>
+<li>Kiểm tra tương quan giữa các biến.</li>
+<li>Làm ACP để giảm chiều và diễn giải cấu trúc dữ liệu.</li>
+</ul>
+<pre class="r"><code>amiard &lt;- read.table(&quot;Amiard.php&quot;, header = TRUE, sep = &quot;&quot;)
+
+amiardC  &lt;- scale(amiard, center = TRUE, scale = FALSE)
+amiardCR &lt;- scale(amiard, center = TRUE, scale = TRUE)
+
+apply(amiard, 2, mean)
+apply(amiard, 2, sd)
+
+par(mfrow = c(1, 3))
+boxplot(amiard,   main = &quot;Brutes&quot;)
+boxplot(amiardC,  main = &quot;Centrées&quot;)
+boxplot(amiardCR, main = &quot;Réduites&quot;)
+par(mfrow = c(1, 1))</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Nếu dispersion giữa các biến quá khác nhau thì ACP trên covariance
+sẽ bị biến có variance lớn thống trị.</li>
+<li>Với dữ liệu có đơn vị khác nhau hoặc chênh scale lớn, thường nên làm
+ACP sur matrice des corrélations (<code>cor = TRUE</code>).</li>
+</ul>
+<pre class="r"><code>pairs(amiard,
+      lower.panel = panel.smooth,
+      upper.panel = panel.cor,
+      diag.panel  = panel.hist)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Nếu khối biến morphométriques có tương quan rất cao, ta kỳ vọng
+<strong>PC1</strong> sẽ đại diện cho “taille globale”.</li>
+<li>Nếu khối biến phóng xạ hay sinh học khác tách riêng, có thể PC2 hoặc
+PC3 sẽ bắt được gradient đó.</li>
+</ul>
+<pre class="r"><code>resAcpCR &lt;- princomp(amiard, cor = TRUE, scores = TRUE)
+summary(resAcpCR)
+resAcpCR$loadings
+
+# Valeurs propres
+vp &lt;- resAcpCR$sdev^2
+vp
+sum(vp)
+round(cumsum(vp) / sum(vp) * 100, 2)
+
+barplot(vp, main = &quot;Valeurs propres&quot;)
+abline(h = 1, col = &quot;red&quot;)  # règle de Kaiser
+
+# seuil de Saporta
+1 + 2 * sqrt((ncol(amiard) - 1) / (nrow(amiard) - 1))</code></pre>
+<p><strong>Interpretation</strong></p>
+</div>
+<div id="cách-chọn-số-trục" class="section level3">
+<h3>Cách chọn số trục</h3>
+<ul>
+<li><strong>Kaiser</strong>: giữ các trục có valeur propre &gt; 1.</li>
+<li><strong>Coude (elbow)</strong>: nhìn điểm gãy của scree plot.</li>
+<li><strong>80% inertie cumulée</strong>: thực dụng, hay dùng khi cần
+tóm tắt nhiều thông tin.</li>
+<li><strong>Saporta</strong>: chặt hơn Kaiser trong vài bối cảnh.</li>
+</ul>
+</div>
+<div id="cách-viết-kết-luận" class="section level3">
+<h3>Cách viết kết luận</h3>
+<p>Ví dụ:</p>
+<blockquote>
+<p>Les deux premiers axes résument une part importante de l’inertie
+totale. L’axe 1 semble surtout traduire un gradient global de taille,
+tandis que l’axe 2 oppose davantage les variables de radioactivité aux
+variables morphométriques.</p>
+</blockquote>
+<pre class="r"><code># Représentation des individus
+plot(resAcpCR$scores[, 1:2],
+     main = &quot;Individus sur le plan 1-2&quot;,
+     xlab = &quot;Axe 1&quot;,
+     ylab = &quot;Axe 2&quot;,
+     pch  = 16)
+text(resAcpCR$scores[, 1], resAcpCR$scores[, 2], labels = rownames(amiard), pos = 3, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)
+
+# Cercle des corrélations
+corvar &lt;- cor(amiard, resAcpCR$scores[, 1:2])
+plot(corvar[, 1], corvar[, 2],
+     xlim = c(-1, 1), ylim = c(-1, 1), asp = 1,
+     xlab = &quot;Axe 1&quot;, ylab = &quot;Axe 2&quot;,
+     main = &quot;Cercle des corrélations&quot;, type = &quot;n&quot;)
+symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = &quot;blue&quot;, lty = 2)
+text(corvar[, 1], corvar[, 2], labels = colnames(amiard), cex = 0.8)
+arrows(0, 0, corvar[, 1] * 0.95, corvar[, 2] * 0.95, length = 0.1, angle = 15)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><strong>Interpretation của plan factoriel</strong></p>
+<ul>
+<li><strong>Individus gần nhau</strong> → profils semblables.</li>
+<li><strong>Biến cùng hướng</strong> → corrélation positive.</li>
+<li><strong>Biến đối hướng</strong> → corrélation négative.</li>
+<li><strong>Biến gần vòng tròn</strong> → bien représentée sur ce
+plan.</li>
+<li><strong>Individus xa gốc</strong> → profils marqués, đóng góp nhiều
+cho cấu trúc trục.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="acp-trên-dữ-liệu-villes" class="section level2">
+<h2>2.2. ACP trên dữ liệu <em>villes</em></h2>
+<pre class="r"><code># Nếu cột đầu là tên thành phố
+villes &lt;- read.table(&quot;villes.csv&quot;, header = TRUE, sep = &quot;;&quot;, dec = &quot;.&quot;, row.names = 1)
+
+villesCR &lt;- scale(villes)
+resacp &lt;- princomp(villes, cor = TRUE, scores = TRUE)
+
+# Inertie cumulée
+cumsum(resacp$sdev^2 / sum(resacp$sdev^2))
+
+# Scree plot
+barplot(resacp$sdev^2, las = 2)
+
+# Saporta
+1 + 2 * sqrt((ncol(villes) - 1) / (nrow(villes) - 1))
+
+# Plan 1-2: observations
+par(mfrow = c(1, 2))
+plot(resacp$scores[, 1:2], pch = 20, main = &quot;Observations&quot;)
+text(resacp$scores[, 1:2], labels = rownames(villes), cex = 0.6, pos = 3)
+abline(h = 0, v = 0, lty = 2)
+
+# Plan 1-2: variables
+corvar &lt;- cor(villes, resacp$scores[, 1:2])
+plot(corvar[, 1], corvar[, 2], xlim = c(-1,1), ylim = c(-1,1), asp = 1,
+     xlab = &quot;PC1&quot;, ylab = &quot;PC2&quot;, main = &quot;Variables&quot;, type = &quot;n&quot;)
+symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = &quot;blue&quot;, lty = 2)
+text(corvar[, 1], corvar[, 2], labels = colnames(villes), cex = 0.7, col = &quot;red&quot;)
+arrows(0, 0, corvar[, 1] * 0.95, corvar[, 2] * 0.95, angle = 15, code = 2, length = 0.1)
+abline(h = 0, v = 0, lty = 2)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Với dữ liệu villes, trục 1 thường đại diện cho <strong>gradient
+global</strong> (ví dụ mức đô thị hóa / quy mô / mức phát triển, tùy
+biến gốc).</li>
+<li>Trục 2 thường bổ sung một chiều tương phản khác, không còn trùng với
+trục 1.</li>
+<li>Đừng viết kiểu “PC1 giải thích 40% nên rất tốt” rồi hết. Phải nói
+<strong>PC1 đối lập cái gì với cái gì</strong> dựa trên loadings hoặc
+cercle des corrélations.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="afc-và-afcm" class="section level1">
+<h1>3. AFC và AFCM</h1>
+<div id="afc-trên-zola" class="section level2">
+<h2>3.1. AFC trên <em>Zola</em></h2>
+<div id="khi-nào-dùng-afc" class="section level3">
+<h3>Khi nào dùng AFC?</h3>
+<p>Dùng khi có <strong>bảng chéo</strong> hoặc tableau de contingence,
+và muốn phân tích quan hệ giữa hàng và cột.</p>
+<pre class="r"><code># Cách gợi ý hiện đại: dùng FactoMineR
+library(FactoMineR)
+
+zola &lt;- read.table(&quot;Zola_bis.txt&quot;, header = TRUE, row.names = 1)
+res_ca &lt;- CA(zola, graph = FALSE)
+
+# Coordonnées lignes / colonnes
+head(res_ca$row$coord)
+head(res_ca$col$coord)
+
+# Graphique simple
+plot(res_ca$row$coord[,1:2], type = &quot;n&quot;, xlab = &quot;Dim 1&quot;, ylab = &quot;Dim 2&quot;,
+     main = &quot;AFC - oeuvres&quot;)
+text(res_ca$row$coord[,1], res_ca$row$coord[,2], labels = rownames(zola), col = &quot;blue&quot;)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Trong AFC, <strong>gần nhau</strong> nghĩa là profils similaires
+relativement aux masses.</li>
+<li>Một œuvre gần một modalité / mot / catégorie cho thấy association
+relative mạnh hơn mức trung bình.</li>
+<li>Phải đọc theo logic “écart à l’indépendance”, không phải đơn thuần
+khoảng cách thô.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="afcm-trên-pbiom" class="section level2">
+<h2>3.2. AFCM trên <em>pbiom</em></h2>
+<div id="khi-nào-dùng-afcm" class="section level3">
+<h3>Khi nào dùng AFCM?</h3>
+<p>Dùng khi dữ liệu là <strong>nhiều biến định tính</strong> trên cùng
+một tập cá thể.</p>
+<pre class="r"><code>library(FactoMineR)
+
+pbiom &lt;- read.table(&quot;pbiom.txt&quot;, header = TRUE)
+res_mca &lt;- MCA(pbiom, graph = FALSE)
+
+# Coordonnées individus
+head(res_mca$ind$coord)
+
+# Représentation colorée selon SITPROF nếu có
+plot(res_mca$ind$coord[,1:2], type = &quot;n&quot;, xlab = &quot;Dim 1&quot;, ylab = &quot;Dim 2&quot;,
+     main = &quot;AFCM - individus&quot;)
+text(res_mca$ind$coord[,1], res_mca$ind$coord[,2], labels = seq_len(nrow(pbiom)), cex = 0.7)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>AFCM biến các câu trả lời định tính thành một không gian
+factoriel.</li>
+<li>Những cá thể gần nhau có <strong>profils qualitatifs
+similaires</strong>.</li>
+<li>Các modalités đóng góp mạnh cho một trục là chìa khóa để <strong>đặt
+tên</strong> cho trục đó.</li>
+</ul>
+<hr />
+</div>
+</div>
+</div>
+<div id="clustering-cah-heatmap-k-means" class="section level1">
+<h1>4. Clustering: CAH, heatmap, k-means</h1>
+<div id="cah-sur-villes" class="section level2">
+<h2>4.1. CAH sur <em>villes</em></h2>
+<div id="mục-tiêu-3" class="section level3">
+<h3>Mục tiêu</h3>
+<ul>
+<li>So sánh các méthodes d’agrégation: single, complete, Ward.D2.</li>
+<li>Chọn số cụm.</li>
+<li>So sánh clustering trên dữ liệu gốc và trên scores ACP.</li>
+</ul>
+<pre class="r"><code>villes &lt;- read.table(&quot;villes.csv&quot;, header = TRUE, sep = &quot;;&quot;, dec = &quot;.&quot;, row.names = 1)
+villesCR &lt;- scale(villes)
+
+distVilleCR &lt;- dist(villesCR)
+
+hc_single   &lt;- hclust(distVilleCR, method = &quot;single&quot;)
+hc_complete &lt;- hclust(distVilleCR, method = &quot;complete&quot;)
+hc_ward     &lt;- hclust(distVilleCR, method = &quot;ward.D2&quot;)
+
+par(mfrow = c(1, 3))
+plot(hc_single,   hang = -1, main = &quot;Single linkage&quot;)
+plot(hc_complete, hang = -1, main = &quot;Complete linkage&quot;)
+plot(hc_ward,     hang = -1, main = &quot;Ward.D2&quot;)
+par(mfrow = c(1, 1))
+
+rect.hclust(hc_ward, k = 4, border = 2:5)
+groupeWard4 &lt;- cutree(hc_ward, k = 4)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li><strong>Single linkage</strong> dễ bị chaining, cụm kéo dài và kém
+ổn định.</li>
+<li><strong>Complete linkage</strong> tạo cụm chặt hơn.</li>
+<li><strong>Ward.D2</strong> thường là lựa chọn tốt nhất khi muốn cụm
+cân đối, tối thiểu hóa inertie intra-classe.</li>
+<li>Trong thực hành học thi Data Mining, nếu không có lý do khác,
+<strong>Ward.D2</strong> thường là lựa chọn an toàn nhất.</li>
+</ul>
+<pre class="r"><code>library(NbClust)
+
+ward_ch &lt;- NbClust(data = villesCR,
+                   distance = &quot;euclidean&quot;,
+                   min.nc = 2,
+                   max.nc = 15,
+                   method = &quot;ward.D2&quot;,
+                   index = &quot;ch&quot;)
+
+plot(2:15, ward_ch$All.index, type = &quot;l&quot;, xlab = &quot;Nombre de groupes&quot;, ylab = &quot;Indice CH&quot;)
+abline(v = ward_ch$Best.nc[1], col = &quot;red&quot;)
+ward_ch$Best.nc</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Chọn số cụm bằng <strong>Calinski-Harabasz (CH)</strong>: giá trị
+càng cao càng tốt.</li>
+<li>Không nên mù quáng tin duy nhất một chỉ số. Phải đối chiếu với
+dendrogram và tính hợp lý giải thích.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="cah-trên-scores-của-acp" class="section level2">
+<h2>4.2. CAH trên scores của ACP</h2>
+<pre class="r"><code>resACPvillesCR &lt;- princomp(villesCR, cor = FALSE, scores = TRUE)
+
+distACP &lt;- dist(resACPvillesCR$scores[, 1:2])
+hcACP   &lt;- hclust(distACP, method = &quot;ward.D2&quot;)
+plot(hcACP, hang = -1, main = &quot;Ward sur les scores ACP (PC1-PC2)&quot;)
+
+groupeScore &lt;- cutree(hcACP, k = 4)
+
+par(mfrow = c(1, 2))
+plot(resACPvillesCR$scores[, 1:2], col = groupeScore, pch = 16,
+     xlab = &quot;PC1&quot;, ylab = &quot;PC2&quot;, main = &quot;CAH sur scores ACP&quot;)
+text(resACPvillesCR$scores[, 1:2], labels = rownames(villes), pos = 4, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)
+
+plot(resACPvillesCR$scores[, 1:2], col = groupeWard4, pch = 16,
+     xlab = &quot;PC1&quot;, ylab = &quot;PC2&quot;, main = &quot;CAH sur données initiales&quot;)
+text(resACPvillesCR$scores[, 1:2], labels = rownames(villes), pos = 4, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Cluster trên scores ACP giúp giảm bruit và tập trung vào cấu trúc
+chính.</li>
+<li>Nếu phân nhóm trên données complètes và trên scores ACP khá giống
+nhau, đó là tín hiệu tốt: cấu trúc cụm tương đối ổn định.</li>
+</ul>
+<hr />
+</div>
+<div id="heatmap-và-clustering-biến" class="section level2">
+<h2>4.3. Heatmap và clustering biến</h2>
+<pre class="r"><code>matcor  &lt;- cor(villesCR)
+distvar &lt;- as.dist(1 - matcor^2)
+hc_var  &lt;- hclust(distvar, method = &quot;ward.D2&quot;)
+
+plot(hc_var, hang = -1, main = &quot;Clustering des variables&quot;)
+heatmap(villesCR,
+        Rowv = as.dendrogram(hc_ward),
+        Colv = as.dendrogram(hc_var),
+        scale = &quot;none&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Heatmap + double dendrogram rất hữu ích để thấy cùng lúc:
+<ul>
+<li>nhóm quan sát,</li>
+<li>nhóm biến,</li>
+<li>cấu trúc block trong dữ liệu.</li>
+</ul></li>
+<li>Dùng tốt khi muốn chuyển từ “plot đẹp” sang “đọc pattern thật”. Một
+ý niệm hiếm hoi giữa thời đại người ta thích tô màu hơn hiểu dữ
+liệu.</li>
+</ul>
+<hr />
+</div>
+<div id="k-means-trên-villes" class="section level2">
+<h2>4.4. k-means trên <em>villes</em></h2>
+<pre class="r"><code>set.seed(123)
+reskmean4 &lt;- kmeans(villesCR, centers = 4, nstart = 50)
+reskmean4$cluster
+reskmean4$size
+reskmean4$tot.withinss
+
+plot(resACPvillesCR$scores[, 1:2], col = reskmean4$cluster, pch = 16,
+     xlab = &quot;PC1&quot;, ylab = &quot;PC2&quot;, main = &quot;k-means (4 groupes)&quot;)
+text(resACPvillesCR$scores[, 1:2], labels = rownames(villes), pos = 4, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li><code>tot.withinss</code> càng nhỏ thì cụm càng compact, nhưng luôn
+giảm khi tăng số cụm.</li>
+<li>Vì thế phải kết hợp elbow plot, CH index, và tính giải thích được
+của các cụm.</li>
+</ul>
+<pre class="r"><code>enrintra &lt;- numeric(9)
+for (i in 2:10) {
+  km &lt;- kmeans(villesCR, centers = i, nstart = 50)
+  enrintra[i - 1] &lt;- km$tot.withinss
+}
+plot(2:10, enrintra, type = &quot;b&quot;, xlab = &quot;Nombre de groupes&quot;, ylab = &quot;Withinss total&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Điểm gãy của đường cong cho biết số nhóm hợp lý.</li>
+<li>So sánh k-means với Ward giúp thấy tính ổn định của cấu trúc phân
+nhóm.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="lda-analyse-discriminante-linéaire" class="section level1">
+<h1>5. LDA (Analyse discriminante linéaire)</h1>
+<div id="données-painting8-và-painting64" class="section level2">
+<h2>5.1. Données <em>painting8</em> và <em>painting64</em></h2>
+<div id="mục-tiêu-4" class="section level3">
+<h3>Mục tiêu</h3>
+<ul>
+<li>Phân loại tranh theo histogram màu.</li>
+<li>So sánh bộ biến 8 màu với 64 màu.</li>
+<li>Loại biến không phù hợp trước khi chạy LDA.</li>
+</ul>
+<pre class="r"><code>data8  &lt;- read.table(&quot;painting8.php&quot;,  header = FALSE, sep = &quot;&quot;, row.names = 1)
+data64 &lt;- read.table(&quot;painting64.php&quot;, header = FALSE, sep = &quot;&quot;, row.names = 1)
+
+gp &lt;- substr(rownames(data8), 1, 1)
+gp &lt;- as.factor(gp)
+
+data8  &lt;- as.matrix(data8)
+data64 &lt;- as.matrix(data64)
+
+summary(data8)
+par(mfrow = c(1, 2))
+boxplot(data8,  main = &quot;8 couleurs&quot;)
+boxplot(data64, main = &quot;64 couleurs&quot;)
+par(mfrow = c(1, 1))</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Trước LDA, phải xem dữ liệu có cần scale không và có biến gần hằng
+không.</li>
+<li>Với histogram / proportions, vấn đề chính thường không phải scale
+khủng mà là <strong>dépendance linéaire</strong> và biến gần
+0-variance.</li>
+</ul>
+<pre class="r"><code># Với 8 couleurs: bỏ 1 biến để tránh dépendance complète si somme = 1
+# (các proportions cộng lại bằng 1 -&gt; ma trận hiệp phương sai suy biến)
+data8sel &lt;- data8[, -8]
+
+# Với 64 couleurs: bỏ biến có variance quá thấp
+vecvar    &lt;- apply(data64, 2, var)
+data64sel &lt;- data64[, vecvar &gt; 1e-4]
+dim(data64sel)</code></pre>
+<p><strong>Interpretation rất quan trọng</strong></p>
+<ul>
+<li>Nếu các proportions cộng đúng bằng 1, một biến là tổ hợp tuyến tính
+của các biến còn lại.<br />
+=&gt; cần bỏ ít nhất 1 biến.</li>
+<li>Nếu variance gần 0, biến gần như không mang thông tin phân
+loại.<br />
+=&gt; giữ lại chỉ làm ma trận xấu thêm.</li>
+</ul>
+<pre class="r"><code>reslda8  &lt;- lda(x = data8sel,  grouping = gp)
+reslda64 &lt;- lda(x = data64sel, grouping = gp)
+
+# Số trục discriminants tối đa = min(p, g - 1)
+reslda8
+reslda64</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Với <code>g</code> nhóm, số trục discriminants tối đa là
+<code>g - 1</code>.</li>
+<li>LDA tìm các tổ hợp tuyến tính tối đa hóa tách biệt giữa nhóm so với
+biến thiên trong nhóm.</li>
+</ul>
+<pre class="r"><code>pred8  &lt;- predict(reslda8,  newdata = data8sel)
+pred64 &lt;- predict(reslda64, newdata = data64sel)
+
+mean(pred8$class  == gp)
+mean(pred64$class == gp)
+
+table(pred8$class,  gp)
+table(pred64$class, gp)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Đây là <strong>training accuracy</strong>, luôn lạc quan hơn thực
+tế.</li>
+<li>Dùng để so sánh sơ bộ giữa 8 màu và 64 màu, nhưng không được coi là
+performance cuối cùng.</li>
+<li>Nếu <code>data64</code> cho accuracy cao hơn rõ rệt, có thể kết luận
+bộ biến giàu thông tin hơn cho discrimination.</li>
+</ul>
+<pre class="r"><code>par(mfrow = c(1, 2))
+
+plot(pred8$x[, 1:2], type = &quot;n&quot;, main = &quot;LDA - 8 couleurs&quot;)
+abline(h = 0, v = 0)
+colmis8 &lt;- ifelse(pred8$class != gp, &quot;red&quot;, &quot;black&quot;)
+text(pred8$x[, 1:2], labels = gp, col = colmis8)
+
+plot(pred64$x[, 1:2], type = &quot;n&quot;, main = &quot;LDA - 64 couleurs&quot;)
+abline(h = 0, v = 0)
+colmis64 &lt;- ifelse(pred64$class != gp, &quot;red&quot;, &quot;black&quot;)
+text(pred64$x[, 1:2], labels = gp, col = colmis64)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Điểm màu đỏ là quan sát bị phân loại sai.</li>
+<li>Nếu trên plan discriminant các nhóm tách xa nhau, đó là tín hiệu LDA
+đang hoạt động tốt.</li>
+<li>Nếu nhóm chồng lấn nhiều, accuracy khó cao trừ khi dữ liệu có cấu
+trúc phi tuyến mà LDA không bắt được.</li>
+</ul>
+<pre class="r"><code>lda_cv_mean(X = data64sel, y = gp, nbcv = 4, nbrun = 30)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Đây mới là con số có giá trị hơn training accuracy.</li>
+<li>Nếu CV accuracy giảm mạnh so với training accuracy, mô hình có thể
+over-optimistic hoặc dữ liệu khó thật.</li>
+</ul>
+<hr />
+</div>
+</div>
+</div>
+<div id="knn-và-cart" class="section level1">
+<h1>6. kNN và CART</h1>
+<div id="knn-trên-painting64" class="section level2">
+<h2>6.1. kNN trên <em>painting64</em></h2>
+<div id="mục-tiêu-5" class="section level3">
+<h3>Mục tiêu</h3>
+<ul>
+<li>Hiểu bản chất local classifier.</li>
+<li>So sánh training accuracy và validation accuracy.</li>
+<li>Chọn số láng giềng tối ưu.</li>
+</ul>
+<pre class="r"><code>data64 &lt;- read.table(&quot;painting64.php&quot;, header = FALSE, sep = &quot;&quot;, row.names = 1)
+gp     &lt;- as.factor(substr(rownames(data64), 1, 1))
+data64 &lt;- as.matrix(data64)
+
+resknn3 &lt;- knn(train = data64, test = data64, cl = gp, k = 3)
+mean(resknn3 == gp)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Đây là <strong>training accuracy</strong>, gần như luôn tốt hơn
+CV.</li>
+<li>kNN rất nhạy với scale và với curse of dimensionality.</li>
+</ul>
+<pre class="r"><code>vecvar    &lt;- apply(data64, 2, var)
+data64sel &lt;- data64[, vecvar &gt; 1e-4]
+resacp    &lt;- princomp(scale(data64sel))
+
+plot(resacp$scores[, 1:2], type = &quot;n&quot;, main = &quot;ACP pour visualiser les voisinages&quot;)
+text(resacp$scores[, 1:2], labels = gp)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>ACP ở đây không phải mô hình chính, mà là công cụ để nhìn những quan
+sát nằm gần ranh giới nhóm.</li>
+<li>Rất hữu ích để hiểu vì sao kNN nhầm.</li>
+</ul>
+<pre class="r"><code>knn_cv_mean(X = data64, y = gp, k = 3, nbcv = 4, nbrun = 30)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>CV accuracy phản ánh đúng hơn năng lực tổng quát hóa.</li>
+<li>Nếu thấp hơn training accuracy nhiều, mô hình đang hưởng lợi từ học
+trên chính dữ liệu nó bị chấm.</li>
+</ul>
+<pre class="r"><code>enrres &lt;- numeric(10)
+for (i in 1:10) {
+  enrres[i] &lt;- knn_cv_mean(X = data64, y = gp, k = i, nbcv = 4, nbrun = 30)
+}
+plot(1:10, enrres, type = &quot;b&quot;, xlab = &quot;k&quot;, ylab = &quot;Validation accuracy&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li><code>k</code> nhỏ quá: variance cao, nhạy với noise.</li>
+<li><code>k</code> lớn quá: decision boundary quá trơn, bias cao.</li>
+<li>Chọn <code>k</code> tại vùng performance tốt và ổn định, không cần
+ám ảnh đúng 1 điểm tuyệt đối nếu các điểm lân cận gần như nhau.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="cart-lda-knn-trên-dữ-liệu-puces" class="section level2">
+<h2>6.2. CART, LDA, kNN trên dữ liệu <em>puces</em></h2>
+<div id="mục-tiêu-6" class="section level3">
+<h3>Mục tiêu</h3>
+<p>So sánh thực hành giữa ba cách phân loại có triết lý rất khác
+nhau:</p>
+<ul>
+<li><strong>LDA</strong>: tuyến tính, mô hình hóa.</li>
+<li><strong>kNN</strong>: local, phi tham số.</li>
+<li><strong>CART</strong>: dễ giải thích, phi tuyến, nhưng cần
+pruning.</li>
+</ul>
+<pre class="r"><code>Xpuces &lt;- read.table(&quot;X_puces.xls&quot;, header = TRUE, sep = &quot;;&quot;)
+Xpuces &lt;- as.matrix(Xpuces)
+Ypuces &lt;- read.table(&quot;gp_puces.xls&quot;)
+Ypuces &lt;- as.factor(Ypuces[, 1])
+
+table(Ypuces)</code></pre>
+</div>
+<div id="cart" class="section level3">
+<h3>CART</h3>
+<pre class="r"><code>puces &lt;- data.frame(Xpuces, Ypuces = Ypuces)
+
+# Arbre par défaut
+resrpart &lt;- rpart(Ypuces ~ ., data = puces)
+plot(resrpart)
+text(resrpart, use.n = TRUE)
+
+pred_rpart &lt;- predict(resrpart, type = &quot;class&quot;)
+mean(pred_rpart == Ypuces)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>CART rất dễ đọc vì cho rule phân nhánh rõ ràng.</li>
+<li>Nhưng training accuracy không đủ, vì cây sâu sẽ học cả noise.</li>
+</ul>
+<pre class="r"><code># Arbre très grand
+resrpart_full &lt;- rpart(Ypuces ~ ., data = puces,
+                       control = rpart.control(minsplit = 1, cp = 0))
+plot(resrpart_full)
+text(resrpart_full, use.n = TRUE)
+
+printcp(resrpart_full)
+plotcp(resrpart_full)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li><code>printcp()</code> cho bảng pruning.</li>
+<li><code>xerror</code> là lỗi CV nội bộ, hữu ích hơn
+<code>rel error</code> training.</li>
+<li>Thường chọn cây tại:
+<ul>
+<li><code>xerror</code> nhỏ nhất, hoặc</li>
+<li>quy tắc <strong>1-SE</strong> nếu muốn cây gọn và ổn định hơn.</li>
+</ul></li>
+</ul>
+<pre class="r"><code>par(mfrow = c(1, 2))
+res_cp1 &lt;- rpart(Ypuces ~ ., data = puces,
+                 control = rpart.control(minsplit = 1, cp = 0.15))
+plot(res_cp1); text(res_cp1, use.n = TRUE)
+
+res_cp2 &lt;- rpart(Ypuces ~ ., data = puces,
+                 control = rpart.control(minsplit = 1, cp = 0.08))
+plot(res_cp2); text(res_cp2, use.n = TRUE)
+par(mfrow = c(1, 1))</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Cây quá nhỏ: underfit.<br />
+</li>
+<li>Cây quá lớn: overfit.<br />
+</li>
+<li>Pruning là bước bắt buộc nếu muốn CART có giá trị thực tế.</li>
+</ul>
+</div>
+<div id="lda-trên-puces" class="section level3">
+<h3>LDA trên <em>puces</em></h3>
+<pre class="r"><code>reslda &lt;- lda(x = Xpuces, grouping = Ypuces)
+predlda &lt;- predict(reslda)
+
+mean(predlda$class == Ypuces)
+table(predlda$class, Ypuces)
+
+plot(predlda$x[, 1:2], type = &quot;n&quot;, main = &quot;LDA - puces&quot;)
+text(predlda$x[, 1:2], labels = Ypuces)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Nếu nhóm tách khá tuyến tính, LDA thường rất mạnh và gọn.</li>
+<li>Nếu cấu trúc lớp phức tạp, CART hoặc kNN có thể bắt tốt hơn.</li>
+</ul>
+<pre class="r"><code>lda_cv_mean(X = Xpuces, y = Ypuces, nbcv = 4, nbrun = 30)</code></pre>
+</div>
+<div id="knn-trên-puces" class="section level3">
+<h3>kNN trên <em>puces</em></h3>
+<pre class="r"><code>enrres &lt;- numeric(10)
+for (i in 1:10) {
+  enrres[i] &lt;- knn_cv_mean(X = Xpuces, y = Ypuces, k = i, nbcv = 4, nbrun = 30)
+}
+plot(1:10, enrres, type = &quot;b&quot;, xlab = &quot;k&quot;, ylab = &quot;Validation accuracy&quot;)
+
+resknn4 &lt;- knn(train = Xpuces, test = Xpuces, cl = Ypuces, k = 4)
+mean(resknn4 == Ypuces)
+knn_cv_mean(X = Xpuces, y = Ypuces, k = 4, nbcv = 4, nbrun = 30)
+
+resknn5 &lt;- knn(train = Xpuces, test = Xpuces, cl = Ypuces, k = 5)
+mean(resknn5 == Ypuces)
+knn_cv_mean(X = Xpuces, y = Ypuces, k = 5, nbcv = 4, nbrun = 30)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>So sánh <code>k = 4</code> và <code>k = 5</code> không chỉ bằng
+training accuracy mà chủ yếu bằng CV.</li>
+<li>Nếu chênh lệch CV rất nhỏ, ưu tiên mô hình đơn giản hơn hoặc ổn định
+hơn.</li>
+</ul>
+</div>
+<div id="kết-luận-so-sánh-lda-knn-cart" class="section level3">
+<h3>Kết luận so sánh LDA / kNN / CART</h3>
+<ul>
+<li><strong>LDA</strong> tốt khi structure gần tuyến tính và covariance
+giữa nhóm không quá khác.</li>
+<li><strong>kNN</strong> linh hoạt nhưng nhạy với scale, dimension, và
+sample size.</li>
+<li><strong>CART</strong> rất giải thích được, nhưng hiệu năng thường
+cần pruning kỹ.</li>
+<li>Bài thi hay rapport tốt không chỉ ghi mô hình nào điểm cao nhất, mà
+phải nói <strong>tại sao mô hình đó hợp với hình học dữ
+liệu</strong>.</li>
+</ul>
+<hr />
+</div>
+</div>
+</div>
+<div id="pls-partial-least-squares" class="section level1">
+<h1>7. PLS (Partial Least Squares)</h1>
+<div id="données-prostate" class="section level2">
+<h2>7.1. Données <em>prostate</em></h2>
+<div id="khi-nào-dùng-pls" class="section level3">
+<h3>Khi nào dùng PLS?</h3>
+<ul>
+<li>Nhiều biến giải thích tương quan mạnh với nhau.</li>
+<li>Hồi quy tuyến tính cổ điển bị đa cộng tuyến.</li>
+<li>Muốn xây composantes vừa tóm tắt X vừa hữu ích cho dự đoán Y.</li>
+</ul>
+<pre class="r"><code>prostate &lt;- read.table(&quot;prostate.txt&quot;, header = TRUE, row.names = 1)
+summary(prostate)
+
+# svi là biến nhị phân trong script gốc, có thể loại để đơn giản hóa ví dụ
+# nhưng trong thực hành thật phải có lý do khoa học/statistique rõ ràng
+# ở đây giữ cách làm gần script TD gốc
+prostate &lt;- prostate[, -5]
+
+table(prostate$train)
+boxplot(prostate$lpsa ~ prostate$train, main = &quot;Comparaison train vs test&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Phải kiểm tra train/test có phân phối khá tương đồng không, ít nhất
+với <code>lpsa</code>.</li>
+<li>Nếu train và test lệch nhau quá mạnh, đánh giá ngoài mẫu sẽ
+méo.</li>
+</ul>
+<pre class="r"><code># Tách train / test
+prostateTrain &lt;- subset(prostate, train == TRUE)
+prostateTest  &lt;- subset(prostate, train == FALSE)
+
+# Bỏ cột train khỏi dữ liệu mô hình
+prostateTrain &lt;- prostateTrain[, setdiff(colnames(prostateTrain), &quot;train&quot;)]
+prostateTest  &lt;- prostateTest[,  setdiff(colnames(prostateTest),  &quot;train&quot;)]
+
+# Tách X / y
+x_train &lt;- subset(prostateTrain, select = -lpsa)
+y_train &lt;- prostateTrain$lpsa
+
+x_test  &lt;- subset(prostateTest, select = -lpsa)
+y_test  &lt;- prostateTest$lpsa
+
+# Centrer-réduire X theo thống kê của train
+meanTrain &lt;- apply(x_train, 2, mean)
+sdTrain   &lt;- apply(x_train, 2, sd)
+
+x_train_cr &lt;- scale(x_train, center = meanTrain, scale = sdTrain)
+x_test_cr  &lt;- scale(x_test,  center = meanTrain, scale = sdTrain)
+
+prostateTrainCR &lt;- data.frame(x_train_cr, lpsa = y_train)
+prostateTestCR  &lt;- data.frame(x_test_cr,  lpsa = y_test)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Đây là bước rất hay bị làm sai.</li>
+<li><strong>Test phải được chuẩn hóa theo mean và SD của train</strong>,
+không phải theo chính test.</li>
+<li>Nếu chuẩn hóa riêng test, bạn đang làm rò rỉ thông tin hoặc ít nhất
+phá logic của bài toán dự đoán.</li>
+</ul>
+<pre class="r"><code>res_pls &lt;- plsr(lpsa ~ ., data = prostateTrainCR, ncomp = 7)
+summary(res_pls)
+
+# % variance expliquée, scores, loadings
+res_pls</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Khác PCA, PLS xây composantes có tính đến cả quan hệ với
+<code>Y = lpsa</code>.</li>
+<li>Vì thế số composantes tối ưu không nhất thiết là số trục giải thích
+X tốt nhất, mà là số trục dự đoán Y tốt nhất.</li>
+</ul>
+<pre class="r"><code>par(mfrow = c(1, 2))
+
+# Plan des individus
+plot(res_pls$scores[, 1], res_pls$scores[, 2], pch = 16,
+     xlab = &quot;Comp 1&quot;, ylab = &quot;Comp 2&quot;, main = &quot;Scores PLS&quot;)
+text(res_pls$scores[, 1], res_pls$scores[, 2], labels = rownames(prostateTrainCR), pos = 3, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)
+
+# Cercle / corrélations variables-composantes
+corVar &lt;- cor(prostateTrainCR, res_pls$scores)
+plot(corVar[, 1], corVar[, 2], xlim = c(-1,1), ylim = c(-1,1), type = &quot;n&quot;,
+     xlab = &quot;Comp 1&quot;, ylab = &quot;Comp 2&quot;, main = &quot;Corrélations variables-composantes&quot;)
+angle &lt;- seq(0, 2*pi, length = 500)
+points(cos(angle), sin(angle), type = &quot;l&quot;)
+text(corVar[, 1], corVar[, 2], labels = rownames(corVar), pos = 4)
+arrows(0, 0, corVar[, 1], corVar[, 2], length = 0.1)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Biến nào cùng hướng trên 2 composantes đầu thì có xu hướng đồng biến
+trong cấu trúc dự đoán.</li>
+<li>Quan sát xa gốc là những profile nổi bật, có thể ảnh hưởng mạnh đến
+mô hình.</li>
+</ul>
+<pre class="r"><code># RSS pour 1 à 7 composantes
+RSS_pls &lt;- numeric(7)
+for (i in 1:7) {
+  RSS_pls[i] &lt;- sqrt(sum(res_pls$residuals[, 1, i]^2))
+}
+plot(1:7, RSS_pls, type = &quot;b&quot;, xlab = &quot;Nb composantes&quot;, ylab = &quot;RSS&quot;)
+
+# R2 training pour 4 composantes
+cor(prostateTrainCR$lpsa, res_pls$fitted.values[, 1, 4])^2
+R2(res_pls)</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>RSS training giảm dần khi thêm composantes, nhưng điều đó
+<strong>không đủ</strong> để chọn mô hình.</li>
+<li>Cần xem validation vì training fit luôn đẹp dần theo số
+composantes.</li>
+</ul>
+<pre class="r"><code># CV 2-fold répété
+PRESS100CV &lt;- matrix(NA, 100, 7)
+R2100CV    &lt;- matrix(NA, 100, 7)
+
+for (i in 1:100) {
+  res_cv &lt;- plsr(lpsa ~ ., data = prostateTrainCR,
+                 validation = &quot;CV&quot;, segments = 2, ncomp = 7)
+
+  PRESS100CV[i, ] &lt;- as.numeric(res_cv$validation$PRESS)
+
+  for (h in 1:7) {
+    R2100CV[i, h] &lt;- cor(prostateTrainCR$lpsa, res_cv$validation$pred[, 1, h])^2
+  }
+}
+
+PRESS100moy &lt;- apply(PRESS100CV, 2, mean)
+R2100moy    &lt;- apply(R2100CV, 2, mean)
+
+par(mfrow = c(1, 2))
+plot(1:7, PRESS100moy, type = &quot;b&quot;, ylab = &quot;PRESS moyen&quot;, xlab = &quot;Nb composantes&quot;)
+plot(1:7, R2100moy, type = &quot;b&quot;, ylab = &quot;R² CV moyen&quot;, xlab = &quot;Nb composantes&quot;)
+par(mfrow = c(1, 1))</code></pre>
+<p><strong>Interpretation cực kỳ quan trọng</strong></p>
+<ul>
+<li><strong>PRESS nhỏ nhất</strong> thường là tiêu chí mạnh để chọn số
+composantes.</li>
+<li><strong>R² CV</strong> giúp hiểu lợi ích dự đoán thực tế của từng số
+composantes.</li>
+<li>Nếu PRESS giảm mạnh đến 2-3 composantes rồi gần như phẳng, đừng cố
+nhồi thêm. Đó là cách overfit mặc vest học thuật.</li>
+</ul>
+<pre class="r"><code># Giả sử chọn 3 composantes
+pred_test &lt;- predict(res_pls, newdata = prostateTestCR, ncomp = 3)
+cor(prostateTestCR$lpsa, pred_test)^2</code></pre>
+<p><strong>Interpretation</strong></p>
+<ul>
+<li>Đây là đánh giá ngoài mẫu trên test set.</li>
+<li>Nếu R² test thấp hơn nhiều so với training, mô hình chưa tổng quát
+hóa tốt.</li>
+<li>Khi viết nhận xét, phải nói rõ:
+<ul>
+<li>performance training,</li>
+<li>performance CV,</li>
+<li>performance test,</li>
+<li>và chọn số composantes dựa trên cân bằng giữa 3 thứ đó.</li>
+</ul></li>
+</ul>
+<hr />
+</div>
+</div>
+</div>
+<div id="mẫu-khung-interpretation-cho-từng-phương-pháp"
+class="section level1">
+<h1>8. Mẫu khung interpretation cho từng phương pháp</h1>
+<div id="exploration" class="section level2">
+<h2>8.1. Exploration</h2>
+<blockquote>
+<p>Les variables présentent des dispersions différentes, ce qui justifie
+un centrage-réduction avant les méthodes fondées sur les distances ou
+les variances. Les corrélations élevées entre plusieurs variables
+suggèrent une redondance d’information et plaident en faveur d’une
+ACP.</p>
+</blockquote>
+</div>
+<div id="acp" class="section level2">
+<h2>8.2. ACP</h2>
+<blockquote>
+<p>Les deux premiers axes résument xx% de l’inertie totale. L’axe 1
+correspond principalement à […], tandis que l’axe 2 oppose […]. Les
+individus situés à proximité présentent des profils semblables. Les
+variables proches du cercle sont bien représentées sur le plan
+factoriel.</p>
+</blockquote>
+</div>
+<div id="afc-afcm" class="section level2">
+<h2>8.3. AFC / AFCM</h2>
+<blockquote>
+<p>L’analyse met en évidence une structure d’association entre les
+profils de lignes et de colonnes. Les modalités / individus proches dans
+le plan factoriel présentent des profils similaires relativement à la
+structure moyenne du tableau.</p>
+</blockquote>
+</div>
+<div id="cah-k-means" class="section level2">
+<h2>8.4. CAH / k-means</h2>
+<blockquote>
+<p>La classification met en évidence x groupes relativement homogènes.
+La méthode de Ward donne une partition plus équilibrée et plus
+interprétable que les autres méthodes d’agrégation. Les résultats sont
+cohérents avec la projection ACP.</p>
+</blockquote>
+</div>
+<div id="lda" class="section level2">
+<h2>8.5. LDA</h2>
+<blockquote>
+<p>LDA fournit une bonne séparation entre les groupes sur les premiers
+axes discriminants. Le taux de bien classés sur l’échantillon
+d’apprentissage est de xx%, mais le taux de validation croisée est plus
+pertinent pour juger la capacité de généralisation.</p>
+</blockquote>
+</div>
+<div id="knn" class="section level2">
+<h2>8.6. kNN</h2>
+<blockquote>
+<p>Le choix du nombre de voisins a été optimisé par validation croisée.
+Les meilleurs résultats sont obtenus pour k = x. Un k trop faible rend
+le modèle instable, alors qu’un k trop élevé lisse excessivement la
+frontière de décision.</p>
+</blockquote>
+</div>
+<div id="cart-1" class="section level2">
+<h2>8.7. CART</h2>
+<blockquote>
+<p>L’arbre complet est trop complexe et susceptible de surapprentissage.
+Le choix d’un arbre élagué repose sur l’erreur de validation croisée
+(<code>xerror</code>) afin d’obtenir un compromis entre performance et
+interprétabilité.</p>
+</blockquote>
+</div>
+<div id="pls" class="section level2">
+<h2>8.8. PLS</h2>
+<blockquote>
+<p>Le nombre de composantes a été choisi à partir du PRESS moyen et du
+R² en validation croisée. Bien que les performances d’apprentissage
+augmentent avec le nombre de composantes, le gain devient marginal
+au-delà de x composantes, ce qui justifie un modèle plus
+parcimonieux.</p>
+</blockquote>
+<hr />
+</div>
+</div>
+<div id="pièges-fréquents-à-éviter" class="section level1">
+<h1>9. Pièges fréquents à éviter</h1>
+<ol style="list-style-type: decimal">
+<li><p><strong>Confondre training accuracy và validation
+accuracy</strong>.<br />
+Đây là lỗi rất hay gặp và rất dở.</p></li>
+<li><p><strong>Quên scale dữ liệu</strong> trước kNN / CAH / k-means /
+ACP sur corrélations.</p></li>
+<li><p><strong>Diễn giải trục mà không nhìn loadings /
+corrélations</strong>.<br />
+Chỉ nhìn plot rồi bịa nghĩa là con đường ngắn nhất tới nhận xét vô giá
+trị.</p></li>
+<li><p><strong>Chọn số composantes chỉ theo training fit</strong> trong
+PLS.</p></li>
+<li><p><strong>Không loại biến phụ thuộc tuyến tính /
+quasi-constantes</strong> trước LDA.</p></li>
+<li><p><strong>Tin một chỉ số duy nhất</strong> để chọn số cụm.</p></li>
+</ol>
+<hr />
+</div>
+<div id="kết-luận-học-nhanh" class="section level1">
+<h1>10. Kết luận học nhanh</h1>
+<p>Nếu cần học nhanh để đi thi hoặc viết rapport, hãy nhớ logic ngắn gọn
+này:</p>
+<ul>
+<li><strong>ACP</strong>: dữ liệu định lượng, nhiều biến tương quan, mục
+tiêu mô tả cấu trúc và giảm chiều.</li>
+<li><strong>AFC/AFCM</strong>: dữ liệu định tính / bảng chéo.</li>
+<li><strong>CAH / k-means</strong>: phân nhóm không giám sát.</li>
+<li><strong>LDA / kNN / CART</strong>: phân loại có giám sát.</li>
+<li><strong>PLS</strong>: hồi quy khi X nhiều và tương quan mạnh.</li>
+</ul>
+<p>Thứ tự làm gần như luôn là:<br />
+<strong>exploration -&gt; prétraitement -&gt; méthode -&gt; validation
+-&gt; interpretation</strong>.</p>
+<p>Đó là bộ khung đủ chắc để không bị lạc giữa đống output, thứ mà R sản
+xuất ra với sự vô cảm rất nhất quán.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.3 (2026-03-11)
+Platform: aarch64-apple-darwin20
+Running under: macOS Ventura 13.6.3
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Paris
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] pls_2.9-0    rpart_4.1.24 class_7.3-23 MASS_7.3-65 
+
+loaded via a namespace (and not attached):
+ [1] vctrs_0.7.1       cli_3.6.5         knitr_1.51        rlang_1.1.7      
+ [5] xfun_0.56         stringi_1.8.7     otel_0.2.0        promises_1.5.0   
+ [9] jsonlite_2.0.0    workflowr_1.7.2   glue_1.8.0        rprojroot_2.1.1  
+[13] git2r_0.36.2      htmltools_0.5.9   httpuv_1.6.16     sass_0.4.10      
+[17] rmarkdown_2.30    jquerylib_0.1.4   evaluate_1.0.5    tibble_3.3.1     
+[21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    
+[25] compiler_4.5.3    fs_1.6.7          Rcpp_1.1.1        pkgconfig_2.0.3  
+[29] rstudioapi_0.18.0 later_1.4.8       digest_0.6.39     R6_2.6.1         
+[33] pillar_1.11.1     magrittr_2.0.4    bslib_0.10.0      tools_4.5.3      
+[37] cachem_1.1.0     </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
