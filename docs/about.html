@@ -310,7 +310,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-03-17
+<strong>Last updated:</strong> 2026-04-18
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -357,15 +357,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreea390b6a4ee3a51d1fbf3169715d26b23972f584etargetblanka390b6aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree965724c84af13e3219a1fa2af0f27ce175ea76b9targetblank965724ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/a390b6a4ee3a51d1fbf3169715d26b23972f584e" target="_blank">a390b6a</a>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/965724c84af13e3219a1fa2af0f27ce175ea76b9" target="_blank">965724c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistreea390b6a4ee3a51d1fbf3169715d26b23972f584etargetblanka390b6aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree965724c84af13e3219a1fa2af0f27ce175ea76b9targetblank965724ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -375,7 +375,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/tthanhhuong/Data_Analysis/tree/a390b6a4ee3a51d1fbf3169715d26b23972f584e" target="_blank">a390b6a</a>.
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/965724c84af13e3219a1fa2af0f27ce175ea76b9" target="_blank">965724c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -396,20 +396,13 @@ Ignored files:
     Ignored:    DataMiningwithR/.DS_Store
     Ignored:    analysis/.DS_Store
     Ignored:    analysis/.Rhistory
-    Ignored:    analysis/figure/
     Ignored:    analysis/images/
 
 Untracked files:
-    Untracked:  EDC_RScript.Rmd
-    Untracked:  EDC_RScript_files/
-    Untracked:  analysis/EDC_RScript.Rmd
-    Untracked:  analysis/fonctions_afc.R
-    Untracked:  fonctions_afc.R
     Untracked:  stats_python_theorie_a_pratique_duverier_djifack_zebaze/
 
 Unstaged changes:
-    Modified:   analysis/EDC_Script_Final.Rmd
-    Modified:   analysis/index.Rmd
+    Deleted:    analysis/EDC_RScript.Rmd
 
 </code></pre>
 <p>
@@ -453,6 +446,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/tthanhhuong/Data_Analysis/blob/965724c84af13e3219a1fa2af0f27ce175ea76b9/analysis/about.Rmd" target="_blank">965724c</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-04-18
+</td>
+<td>
+Republish selected working pages
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/tthanhhuong/Data_Analysis/579dff2213bddd49a5b28b525bc78cf3185ebf85/docs/about.html" target="_blank">579dff2</a>
+</td>
+<td>
+Huong PHAM
+</td>
+<td>
+2026-03-24
+</td>
+<td>
+changement
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -689,7 +716,32 @@ build the HTML files, and commit the HTML files</p></li>
 <li><p>Push the changes to GitHub or GitLab with <a
 href="https://workflowr.github.io/workflowr/reference/wflow_git_push.html"><code>wflow_git_push()</code></a> (or <code>git push</code> in
 the Terminal)</p></li>
-<li><p><code>wflow_publish(republish=T, message = "Republish entire site")</code></p></li>
+<li><p><code>wflow_publish(republish=T, message = "Republish entire site")</code></p>
+<p><code># 1) Lấy toàn bộ file Rmd trong analysis</code></p>
+<p><code>all_files &lt;- list.files("analysis", pattern = "\\.Rmd$", full.names = TRUE)</code></p>
+<p><code># 2) Loại file lỗi ra</code></p>
+<p><code>good_files &lt;- setdiff(all_files, "analysis/trang_loi.Rmd")</code></p>
+<p><code># 3) Republish chỉ các file còn lại</code></p>
+<p><code>wflow_publish(</code></p>
+<p><code>files = good_files,</code></p>
+<p><code>republish = TRUE,</code></p>
+<p><code>combine = "and",</code></p>
+<p><code>message = "Republish site except broken page"</code></p>
+<p><code>)</code></p>
+<p><strong>Chỉ publish những file ngon :</strong>
+<code>good_files &lt;- c(</code></p>
+<p><code>"analysis/index.Rmd",</code></p>
+<p><code>"analysis/about.Rmd",</code></p>
+<p><code>"analysis/license.Rmd",</code></p>
+<p><code>"analysis/4_Exercice.Rmd",</code></p>
+<p><code>"analysis/EDC_Jade.Rmd"</code></p>
+<p><code>)</code></p>
+<p><code>wflow_publish(</code></p>
+<p><code>files = good_files,</code></p>
+<p><code>republish = TRUE,</code></p>
+<p><code>combine = "and",</code></p>
+<p><code>message = "Republish selected working pages"</code></p>
+<p><code>)</code></p></li>
 </ol>
 <p>This ensures that the code version recorded at the top of an HTML
 file corresponds to the state of the Git repository at the time it was
