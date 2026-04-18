@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="quentin vidal" />
+
+<meta name="date" content="2026-03-28" />
+
+<title>PLS_VQ</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data_Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/tthanhhuong/Data_Analysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">PLS_VQ</h1>
+<h4 class="author">quentin vidal</h4>
+<h4 class="date">2026-03-28</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-03-29
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 2
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20260226code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20260226)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20260226code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20260226)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it
+difficult for you and others to run your code on a different machine.
+Change the absolute path(s) below to the suggested relative path(s) to
+make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/Users/thanhhuong/R/Data_Analysis
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree579dff2213bddd49a5b28b525bc78cf3185ebf85targetblank579dff2a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/579dff2213bddd49a5b28b525bc78cf3185ebf85" target="_blank">579dff2</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree579dff2213bddd49a5b28b525bc78cf3185ebf85targetblank579dff2a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/579dff2213bddd49a5b28b525bc78cf3185ebf85" target="_blank">579dff2</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    DataMiningwithR/.DS_Store
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/figure/
+    Ignored:    analysis/images/
+
+Untracked files:
+    Untracked:  analysis/PLS_AFCM_quentin.Rmd
+    Untracked:  stats_python_theorie_a_pratique_duverier_djifack_zebaze/
+
+Unstaged changes:
+    Modified:   analysis/EDC_RScript.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="chargement-des-packages-et-importation-des-données"
+class="section level1">
+<h1>0. Chargement des packages et importation des données</h1>
+<div id="packages" class="section level2">
+<h2>0.1 Packages</h2>
+<pre class="r"><code>packages &lt;- c(&quot;MASS&quot;, &quot;pls&quot;, &quot;rpart&quot;, &quot;randomForest&quot;, &quot;NbClust&quot;)
+to_install &lt;- packages[!packages %in% rownames(installed.packages())]
+if(length(to_install) &gt; 0) install.packages(to_install)
+
+library(MASS)
+library(pls)
+library(rpart)
+library(randomForest)
+library(NbClust)</code></pre>
+</div>
+<div id="importation-des-données" class="section level2">
+<h2>0.2 Importation des données</h2>
+<pre class="r"><code>setwd(&quot;/Users/thanhhuong/R/Data_Analysis&quot;)
+gym &lt;- read.csv(&quot;/Users/thanhhuong/Downloads/M1/Etude de cas/gym_members_exercise_tracking.csv&quot;, header = TRUE, sep = &quot;,&quot;, dec = &quot;.&quot;)
+
+# Renommage propre des variables
+colnames(gym) &lt;- c(
+  &quot;Age&quot;, &quot;Gender&quot;, &quot;Weight&quot;, &quot;Height&quot;, &quot;Max_BPM&quot;, &quot;Avg_BPM&quot;,
+  &quot;Resting_BPM&quot;, &quot;Session_Duration&quot;, &quot;Calories_Burned&quot;,
+  &quot;Workout_Type&quot;, &quot;Fat_Percentage&quot;, &quot;Water_Intake&quot;,
+  &quot;Workout_Frequency&quot;, &quot;Experience_Level&quot;, &quot;BMI&quot;
+)
+
+dim(gym)</code></pre>
+<pre><code>[1] 973  15</code></pre>
+<pre class="r"><code>str(gym)</code></pre>
+<pre><code>&#39;data.frame&#39;:   973 obs. of  15 variables:
+ $ Age              : int  56 46 32 25 38 56 36 40 28 28 ...
+ $ Gender           : chr  &quot;Male&quot; &quot;Female&quot; &quot;Female&quot; &quot;Male&quot; ...
+ $ Weight           : num  88.3 74.9 68.1 53.2 46.1 ...
+ $ Height           : num  1.71 1.53 1.66 1.7 1.79 1.68 1.72 1.51 1.94 1.84 ...
+ $ Max_BPM          : int  180 179 167 190 188 168 174 189 185 169 ...
+ $ Avg_BPM          : int  157 151 122 164 158 156 169 141 127 136 ...
+ $ Resting_BPM      : int  60 66 54 56 68 74 73 64 52 64 ...
+ $ Session_Duration : num  1.69 1.3 1.11 0.59 0.64 1.59 1.49 1.27 1.03 1.08 ...
+ $ Calories_Burned  : num  1313 883 677 532 556 ...
+ $ Workout_Type     : chr  &quot;Yoga&quot; &quot;HIIT&quot; &quot;Cardio&quot; &quot;Strength&quot; ...
+ $ Fat_Percentage   : num  12.6 33.9 33.4 28.8 29.2 15.5 21.3 30.6 28.9 29.7 ...
+ $ Water_Intake     : num  3.5 2.1 2.3 2.1 2.8 2.7 2.3 1.9 2.6 2.7 ...
+ $ Workout_Frequency: int  4 4 4 3 3 5 3 3 4 3 ...
+ $ Experience_Level : int  3 2 2 1 1 3 2 2 2 1 ...
+ $ BMI              : num  30.2 32 24.7 18.4 14.4 ...</code></pre>
+<pre class="r"><code>summary(gym)</code></pre>
+<pre><code>      Age           Gender              Weight           Height     
+ Min.   :18.00   Length:973         Min.   : 40.00   Min.   :1.500  
+ 1st Qu.:28.00   Class :character   1st Qu.: 58.10   1st Qu.:1.620  
+ Median :40.00   Mode  :character   Median : 70.00   Median :1.710  
+ Mean   :38.68                      Mean   : 73.85   Mean   :1.723  
+ 3rd Qu.:49.00                      3rd Qu.: 86.00   3rd Qu.:1.800  
+ Max.   :59.00                      Max.   :129.90   Max.   :2.000  
+    Max_BPM         Avg_BPM       Resting_BPM    Session_Duration
+ Min.   :160.0   Min.   :120.0   Min.   :50.00   Min.   :0.500   
+ 1st Qu.:170.0   1st Qu.:131.0   1st Qu.:56.00   1st Qu.:1.040   
+ Median :180.0   Median :143.0   Median :62.00   Median :1.260   
+ Mean   :179.9   Mean   :143.8   Mean   :62.22   Mean   :1.256   
+ 3rd Qu.:190.0   3rd Qu.:156.0   3rd Qu.:68.00   3rd Qu.:1.460   
+ Max.   :199.0   Max.   :169.0   Max.   :74.00   Max.   :2.000   
+ Calories_Burned  Workout_Type       Fat_Percentage   Water_Intake  
+ Min.   : 303.0   Length:973         Min.   :10.00   Min.   :1.500  
+ 1st Qu.: 720.0   Class :character   1st Qu.:21.30   1st Qu.:2.200  
+ Median : 893.0   Mode  :character   Median :26.20   Median :2.600  
+ Mean   : 905.4                      Mean   :24.98   Mean   :2.627  
+ 3rd Qu.:1076.0                      3rd Qu.:29.30   3rd Qu.:3.100  
+ Max.   :1783.0                      Max.   :35.00   Max.   :3.700  
+ Workout_Frequency Experience_Level      BMI       
+ Min.   :2.000     Min.   :1.00     Min.   :12.32  
+ 1st Qu.:3.000     1st Qu.:1.00     1st Qu.:20.11  
+ Median :3.000     Median :2.00     Median :24.16  
+ Mean   :3.322     Mean   :1.81     Mean   :24.91  
+ 3rd Qu.:4.000     3rd Qu.:2.00     3rd Qu.:28.56  
+ Max.   :5.000     Max.   :3.00     Max.   :49.84  </code></pre>
+<p>Le jeu de données contient 973 individus et 15 variables.<br />
+On travaille ici sur une logique simple et défendable :
+<strong>exploration factorielle</strong>, <strong>segmentation</strong>,
+puis <strong>modèles supervisés</strong>.</p>
+</div>
+</div>
+<div id="préparation-des-données" class="section level1">
+<h1>1. Préparation des données</h1>
+<div id="mise-en-forme-des-variables-qualitatives"
+class="section level2">
+<h2>1.1 Mise en forme des variables qualitatives</h2>
+<pre class="r"><code>gym$Gender &lt;- factor(gym$Gender)
+gym$Workout_Type &lt;- factor(gym$Workout_Type)
+gym$Experience_Level &lt;- factor(gym$Experience_Level)
+
+table(gym$Gender)</code></pre>
+<pre><code>
+Female   Male 
+   462    511 </code></pre>
+<pre class="r"><code>table(gym$Workout_Type)</code></pre>
+<pre><code>
+  Cardio     HIIT Strength     Yoga 
+     255      221      258      239 </code></pre>
+<pre class="r"><code>table(gym$Experience_Level)</code></pre>
+<pre><code>
+  1   2   3 
+376 406 191 </code></pre>
+</div>
+<div id="séparation-quanti-quali" class="section level2">
+<h2>1.2 Séparation quanti / quali</h2>
+<pre class="r"><code>gymQuanti &lt;- gym[, c(
+  &quot;Age&quot;, &quot;Weight&quot;, &quot;Height&quot;, &quot;Max_BPM&quot;, &quot;Avg_BPM&quot;,
+  &quot;Resting_BPM&quot;, &quot;Session_Duration&quot;, &quot;Calories_Burned&quot;,
+  &quot;Fat_Percentage&quot;, &quot;Water_Intake&quot;, &quot;Workout_Frequency&quot;, &quot;BMI&quot;
+)]
+
+gymQuali &lt;- gym[, c(&quot;Gender&quot;, &quot;Workout_Type&quot;, &quot;Experience_Level&quot;)]</code></pre>
+</div>
+<div id="création-des-classes-de-calories" class="section level2">
+<h2>1.3 Création des classes de calories</h2>
+<pre class="r"><code>t1 &lt;- as.numeric(quantile(gym$Calories_Burned, 1/3))
+t2 &lt;- as.numeric(quantile(gym$Calories_Burned, 2/3))
+
+gym$Calories_Class &lt;- cut(
+  gym$Calories_Burned,
+  breaks = c(-Inf, t1, t2, Inf),
+  labels = c(&quot;Faible&quot;, &quot;Moderee&quot;, &quot;Haute&quot;),
+  include.lowest = TRUE
+)
+
+gp &lt;- factor(gym$Calories_Class, levels = c(&quot;Faible&quot;, &quot;Moderee&quot;, &quot;Haute&quot;))
+
+t1</code></pre>
+<pre><code>[1] 784</code></pre>
+<pre class="r"><code>t2</code></pre>
+<pre><code>[1] 1006</code></pre>
+<pre class="r"><code>table(gp)</code></pre>
+<pre><code>gp
+ Faible Moderee   Haute 
+    325     324     324 </code></pre>
+<p>Les seuils tertiles sont ici : - <strong>Faible</strong> : calories
+&lt; 784 - <strong>Modérée</strong> : 784 à 1006 -
+<strong>Haute</strong> : calories &gt; 1006</p>
+<p>Le découpage produit 325 / 324 / 324 individus par classe, ce qui est
+très correct pour une classification supervisée.</p>
+</div>
+</div>
+<div id="vérifications-préalables-au-nettoyage" class="section level1">
+<h1>2. Vérifications préalables au nettoyage</h1>
+<div id="corrélations-entre-les-bpm-et-avec-les-calories"
+class="section level2">
+<h2>2.1 Corrélations entre les BPM et avec les calories</h2>
+<pre class="r"><code>cor_bpm &lt;- cor(gym[, c(&quot;Max_BPM&quot;, &quot;Avg_BPM&quot;, &quot;Resting_BPM&quot;)])
+cor_bpm_cal &lt;- cor(gym[, c(&quot;Max_BPM&quot;, &quot;Avg_BPM&quot;, &quot;Resting_BPM&quot;, &quot;Calories_Burned&quot;)])
+
+round(cor_bpm, 3)</code></pre>
+<pre><code>            Max_BPM Avg_BPM Resting_BPM
+Max_BPM       1.000   -0.04       0.037
+Avg_BPM      -0.040    1.00       0.060
+Resting_BPM   0.037    0.06       1.000</code></pre>
+<pre class="r"><code>round(cor_bpm_cal[, &quot;Calories_Burned&quot;], 3)</code></pre>
+<pre><code>        Max_BPM         Avg_BPM     Resting_BPM Calories_Burned 
+          0.002           0.340           0.017           1.000 </code></pre>
+<p><code>Max_BPM</code> et <code>Resting_BPM</code> sont très peu liés à
+<code>Calories_Burned</code> (0.002 et 0.017), alors que
+<code>Avg_BPM</code> garde une corrélation exploitable (0.34).<br />
+Autrement dit, deux variables font surtout de la figuration
+statistique.</p>
+</div>
+<div id="redondance-du-bmi-avec-weight-et-height"
+class="section level2">
+<h2>2.2 Redondance du BMI avec Weight et Height</h2>
+<pre class="r"><code>cor_bmi &lt;- cor(gym[, c(&quot;BMI&quot;, &quot;Weight&quot;, &quot;Height&quot;)])
+round(cor_bmi, 3)</code></pre>
+<pre><code>          BMI Weight Height
+BMI     1.000  0.853 -0.159
+Weight  0.853  1.000  0.365
+Height -0.159  0.365  1.000</code></pre>
+<p>Le <code>BMI</code> est fortement redondant avec <code>Weight</code>
+(0.853) et dépend structurellement de <code>Height</code>.<br />
+Le garder en plus du poids et de la taille reviendrait à faire entrer
+trois fois à moitié la même information.</p>
+</div>
+<div id="variables-dérivées-bpm-testées-puis-rejetées"
+class="section level2">
+<h2>2.3 Variables dérivées BPM testées puis rejetées</h2>
+<pre class="r"><code>gym$BPM_amplitude &lt;- gym$Max_BPM - gym$Resting_BPM
+gym$BPM_effort    &lt;- gym$Avg_BPM - gym$Resting_BPM
+gym$BPM_ratio     &lt;- gym$Avg_BPM / gym$Max_BPM
+
+cor_bpm_derived &lt;- cor(gym[, c(&quot;BPM_amplitude&quot;, &quot;BPM_effort&quot;, &quot;BPM_ratio&quot;, &quot;Calories_Burned&quot;)])
+cor_bpm_vs_avg  &lt;- cor(gym[, c(&quot;BPM_effort&quot;, &quot;BPM_ratio&quot;, &quot;Avg_BPM&quot;)])
+
+round(cor_bpm_derived[, &quot;Calories_Burned&quot;], 3)</code></pre>
+<pre><code>  BPM_amplitude      BPM_effort       BPM_ratio Calories_Burned 
+         -0.007           0.302           0.279           1.000 </code></pre>
+<pre class="r"><code>round(cor_bpm_vs_avg[, &quot;Avg_BPM&quot;], 3)</code></pre>
+<pre><code>BPM_effort  BPM_ratio    Avg_BPM 
+     0.885      0.845      1.000 </code></pre>
+<p>Les variables dérivées n’apportent pas de vrai gain : -
+<code>BPM_amplitude</code> reste peu informative, -
+<code>BPM_effort</code> et <code>BPM_ratio</code> sont surtout
+redondantes avec <code>Avg_BPM</code>.</p>
+</div>
+<div id="conclusion-du-nettoyage" class="section level2">
+<h2>2.4 Conclusion du nettoyage</h2>
+<p>On retire donc : - <code>BMI</code> - <code>Max_BPM</code> -
+<code>Resting_BPM</code></p>
+<p>On conserve : - <code>Age</code> - <code>Weight</code> -
+<code>Height</code> - <code>Avg_BPM</code> -
+<code>Session_Duration</code> - <code>Fat_Percentage</code> -
+<code>Water_Intake</code> - <code>Workout_Frequency</code></p>
+</div>
+</div>
+<div
+id="afcm-pls-intégration-des-variables-qualitatives-dans-une-régression-supervisée"
+class="section level1">
+<h1>7. AFCM + PLS : intégration des variables qualitatives dans une
+régression supervisée</h1>
+<div id="afcm-transformation-des-variables-qualitatives"
+class="section level2">
+<h2>7.1 AFCM : transformation des variables qualitatives</h2>
+<div id="chargement-des-fonctions" class="section level3">
+<h3>7.1.1 Chargement des fonctions</h3>
+<pre class="r"><code># Tắt việc hỏi chuyển trang đồ thị
+options(device.ask.default = FALSE)
+grDevices::devAskNewPage(FALSE)
+
+# Tạo môi trường riêng để nạp fonctions_afc.R
+afc_env &lt;- new.env(parent = globalenv())
+
+# Ghi đè các hàm tương tác hay gây treo khi knit
+afc_env$readline &lt;- function(prompt = &quot;&quot;) {
+  cat(prompt, &quot; [auto=6]\n&quot;)
+  &quot;6&quot;
+}
+
+afc_env$menu &lt;- function(choices, ...) {
+  cat(&quot;menu() détecté -&gt; choix automatique = 1\n&quot;)
+  1
+}
+
+afc_env$scan &lt;- function(file = &quot;&quot;, what = &quot;&quot;, nmax = 1, quiet = TRUE, ...) {
+  cat(&quot;scan() détecté -&gt; valeur automatique = 6\n&quot;)
+  if (is.numeric(what)) return(6)
+  if (is.integer(what)) return(6L)
+  &quot;6&quot;
+}
+
+afc_env$devAskNewPage &lt;- function(ask = FALSE) {
+  grDevices::devAskNewPage(FALSE)
+}
+
+afc_env$par &lt;- function(...) {
+  graphics::par(ask = FALSE, ...)
+}
+
+# Charger le fichier dans cet environnement
+sys.source(&quot;fonctions_afc.R&quot;, envir = afc_env)</code></pre>
+<pre class="r"><code>if(!file.exists(&quot;fonctions_afc.R&quot;)){
+  stop(&quot;Le fichier &#39;fonctions_afc.R&#39; doit être présent dans le dossier de travail.&quot;)
+}
+
+source(&quot;fonctions_afc.R&quot;)</code></pre>
+</div>
+<div
+id="version-retenue-codage-des-quali-en-entiers-puis-tableau-disjonctif-complet"
+class="section level3">
+<h3>7.1.2 Version retenue : codage des quali en entiers puis tableau
+disjonctif complet</h3>
+<pre class="r"><code>gymQuali_num &lt;- matrix(
+  c(
+    as.integer(gym$Gender),
+    as.integer(gym$Workout_Type),
+    as.integer(gym$Experience_Level)
+  ),
+  nrow = nrow(gym),
+  ncol = 3
+)
+
+colnames(gymQuali_num) &lt;- c(&quot;Gender&quot;, &quot;Workout_Type&quot;, &quot;Exp_Level&quot;)
+rownames(gymQuali_num) &lt;- 1:nrow(gym)
+
+head(gymQuali_num)</code></pre>
+<pre><code>  Gender Workout_Type Exp_Level
+1      2            4         3
+2      1            2         2
+3      1            1         2
+4      2            3         1
+5      2            3         1
+6      1            2         3</code></pre>
+<pre class="r"><code>apply(gymQuali_num, 2, min)</code></pre>
+<pre><code>      Gender Workout_Type    Exp_Level 
+           1            1            1 </code></pre>
+<pre class="r"><code>apply(gymQuali_num, 2, max)</code></pre>
+<pre><code>      Gender Workout_Type    Exp_Level 
+           2            4            3 </code></pre>
+<pre class="r"><code>any(is.na(gymQuali_num))</code></pre>
+<pre><code>[1] FALSE</code></pre>
+<pre class="r"><code># gymQuali_num &lt;- matrix(
+#   c(as.integer(gym$Gender),
+#     as.integer(gym$Workout_Type),
+#     as.integer(gym$Experience_Level)),
+#   nrow = nrow(gym),
+#   ncol = 3
+# )
+# 
+# colnames(gymQuali_num) &lt;- c(&quot;Gender&quot;, &quot;Workout_Type&quot;, &quot;Exp_Level&quot;)
+# rownames(gymQuali_num) &lt;- 1:nrow(gym)
+# 
+# gymDC &lt;- afc_env$Codisjc(gymQuali_num)$U
+# resafcm &lt;- afc_env$afc(gymDC, k = 6)
+# 
+# coord_afcm &lt;- resafcm$C[, 1:6]
+# colnames(coord_afcm) &lt;- paste0(&quot;AFCM_&quot;, 1:6)
+# 
+# dim(coord_afcm)
+# head(coord_afcm)
+# summary(coord_afcm)</code></pre>
+<pre class="r"><code># Package pour l&#39;AFCM
+if (!require(FactoMineR)) install.packages(&quot;FactoMineR&quot;)
+library(FactoMineR)
+
+# Variables qualitatives
+gymQuali &lt;- gym[, c(&quot;Gender&quot;, &quot;Workout_Type&quot;, &quot;Experience_Level&quot;)]
+
+# S&#39;assurer que ce sont bien des facteurs
+gymQuali$Gender &lt;- factor(gymQuali$Gender)
+gymQuali$Workout_Type &lt;- factor(gymQuali$Workout_Type)
+gymQuali$Experience_Level &lt;- factor(gymQuali$Experience_Level)
+
+# AFCM non interactive
+resafcm &lt;- MCA(gymQuali, ncp = 6, graph = FALSE)
+
+# Coordonnées des individus
+coord_afcm &lt;- as.data.frame(resafcm$ind$coord[, 1:6])
+colnames(coord_afcm) &lt;- paste0(&quot;AFCM_&quot;, 1:6)
+
+dim(coord_afcm)</code></pre>
+<pre><code>[1] 973   6</code></pre>
+<pre class="r"><code>head(coord_afcm)</code></pre>
+<pre><code>       AFCM_1     AFCM_2     AFCM_3      AFCM_4     AFCM_5     AFCM_6
+1  1.38858616  0.3112387 -0.5437904  0.29183446  0.4765012  0.2384469
+2 -0.01387025  0.1636794  1.0530167  0.07954641 -0.8469911 -0.3299898
+3 -0.71639853 -0.1368239  0.1222994  0.88873723 -0.5260412  0.3991092
+4 -0.29928283 -0.4309212 -0.2804647 -0.96323507  0.6851659 -0.0565687
+5 -0.29928283 -0.4309212 -0.2804647 -0.96323507  0.6851659 -0.0565687
+6  0.58725571  1.1018948  1.1043729  0.09878204  0.1026043  0.2621178</code></pre>
+<pre class="r"><code>summary(coord_afcm)</code></pre>
+<pre><code>     AFCM_1             AFCM_2              AFCM_3             AFCM_4        
+ Min.   :-1.10458   Min.   :-1.135977   Min.   :-1.01725   Min.   :-1.08931  
+ 1st Qu.:-0.32174   1st Qu.:-0.430921   1st Qu.:-0.49092   1st Qu.:-0.48098  
+ Median :-0.01135   Median :-0.008211   Median : 0.06943   Median : 0.07955  
+ Mean   : 0.00000   Mean   : 0.000000   Mean   : 0.00000   Mean   : 0.00000  
+ 3rd Qu.: 0.39676   3rd Qu.: 0.500790   3rd Qu.: 0.38844   3rd Qu.: 0.29183  
+ Max.   : 1.38859   Max.   : 1.101895   Max.   : 1.10437   Max.   : 0.99766  
+     AFCM_5              AFCM_6        
+ Min.   :-1.094951   Min.   :-1.12114  
+ 1st Qu.:-0.419349   1st Qu.:-0.37407  
+ Median : 0.009564   Median :-0.01249  
+ Mean   : 0.000000   Mean   : 0.00000  
+ 3rd Qu.: 0.423554   3rd Qu.: 0.35503  
+ Max.   : 1.207119   Max.   : 1.35292  </code></pre>
+<p>On retient ici 6 axes AFCM, ce qui est cohérent avec : <span
+class="math display">\[
+(2 + 4 + 3) - 3 = 6
+\]</span> soit le nombre maximal d’axes utiles pour 3 variables
+qualitatives ayant 2, 4 et 3 modalités.</p>
+</div>
+<div id="vérification-rapide-de-cohérence-des-axes-afcm"
+class="section level3">
+<h3>7.1.3 Vérification rapide de cohérence des axes AFCM</h3>
+<pre class="r"><code>aggregate(coord_afcm[, 1] ~ gym$Gender, FUN = mean)</code></pre>
+<pre><code>  gym$Gender coord_afcm[, 1]
+1     Female      -0.2310881
+2       Male       0.2089290</code></pre>
+<pre class="r"><code>aggregate(coord_afcm[, 1] ~ gym$Workout_Type, FUN = mean)</code></pre>
+<pre><code>  gym$Workout_Type coord_afcm[, 1]
+1           Cardio      -0.5708703
+2             HIIT       0.1819312
+3         Strength      -0.1479668
+4             Yoga       0.6005881</code></pre>
+<pre class="r"><code>aggregate(coord_afcm[, 1] ~ gym$Experience_Level, FUN = mean)</code></pre>
+<pre><code>  gym$Experience_Level coord_afcm[, 1]
+1                    1      -0.3816618
+2                    2       0.0342941
+3                    3       0.6784369</code></pre>
+<p>Si les moyennes diffèrent selon les modalités, les axes AFCM
+capturent bien de l’information discriminante sur les variables
+qualitatives.<br />
+Autrement dit, cette étape n’est pas décorative.</p>
+<pre class="r"><code># corrélation des axes et variables
+# L&#39;objet $var$eta2 contient les corrélations entre les 3 variables et les 6 axes
+eta2_afcm &lt;- resafcm$var$eta2
+print(round(eta2_afcm, 3))</code></pre>
+<pre><code>                 Dim 1 Dim 2 Dim 3 Dim 4 Dim 5 Dim 6
+Gender           0.135 0.028 0.335 0.366 0.044 0.091
+Workout_Type     0.524 0.528 0.540 0.463 0.471 0.475
+Experience_Level 0.412 0.491 0.140 0.154 0.438 0.365</code></pre>
+<pre class="r"><code># graph pour chaque axe : 
+barplot(
+  eta2_afcm[, 1], # pourl&#39;axe 1
+  main = &quot;Quelles variables expliquent l&#39;Axe AFCM 1 ?&quot;,
+  col = &quot;steelblue&quot;, 
+  ylab = expression(eta^2))</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/afcm-axe-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barplot(
+  eta2_afcm[, 2], 
+  main = &quot;Quelles variables expliquent l&#39;Axe AFCM 2 ?&quot;,
+  col = &quot;steelblue&quot;, 
+  ylab = expression(eta^2))</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/afcm-axe-2.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barplot(
+  eta2_afcm[, 3], 
+  main = &quot;Quelles variables expliquent l&#39;Axe AFCM 3 ?&quot;,
+  col = &quot;steelblue&quot;, 
+  ylab = expression(eta^2))</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/afcm-axe-3.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barplot(
+  eta2_afcm[, 4],
+  main = &quot;Quelles variables expliquent l&#39;Axe AFCM 4 ?&quot;,
+  col = &quot;steelblue&quot;, 
+  ylab = expression(eta^2))</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/afcm-axe-4.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barplot(
+  eta2_afcm[, 5], 
+  main = &quot;Quelles variables expliquent l&#39;Axe AFCM 5 ?&quot;,
+  col = &quot;steelblue&quot;, 
+  ylab = expression(eta^2))</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/afcm-axe-5.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barplot(
+  eta2_afcm[, 6], 
+  main = &quot;Quelles variables expliquent l&#39;Axe AFCM 6 ?&quot;,
+  col = &quot;steelblue&quot;, 
+  ylab = expression(eta^2))</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/afcm-axe-6.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># coordonnées exactes des modalités sur les axes 1 et 2
+coord_modalites &lt;- resafcm$var$coord[, 1:6]
+print(round(coord_modalites, 2))</code></pre>
+<pre><code>         Dim 1 Dim 2 Dim 3 Dim 4 Dim 5 Dim 6
+Female   -0.39  0.18  0.61  0.64  0.22 -0.32
+Male      0.35 -0.16 -0.55 -0.58 -0.20  0.29
+Cardio   -0.96  0.39 -0.66  0.59 -0.35  0.92
+HIIT      0.30  0.92  0.96 -0.80 -0.90 -0.30
+Strength -0.25 -1.04  0.53 -0.58  0.97  0.23
+Yoga      1.00 -0.14 -0.75  0.74  0.16 -0.95
+1        -0.64  0.44 -0.47 -0.49  0.39 -0.61
+2         0.06 -0.81  0.27  0.30 -0.76  0.07
+3         1.14  0.85  0.36  0.33  0.85  1.06</code></pre>
+<pre class="r"><code># graphique des modalités
+# On cache les individus (invisible=&quot;ind&quot;) pour ne voir que les labels (Cardio, HIIT, Male...)
+moda_plot = plot(resafcm, invisible = c(&quot;ind&quot;), title = &quot;Position des modalités sur AFCM 1 et 6&quot;, col.var=&quot;red&quot;)
+moda_plot</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/afcm-axe-7.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="représentation-simple-des-individus-sur-le-plan-afcm-1-2"
+class="section level3">
+<h3>7.1.4 Représentation simple des individus sur le plan AFCM 1-2</h3>
+<pre class="r"><code>cols_gender &lt;- c(&quot;Female&quot; = &quot;coral&quot;, &quot;Male&quot; = &quot;steelblue&quot;)
+cols_wt     &lt;- c(&quot;Cardio&quot; = &quot;green3&quot;, &quot;HIIT&quot; = &quot;red&quot;, &quot;Strength&quot; = &quot;blue&quot;, &quot;Yoga&quot; = &quot;purple&quot;)
+cols_exp    &lt;- c(&quot;1&quot; = &quot;lightblue&quot;, &quot;2&quot; = &quot;orange&quot;, &quot;3&quot; = &quot;darkred&quot;)
+cols_cal    &lt;- c(&quot;Faible&quot; = &quot;gold&quot;, &quot;Moderee&quot; = &quot;darkorange&quot;, &quot;Haute&quot; = &quot;red3&quot;)
+par(mfrow = c(1, 2))
+plot(coord_afcm[, 1], coord_afcm[, 2],
+     col = cols_gender[gym$Gender], pch = 16, cex = 0.7,
+     main = &quot;AFCM 1-2 colorée par Gender&quot;,
+     xlab = &quot;AFCM 1&quot;, ylab = &quot;AFCM 2&quot;)
+legend(&quot;topright&quot;, legend = names(cols_gender), col = cols_gender, pch = 16, cex = 0.8)
+
+plot(coord_afcm[, 1], coord_afcm[, 2],
+     col = cols_exp[as.character(gym$Experience_Level)], pch = 16, cex = 0.7,
+     main = &quot;AFCM 1-2 colorée par Exp_Level&quot;,
+     xlab = &quot;AFCM 1&quot;, ylab = &quot;AFCM 2&quot;)
+legend(&quot;topright&quot;, legend = names(cols_exp), col = cols_exp, pch = 16, cex = 0.8)</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/afcm-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+</div>
+</div>
+<div id="pls-régression-sur-composantes" class="section level2">
+<h2>7.2 PLS : régression sur composantes</h2>
+<div id="constitution-de-la-matrice-x-complète" class="section level3">
+<h3>7.2.1 Constitution de la matrice X complète</h3>
+<pre class="r"><code>gymX &lt;- gym[, c(
+  &quot;Age&quot;, &quot;Weight&quot;, &quot;Height&quot;, &quot;Avg_BPM&quot;,
+  &quot;Session_Duration&quot;, &quot;Fat_Percentage&quot;,
+  &quot;Water_Intake&quot;, &quot;Workout_Frequency&quot;
+)]
+
+gymXCR &lt;- scale(gymX, center = TRUE, scale = TRUE)
+
+vecvar &lt;- apply(gymXCR, 2, var)
+gymXCRsel &lt;- gymXCR[, vecvar &gt; 0.0001]
+
+
+
+
+gymXpls &lt;- data.frame(
+  as.data.frame(gymXCRsel),
+  coord_afcm
+)
+
+dim(gymXpls)</code></pre>
+<pre><code>[1] 973  14</code></pre>
+<pre class="r"><code>head(gymXpls)</code></pre>
+<pre><code>          Age      Weight      Height    Avg_BPM Session_Duration
+1  1.42161147  0.68114221 -0.09849406  0.9224960        1.2639483
+2  0.60065595  0.04929028 -1.50782814  0.5042348        0.1270330
+3 -0.54868178 -0.27135099 -0.48997575 -1.5173612       -0.4268488
+4 -1.12335065 -0.97393261 -0.17679039  1.4104675       -1.9427358
+5 -0.05610847 -1.30871982  0.52787664  0.9922062       -1.7969775
+6  1.42161147 -0.74759759 -0.33338307  0.8527858        0.9724315
+  Fat_Percentage Water_Intake Workout_Frequency      AFCM_1     AFCM_2
+1     -1.9773038    1.4552185         0.7429130  1.38858616  0.3112387
+2      1.4255680   -0.8774464         0.7429130 -0.01387025  0.1636794
+3      1.3456884   -0.5442086         0.7429130 -0.71639853 -0.1368239
+4      0.6107959   -0.8774464        -0.3523209 -0.29928283 -0.4309212
+5      0.6746996    0.2888860        -0.3523209 -0.29928283 -0.4309212
+6     -1.5140020    0.1222671         1.8381469  0.58725571  1.1018948
+      AFCM_3      AFCM_4     AFCM_5     AFCM_6
+1 -0.5437904  0.29183446  0.4765012  0.2384469
+2  1.0530167  0.07954641 -0.8469911 -0.3299898
+3  0.1222994  0.88873723 -0.5260412  0.3991092
+4 -0.2804647 -0.96323507  0.6851659 -0.0565687
+5 -0.2804647 -0.96323507  0.6851659 -0.0565687
+6  1.1043729  0.09878204  0.1026043  0.2621178</code></pre>
+<pre class="r"><code>Y_cal &lt;- gym$Calories_Burned</code></pre>
+<p>La matrice PLS contient donc : - 8 variables quantitatives nettoyées
+- 6 axes AFCM - soit 14 prédicteurs au total</p>
+</div>
+<div id="découpage-apprentissage-test" class="section level3">
+<h3>7.2.2 Découpage apprentissage / test</h3>
+<pre class="r"><code>set.seed(42)
+idx_app  &lt;- sample(1:nrow(gymXpls), size = floor(0.7 * nrow(gymXpls)))
+idx_test &lt;- setdiff(1:nrow(gymXpls), idx_app)
+
+X_app  &lt;- gymXpls[idx_app, ]
+X_test &lt;- gymXpls[idx_test, ]
+Y_app  &lt;- Y_cal[idx_app]
+Y_test &lt;- Y_cal[idx_test]</code></pre>
+</div>
+<div id="centrage-réduction-sur-lapprentissage-uniquement"
+class="section level3">
+<h3>7.2.3 Centrage-réduction sur l’apprentissage uniquement</h3>
+<pre class="r"><code>mean_app &lt;- apply(X_app, 2, mean)
+sd_app   &lt;- apply(X_app, 2, sd)
+
+X_appCR  &lt;- scale(X_app, center = mean_app, scale = sd_app)
+X_testCR &lt;- scale(X_test, center = mean_app, scale = sd_app)
+
+mean_Y &lt;- mean(Y_app)
+sd_Y   &lt;- sd(Y_app)
+
+Y_appCR &lt;- (Y_app - mean_Y) / sd_Y
+Y_testCR &lt;- (Y_test - mean_Y) / sd_Y
+
+data_appCR  &lt;- data.frame(X_appCR, Calories = Y_appCR)
+data_testCR &lt;- data.frame(X_testCR, Calories = Y_testCR)</code></pre>
+<p>C’est une étape importante : on centre-réduit le test <strong>avec
+les paramètres de l’apprentissage</strong>, sinon on triche sans même
+s’en rendre compte.</p>
+</div>
+<div id="ajustement-pls" class="section level3">
+<h3>7.2.4 Ajustement PLS</h3>
+<pre class="r"><code>ncomp_max &lt;- min(ncol(X_appCR), 15)
+
+respls &lt;- plsr(Calories ~ ., data = data_appCR, ncomp = ncomp_max)
+summary(respls)</code></pre>
+<pre><code>Data:   X dimension: 681 14 
+    Y dimension: 681 1
+Fit method: kernelpls
+Number of components considered: 14
+TRAINING: % variance explained
+          1 comps  2 comps  3 comps  4 comps  5 comps  6 comps  7 comps
+X           23.32    34.34    46.51    51.36    57.88    60.40    66.03
+Calories    74.54    89.12    94.47    97.65    97.80    97.89    97.91
+          8 comps  9 comps  10 comps  11 comps  12 comps  13 comps  14 comps
+X           71.98    76.68     80.45     83.92     89.40     92.81    100.00
+Calories    97.91    97.91     97.91     97.91     97.91     97.91     97.91</code></pre>
+</div>
+<div id="représentation-des-individus-sur-le-plan-pls-1-2"
+class="section level3">
+<h3>7.2.5 Représentation des individus sur le plan PLS 1-2</h3>
+<pre class="r"><code># On utilise index_train pour s&#39;assurer qu&#39;on colorie les bons individus
+
+      # définition de tes palettes de couleurs
+      cols_gender &lt;- c(&quot;Female&quot; = &quot;coral&quot;, &quot;Male&quot; = &quot;steelblue&quot;)
+      cols_wt     &lt;- c(&quot;Cardio&quot; = &quot;green3&quot;, &quot;HIIT&quot; = &quot;red&quot;, &quot;Strength&quot; = &quot;blue&quot;, &quot;Yoga&quot; = &quot;purple&quot;)
+      cols_exp    &lt;- c(&quot;1&quot; = &quot;lightblue&quot;, &quot;2&quot; = &quot;orange&quot;, &quot;3&quot; = &quot;darkred&quot;)
+      cols_cal    &lt;- c(&quot;Faible&quot; = &quot;gold&quot;, &quot;Moderee&quot; = &quot;darkorange&quot;, &quot;Haute&quot; = &quot;red3&quot;)
+      
+      #graphique 1 : Selon la classe de calorie
+      plot(respls$scores[, 1], respls$scores[, 2],
+      main = &quot;Plan des Individus PLS selon les calories (divisées en 3 parties)&quot;,
+      xlab = &quot;Comp 1&quot;, ylab = &quot;Comp 2&quot;, pch = 16, cex = 0.8,
+      col = cols_cal[as.character(gp[idx_app])])
+      abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)
+      legend(&quot;topright&quot;, legend = names(cols_cal), col = cols_cal, pch = 16, cex = 0.8)</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/pls-scores-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>      # Graphique 2 : Selon le Gender
+      plot(respls$scores[, 1], respls$scores[, 2], 
+           xlab=&quot;Comp 1&quot;, ylab=&quot;Comp 2&quot;, main=&quot;Plan des Individus PLS selon Gender&quot;, 
+           pch=16, cex = 0.8, 
+           col = cols_gender[as.character(gym$Gender[idx_app])])
+      abline(h=0, v=0, lty=2, col=&quot;grey&quot;)
+      legend(&quot;topright&quot;, legend=names(cols_gender), col=cols_gender, pch=16, cex=0.7)</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/pls-scores-2.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>      # Graphique 3 : Selon le Workout_Type
+      plot(respls$scores[, 1], respls$scores[, 2], 
+           xlab=&quot;Comp 1&quot;, ylab=&quot;Comp 2&quot;, main=&quot;Plan des Individus PLS selon Workout_Type&quot;, 
+           pch=16, cex = 0.8, 
+           col = cols_wt[as.character(gym$Workout_Type[idx_app])])
+      abline(h=0, v=0, lty=2, col=&quot;grey&quot;)
+      legend(&quot;topright&quot;, legend=names(cols_wt), col=cols_wt, pch=16, cex=0.7)</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/pls-scores-3.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>      # Graphique 4 : Selon l&#39;Experience_Level
+      plot(respls$scores[, 1], respls$scores[, 2], 
+           xlab=&quot;Comp 1&quot;, ylab=&quot;Comp 2&quot;, main=&quot;Plan des Individus PLS selon Experience_Level&quot;, 
+           pch=16, cex = 0.8, 
+           col = cols_exp[as.character(gym$Experience_Level[idx_app])])
+      abline(h=0, v=0, lty=2, col=&quot;grey&quot;)
+      legend(&quot;topright&quot;, legend=names(cols_exp), col=cols_exp, pch=16, cex=0.7)</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/pls-scores-4.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p>Contrairement à l’ACP, la PLS oriente les axes vers la prédiction de
+<code>Calories_Burned</code>. On constate un gradient clair des classes
+apparaissant sur le graphique des individus selon les calories, le plan
+n’est donc plus descriptif mais bien prédictif.</p>
+</div>
+<div id="cercle-des-corrélations-pls" class="section level3">
+<h3>7.2.6 Cercle des corrélations PLS</h3>
+<pre class="r"><code>corvar_pls &lt;- cor(data_appCR[, -ncol(data_appCR)], respls$scores[, 1:2])
+
+plot(corvar_pls[, 1], corvar_pls[, 2],
+     xlim = c(-1, 1), ylim = c(-1, 1),
+     xlab = &quot;PLS1&quot;, ylab = &quot;PLS2&quot;,
+     main = &quot;Cercle des corrélations - PLS&quot;,
+     type = &quot;n&quot;, asp = 1)
+symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, lty = 2)
+abline(h = 0, v = 0, lty = 2, col = &quot;grey&quot;)
+arrows(0, 0, corvar_pls[, 1] * 0.95, corvar_pls[, 2] * 0.95, length = 0.1, angle = 15)
+text(corvar_pls[, 1], corvar_pls[, 2], labels = rownames(corvar_pls), cex = 0.7, col = &quot;purple&quot;)</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/pls-cercle-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p>On retrouve certaines observations faites lors du test de colinéarité
+: Globalement les points sont bien projeté à l’exception de Weight_kg,
+height_m, Age qui sont proche du centre. Certaine observation s’explique
+peut êtr par le fait que ces données ne sont pas corrélés entre elle
+(étonnemment) et la PLS n’apprécie pas. On constate ensuite que la
+varibale Avg_BPM, bien que correctement projetté, elle n’est pas corrélé
+avec les autres variables car orthogonale. On observe que les variables
+Session_Duration_Hour, Experience_Level et Workouot_Frequency_days sont
+fortement corrélées positivement (elles varient ensemble) Quant à la
+variable Fat_Percentage est est corrélé négativement au groupe cité
+avant, ceci étant tou à fait logique car généralement lorsque que l’on
+s’entraine de manière intense et régulière notre body fat diminue. Enfin
+on constate que la composante 1 permet d’expliquer la quasi-totalité des
+variables.</p>
+</div>
+<div id="choix-du-nombre-optimal-de-composantes-par-cv-répétée"
+class="section level3">
+<h3>7.2.7 Choix du nombre optimal de composantes par CV répétée</h3>
+<pre class="r"><code>set.seed(123)
+
+PRESS100CV &lt;- matrix(NA, 100, ncomp_max)
+R2_100CV   &lt;- matrix(NA, 100, ncomp_max)
+
+for(i in 1:100){
+  idx_cv_test &lt;- sample(1:nrow(data_appCR), size = floor(nrow(data_appCR) / 2))
+  idx_cv_app  &lt;- setdiff(1:nrow(data_appCR), idx_cv_test)
+
+  mod_cv &lt;- plsr(Calories ~ ., data = data_appCR[idx_cv_app, ], ncomp = ncomp_max)
+
+  for(h in 1:ncomp_max){
+    pred_cv &lt;- as.vector(predict(mod_cv, newdata = data_appCR[idx_cv_test, ], ncomp = h))
+    obs_cv  &lt;- data_appCR$Calories[idx_cv_test]
+
+    PRESS100CV[i, h] &lt;- sum((obs_cv - pred_cv)^2)
+    R2_100CV[i, h] &lt;- 1 - sum((obs_cv - pred_cv)^2) /
+      sum((obs_cv - mean(data_appCR$Calories[idx_cv_app]))^2)
+  }
+}
+
+PRESS100moy &lt;- colMeans(PRESS100CV, na.rm = TRUE)
+R2_100moy   &lt;- colMeans(R2_100CV, na.rm = TRUE)
+
+par(mfrow = c(1, 2))
+plot(1:ncomp_max, PRESS100moy, type = &quot;b&quot;,
+     xlab = &quot;Nb de composantes&quot;, ylab = &quot;PRESS moyen&quot;,
+     main = &quot;PRESS moyen (100 runs)&quot;)
+plot(1:ncomp_max, R2_100moy, type = &quot;b&quot;,
+     xlab = &quot;Nb de composantes&quot;, ylab = &quot;R² CV moyen&quot;,
+     main = &quot;R² CV moyen (100 runs)&quot;)</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/pls-cv-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))
+
+ncomp_opt &lt;- 4
+ncomp_opt</code></pre>
+<pre><code>[1] 4</code></pre>
+<p>Le nombre optimal de composantes retenu est ici est 4. On choisit
+donc le compromis qui minimise l’erreur de prédiction moyenne.</p>
+</div>
+<div id="évaluation-sur-le-jeu-test" class="section level3">
+<h3>7.2.8 Évaluation sur le jeu test</h3>
+<pre class="r"><code>pred_test_cr  &lt;- as.vector(predict(respls, newdata = data_testCR, ncomp = ncomp_opt))
+pred_test_raw &lt;- pred_test_cr * sd_Y + mean_Y
+
+R2_test_pls   &lt;- 1 - sum((Y_test - pred_test_raw)^2) / sum((Y_test - mean(Y_test))^2)
+RMSE_test_pls &lt;- sqrt(mean((Y_test - pred_test_raw)^2))
+MAE_test_pls  &lt;- mean(abs(Y_test - pred_test_raw))
+
+cat(&quot;R² test   :&quot;, round(R2_test_pls, 4), &quot;\n&quot;)</code></pre>
+<pre><code>R² test   : 0.9752 </code></pre>
+<pre class="r"><code>cat(&quot;RMSE test :&quot;, round(RMSE_test_pls, 2), &quot;\n&quot;)</code></pre>
+<pre><code>RMSE test : 42.12 </code></pre>
+<pre class="r"><code>cat(&quot;MAE test  :&quot;, round(MAE_test_pls, 2), &quot;\n&quot;)</code></pre>
+<pre><code>MAE test  : 33.64 </code></pre>
+<p>Les performances sur le jeu test sont : -
+<code>R² = r round(R2_test_pls, 4)</code> -
+<code>RMSE = r round(RMSE_test_pls, 2)</code> -
+<code>MAE = r round(MAE_test_pls, 2)</code></p>
+<p>Un bon résultat ici signifie que la combinaison : - des variables
+physiologiques, - des variables comportementales, - et des axes AFCM
+issus des qualitatives permet de prédire correctement la dépense
+calorique.</p>
+</div>
+<div id="comparaison-apprentissage-et-test" class="section level3">
+<h3>7.2.9 Comparaison Apprentissage et Test</h3>
+<p>Pour s’assurer de la robustesse de notre modèle PLS et permettre une
+comparaison exhaustive avec d’autres méthodes, il est indispensable de
+comparer les performance d’apprentissage avec celles de prédiction sur
+de nouvelles données.</p>
+<pre class="r"><code># prédictions sur le jeu d&#39;apprentissage
+pred_app_cr  = as.vector(predict(respls, newdata = data_appCR, ncomp = ncomp_opt))
+pred_app_raw = pred_app_cr * sd_Y + mean_Y
+# calcul du R2 et RMSE en appren
+R2_app_pls   = 1 - sum((Y_app - pred_app_raw)^2) / sum((Y_app - mean(Y_app))^2)
+RMSE_app_pls = sqrt(mean((Y_app - pred_app_raw)^2))
+
+# tableau comparatif
+comparatif_pls = data.frame(
+  Metrique = c(&quot;R² (Variance expliquée)&quot;, &quot;RMSE (Erreur moyenne en cal)&quot;),
+  Apprentissage = c(round(R2_app_pls, 4), round(RMSE_app_pls, 2)),
+  Test = c(round(R2_test_pls, 4), round(RMSE_test_pls, 2))
+)
+print(comparatif_pls)</code></pre>
+<pre><code>                      Metrique Apprentissage    Test
+1      R² (Variance expliquée)        0.9765  0.9752
+2 RMSE (Erreur moyenne en cal)       42.1200 42.1200</code></pre>
+<p>Les performances sont quasi identiques entre le jeu d’apprentissage
+et de test. Le modèle est donc robuste et ne fais aucun
+sur-apprentissage.</p>
+</div>
+<div id="scores-vip" class="section level3">
+<h3>7.2.10 Scores VIP</h3>
+<pre class="r"><code>vip_scores &lt;- function(model, ncomp){
+  SS  &lt;- c(model$Yloadings[, 1:ncomp])^2 * colSums(model$scores[, 1:ncomp]^2)
+  W   &lt;- model$loading.weights[, 1:ncomp]
+  p   &lt;- nrow(W)
+  VIP &lt;- sqrt(p * rowSums(sweep(W^2, 2, SS, &quot;*&quot;)) / sum(SS))
+  VIP
+}
+
+vip &lt;- vip_scores(respls, ncomp = ncomp_opt)
+vip_df &lt;- data.frame(Variable = names(vip), VIP = vip)
+vip_df &lt;- vip_df[order(vip_df$VIP, decreasing = TRUE), ]
+
+vip_df</code></pre>
+<pre><code>                           Variable       VIP
+Session_Duration   Session_Duration 2.1128796
+Fat_Percentage       Fat_Percentage 1.3620564
+Workout_Frequency Workout_Frequency 1.3218662
+Avg_BPM                     Avg_BPM 1.2495088
+AFCM_6                       AFCM_6 1.0838036
+AFCM_1                       AFCM_1 1.0464347
+Water_Intake           Water_Intake 0.9034784
+Age                             Age 0.5538130
+AFCM_3                       AFCM_3 0.5433786
+Height                       Height 0.4249528
+Weight                       Weight 0.4092701
+AFCM_4                       AFCM_4 0.3997788
+AFCM_5                       AFCM_5 0.3254214
+AFCM_2                       AFCM_2 0.2650138</code></pre>
+<pre class="r"><code>par(mar = c(10, 4, 4, 2))
+barplot(
+  vip_df$VIP,
+  names.arg = vip_df$Variable,
+  las = 2, cex.names = 0.65,
+  col = ifelse(vip_df$VIP &gt;= 1, &quot;steelblue&quot;, &quot;lightgrey&quot;),
+  main = &quot;Scores VIP - PLS&quot;,
+  ylab = &quot;VIP&quot;
+)
+abline(h = 1, col = &quot;red&quot;, lty = 2)</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/pls-vip-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mar = c(5, 4, 4, 2))</code></pre>
+<p>Les variables avec <strong>VIP &gt; 1</strong> sont celles qui
+contribuent le plus à la projection prédictive.<br />
+On vérifiera si la hiérarchie retrouvée est cohérente avec le CART et la
+Random Forest.</p>
+</div>
+</div>
+<div id="résumé-graphique-du-modèle-afcm-et-pls" class="section level2">
+<h2>7.3. Résumé graphique du modèle (AFCM et PLS)</h2>
+<pre class="r"><code>library(ggplot2)
+if (!require(patchwork)) 
+  install.packages(&quot;patchwork&quot;)
+library(patchwork)
+
+# pérparation données :
+vip_df$Importance &lt;- ifelse(vip_df$VIP &gt;= 1, &quot;Forte (&gt; 1)&quot;, &quot;Faible (&lt; 1)&quot;)
+eta_1 &lt;- resafcm$var$eta2[, 1]
+eta_6 &lt;- resafcm$var$eta2[, 6]
+df_eta1 &lt;- data.frame(
+  Variable = rownames(resafcm$var$eta2),
+  Eta2 = eta_1
+)
+df_eta6 &lt;- data.frame(
+  Variable = rownames(resafcm$var$eta2),
+  Eta2 = eta_6
+)
+
+# GRAPH :
+#AFCM 1
+gg_afcm1 &lt;- ggplot(df_eta1, aes(x = reorder(Variable, Eta2), y = Eta2, fill = Variable)) +
+  geom_bar(stat = &quot;identity&quot;, alpha = 0.8) +
+  coord_flip() +
+  scale_fill_brewer(palette = &quot;Set2&quot;) + 
+  theme_minimal() +
+  labs(title = &quot;Lien (Eta²) entre les axes retenus et nos données qualitatives&quot;, subtitle = &quot;AFCM 1&quot;, x = &quot;&quot;, y = expression(eta^2)) +
+  theme(legend.position = &quot;none&quot;, plot.title = element_text(size = 11, face = &quot;bold&quot;))
+# AFCM 6
+gg_afcm6 &lt;- ggplot(df_eta6, aes(x = reorder(Variable, Eta2), y = Eta2, fill = Variable)) +
+  geom_bar(stat = &quot;identity&quot;, alpha = 0.8) +
+  coord_flip() +
+  scale_fill_brewer(palette = &quot;Set2&quot;) +
+  theme_minimal() +
+  labs(subtitle = &quot;AFCM 6&quot;, x = &quot;&quot;, y = expression(eta^2)) +
+  theme(legend.position = &quot;none&quot;, plot.title = element_text(size = 11, face = &quot;bold&quot;))
+
+# Scores VIP 
+gg_vip &lt;- ggplot(vip_df, aes(x = reorder(Variable, VIP), y = VIP, color = Importance)) +
+  geom_segment(aes(x = reorder(Variable, VIP), xend = reorder(Variable, VIP), y = 0, yend = VIP), size = 1) +
+  geom_point(size = 4) +
+  geom_hline(yintercept = 1, linetype = &quot;dashed&quot;, color = &quot;red&quot;) + 
+  scale_color_manual(values = c(&quot;Forte (&gt; 1)&quot; = &quot;steelblue&quot;, &quot;Faible (&lt; 1)&quot; = &quot;grey50&quot;)) +
+  coord_flip() +
+  theme_minimal() +
+  labs(
+    title = &quot;Ce qui impacte la dépense calorique (PLS)&quot;,
+    subtitle = &quot;Scores VIP (Seuil de pertinence à 1)&quot;,
+    x = &quot;&quot;,
+    y = &quot;Score VIP&quot;
+  ) +
+  theme(legend.position = &quot;bottom&quot;, plot.title = element_text(size = 13, face = &quot;bold&quot;))
+
+# assemblage des graph :
+graphique_final &lt;- (gg_afcm1 / gg_afcm6) | gg_vip
+# plus de largeur pour meilleur visibilité + titre
+graphique_final &lt;- graphique_final + 
+  plot_layout(widths = c(1, 1.2)) +
+  plot_annotation(
+    title = &quot;Synthèse du Modèle PLS : Modéliser la dépense calorique&quot;,
+    theme = theme(plot.title = element_text(size = 18, face = &quot;bold&quot;, hjust = 0.5))
+  )
+
+graphique_final</code></pre>
+<p><img src="figure/PLS_AFCM_quentin.Rmd/ggplot-resume-1.png" alt="" width="1152" style="display: block; margin: auto;" /></p>
+<p>A droite nous avons les scores VIP, en d’autres termes les variables
+qui impactent le plus le modèle. On constate que la durée de la séance
+est la plus prédictives, suivi du pourcentage de masse grasse, l
+afréquence d’entrainenement la moyenne des battements par minutes et 2
+axes de l’AFCM. Sur les graphiques de gauche, on observe que ces 2 axes
+sont portés par les mêmes variables, le type d’entraînement et le niveau
+d’expérience. Pour comprendre concrètement ce que vois la PLS, sur le
+graphiques suivant est illustré nos modalités sur ces 2 axes (vu dans
+7.1.3.). <strong>Perso j’arriv epas à lire ce graph, l’interprétation
+est complexe</strong> En bref, la dépense calorique ne dépend donc pas
+que d’une variable, mais de l’interaction complexe entre la physiologie,
+le choix du sport et l’expérience du pratiquant.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.3 (2026-03-11)
+Platform: aarch64-apple-darwin20
+Running under: macOS Ventura 13.6.3
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Paris
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] patchwork_1.3.2      ggplot2_4.0.2        FactoMineR_2.13     
+[4] NbClust_3.0.1        randomForest_4.7-1.2 rpart_4.1.24        
+[7] pls_2.9-0            MASS_7.3-65         
+
+loaded via a namespace (and not attached):
+ [1] generics_0.1.4       sass_0.4.10          lattice_0.22-9      
+ [4] stringi_1.8.7        digest_0.6.39        magrittr_2.0.4      
+ [7] evaluate_1.0.5       grid_4.5.3           estimability_1.5.1  
+[10] RColorBrewer_1.1-3   mvtnorm_1.3-5        fastmap_1.2.0       
+[13] rprojroot_2.1.1      workflowr_1.7.2      jsonlite_2.0.0      
+[16] ggrepel_0.9.7        promises_1.5.0       scales_1.4.0        
+[19] jquerylib_0.1.4      cli_3.6.5            rlang_1.1.7         
+[22] scatterplot3d_0.3-45 leaps_3.2            withr_3.0.2         
+[25] cachem_1.1.0         yaml_2.3.12          otel_0.2.0          
+[28] tools_4.5.3          multcompView_0.1-11  dplyr_1.2.0         
+[31] DT_0.34.0            httpuv_1.6.16        flashClust_1.1-4    
+[34] vctrs_0.7.1          R6_2.6.1             lifecycle_1.0.5     
+[37] emmeans_2.0.2        git2r_0.36.2         stringr_1.6.0       
+[40] htmlwidgets_1.6.4    fs_1.6.7             cluster_2.1.8.2     
+[43] pkgconfig_2.0.3      pillar_1.11.1        bslib_0.10.0        
+[46] later_1.4.8          gtable_0.3.6         glue_1.8.0          
+[49] Rcpp_1.1.1           tidyselect_1.2.1     xfun_0.56           
+[52] tibble_3.3.1         rstudioapi_0.18.0    knitr_1.51          
+[55] farver_2.1.2         htmltools_0.5.9      labeling_0.4.3      
+[58] rmarkdown_2.30       compiler_4.5.3       S7_0.2.1            </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2490 @@
+<!DOCTYPE html>
+
+<html lang="fr" xml:lang="fr">
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Synthèse pédagogique à partir du code du livre" />
+
+
+<title>Chapitre 4 - Les étapes d’un test statistique</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data_Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/tthanhhuong/Data_Analysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Chapitre 4 - Les étapes d’un test
+statistique</h1>
+<h4 class="author">Synthèse pédagogique à partir du code du livre</h4>
+<h4 class="date">18/04/2026</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-04-18
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Data_Analysis/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20260226code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20260226)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20260226code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20260226)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree579dff2213bddd49a5b28b525bc78cf3185ebf85targetblank579dff2a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/579dff2213bddd49a5b28b525bc78cf3185ebf85" target="_blank">579dff2</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomtthanhhuongDataAnalysistree579dff2213bddd49a5b28b525bc78cf3185ebf85targetblank579dff2a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/tthanhhuong/Data_Analysis/tree/579dff2213bddd49a5b28b525bc78cf3185ebf85" target="_blank">579dff2</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    DataMiningwithR/.DS_Store
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/images/
+
+Untracked files:
+    Untracked:  analysis/EDC_Pham.Rmd
+    Untracked:  analysis/Gael_4.Rmd
+    Untracked:  analysis/PLS_AFCM_quentin.Rmd
+    Untracked:  stats_python_theorie_a_pratique_duverier_djifack_zebaze/
+
+Unstaged changes:
+    Modified:   analysis/EDC_RScript.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="objectif-du-document" class="section level1">
+<h1>Objectif du document</h1>
+<p>Ce document reprend le <strong>code du chapitre 4</strong> et le
+transforme en un support d’apprentissage lisible.<br />
+L’idée n’est pas seulement d’exécuter des lignes R, mais de comprendre
+:</p>
+<ul>
+<li><strong>ce que calcule chaque chunk</strong> ;</li>
+<li><strong>dans quelle logique statistique il s’insère</strong> ;</li>
+<li><strong>comment interpréter le résultat</strong> ;</li>
+<li><strong>quelles fonctions R retenir</strong> pour réviser
+rapidement.</li>
+</ul>
+<div id="fil-directeur-du-chapitre" class="section level2">
+<h2>Fil directeur du chapitre</h2>
+<p>Un test statistique repose toujours sur le même enchaînement :</p>
+<ol style="list-style-type: decimal">
+<li>formuler <strong>deux hypothèses</strong> : <span
+class="math inline">\(H_0\)</span> et <span
+class="math inline">\(H_1\)</span> ;</li>
+<li>choisir une <strong>variable de test</strong> (VT) ;</li>
+<li>connaître la <strong>loi de la VT sous</strong> <span
+class="math inline">\(H_0\)</span> ;</li>
+<li>placer la valeur observée de la VT dans cette loi ;</li>
+<li>obtenir une <strong>p value</strong> ;</li>
+<li>conclure en assumant les risques <span
+class="math inline">\(\alpha\)</span> et <span
+class="math inline">\(\beta\)</span>.</li>
+</ol>
+</div>
+<div id="mémo-r-indispensable-la-logique-des-fonctions-dpqr"
+class="section level2">
+<h2>Mémo R indispensable : la logique des fonctions
+<code>d/p/q/r</code></h2>
+<p>Pour presque toutes les lois sous R, on retrouve la même logique
+:</p>
+<ul>
+<li><code>d...</code> : <strong>densité</strong> ou <strong>masse de
+probabilité</strong> en un point ;</li>
+<li><code>p...</code> : <strong>probabilité cumulée</strong> ;</li>
+<li><code>q...</code> : <strong>quantile</strong> ;</li>
+<li><code>r...</code> : <strong>tirage aléatoire</strong>.</li>
+</ul>
+<p>Exemples :</p>
+<ul>
+<li><code>dbinom()</code> = probabilité exacte pour une loi binomiale
+;</li>
+<li><code>pnorm()</code> = probabilité cumulée sous une loi normale
+;</li>
+<li><code>qchisq()</code> = seuil critique d’une loi du <span
+class="math inline">\(\chi^2\)</span> ;</li>
+<li><code>rt()</code> = simulation aléatoire sous loi de Student.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="les-deux-hypothèses-statistiques" class="section level1">
+<h1>1. Les deux hypothèses statistiques</h1>
+<div id="rappel-conceptuel" class="section level2">
+<h2>Rappel conceptuel</h2>
+<ul>
+<li><span class="math inline">\(H_0\)</span> : hypothèse nulle, celle
+que le test cherche à mettre à l’épreuve.</li>
+<li><span class="math inline">\(H_1\)</span> : hypothèse alternative,
+celle qu’on retient si les données sont trop improbables sous <span
+class="math inline">\(H_0\)</span>.</li>
+</ul>
+<p><strong>Point important</strong> : on ne “prouve” presque jamais
+<span class="math inline">\(H_1\)</span>. On rejette ou non <span
+class="math inline">\(H_0\)</span> selon la compatibilité entre les
+données et la loi théorique de la VT sous <span
+class="math inline">\(H_0\)</span>.</p>
+</div>
+<div id="à-retenir" class="section level2">
+<h2>À retenir</h2>
+<ul>
+<li>La p value ne mesure <strong>pas</strong> la probabilité que <span
+class="math inline">\(H_0\)</span> soit vraie.</li>
+<li>Elle mesure la probabilité d’observer une valeur de VT <strong>au
+moins aussi extrême</strong> que celle obtenue, <strong>si</strong>
+<span class="math inline">\(H_0\)</span> est vraie.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="la-variable-de-test-vt" class="section level1">
+<h1>2. La variable de test (VT)</h1>
+<div id="définition" class="section level2">
+<h2>Définition</h2>
+<p>La VT est une fonction calculée à partir de l’échantillon.<br />
+Exemples classiques :</p>
+<ul>
+<li>une moyenne standardisée ;</li>
+<li>une statistique <span class="math inline">\(t\)</span> ;</li>
+<li>un <span class="math inline">\(\chi^2\)</span> ;</li>
+<li>une somme de rangs de Wilcoxon ;</li>
+<li>une statistique <span class="math inline">\(U\)</span> de
+Mann-Whitney.</li>
+</ul>
+</div>
+<div id="idée-centrale" class="section level2">
+<h2>Idée centrale</h2>
+<p>La variable mesurée et la variable de test ne suivent pas forcément
+la même loi.</p>
+<ul>
+<li>Une variable biologique peut être asymétrique.</li>
+<li>Sa <strong>VT</strong>, après standardisation, peut suivre une loi
+de Student ou normale sous certaines conditions.</li>
+</ul>
+<p>C’est un point que beaucoup de gens ratent, ce qui est assez
+prévisible dès qu’on confond données brutes et statistique de test.</p>
+<hr />
+</div>
+</div>
+<div id="distributions-de-probabilité-discrètes" class="section level1">
+<h1>3. Distributions de probabilité discrètes</h1>
+<div id="loi-binomiale" class="section level2">
+<h2>3.1 Loi binomiale</h2>
+<div id="formule-manuelle-puis-via-r" class="section level3">
+<h3>Formule manuelle puis via R</h3>
+<pre class="r"><code>p &lt;- 0.2
+n &lt;- 4
+k &lt;- 2
+
+choose(n, k) * p^k * (1 - p)^(n - k)</code></pre>
+<pre><code>#&gt; [1] 0.1536</code></pre>
+<pre class="r"><code>dbinom(k, n, p)</code></pre>
+<pre><code>#&gt; [1] 0.1536</code></pre>
+<p><strong>Interprétation.</strong><br />
+On calcule ici <span class="math inline">\(P(X = 2)\)</span> avec <span
+class="math inline">\(X \sim \mathcal{B}(n=4, p=0.2)\)</span>.<br />
+Les deux lignes doivent donner la même valeur :</p>
+<ul>
+<li>la première applique directement la formule théorique ;</li>
+<li>la seconde utilise la fonction R optimisée.</li>
+</ul>
+<p><strong>À retenir.</strong> <code>dbinom(k, n, p)</code> donne une
+<strong>probabilité exacte</strong>, pas une probabilité cumulée.</p>
+</div>
+<div id="représentation-graphique" class="section level3">
+<h3>Représentation graphique</h3>
+<pre class="r"><code>p &lt;- 0.2
+n &lt;- 4
+k &lt;- 0:4
+plot(
+  k, dbinom(k, n, p),
+  pch = 16, cex = 2,
+  xlim = range(0, 5), ylim = range(0, 0.5),
+  xlab = &quot;Nombre de boules noires k&quot;,
+  ylab = &quot;Probabilité f(k)&quot;,
+  cex.lab = 1.2, cex.axis = 1.1,
+  bty = &quot;l&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/binomiale-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+La loi binomiale est <strong>discrète</strong> : on observe des masses
+de probabilité sur des valeurs entières de <span
+class="math inline">\(k\)</span>.<br />
+Le graphe rappelle qu’il n’y a rien entre 0, 1, 2, 3 et 4. Les courbes
+lisses sont jolies, mais les variables discrètes, elles, n’ont pas signé
+pour ça.</p>
+</div>
+<div id="probabilité-à-droite-de-la-distribution"
+class="section level3">
+<h3>Probabilité à droite de la distribution</h3>
+<pre class="r"><code>p &lt;- 0.2
+n &lt;- 4
+
+dbinom(2, n, p) + dbinom(3, n, p) + dbinom(4, n, p)</code></pre>
+<pre><code>#&gt; [1] 0.1808</code></pre>
+<pre class="r"><code>1 - dbinom(0, n, p) - dbinom(1, n, p)</code></pre>
+<pre><code>#&gt; [1] 0.1808</code></pre>
+<pre class="r"><code>pbinom(1, n, p, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.1808</code></pre>
+<p><strong>Interprétation.</strong><br />
+Ces trois instructions calculent la même quantité :</p>
+<p><span class="math display">\[
+P(X \ge 2)
+\]</span></p>
+<p><code>lower.tail = FALSE</code> signifie qu’on travaille dans la
+<strong>queue droite</strong> de la distribution.</p>
+</div>
+<div id="quantiles-binomiaux" class="section level3">
+<h3>Quantiles binomiaux</h3>
+<pre class="r"><code>p &lt;- 0.2
+n &lt;- 4
+
+qbinom(0.1808, n, p, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 1</code></pre>
+<pre class="r"><code>qbinom(0.15, n, p, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 2</code></pre>
+<pre class="r"><code>qbinom(0.5, n, p)</code></pre>
+<pre><code>#&gt; [1] 1</code></pre>
+<p><strong>Interprétation.</strong><br />
+<code>qbinom()</code> cherche le <strong>seuil entier</strong> associé à
+une probabilité cumulée donnée.<br />
+C’est utile pour définir des <strong>valeurs critiques</strong> dans les
+tests exacts.</p>
+</div>
+<div id="influence-de-n" class="section level3">
+<h3>Influence de <code>n</code></h3>
+<pre class="r"><code>p &lt;- 0.2
+k &lt;- 0:20
+
+plot(
+  k, dbinom(k, 4, p), type = &quot;l&quot;,
+  xlab = &quot;Nombre de boules noires k&quot;,
+  ylab = &quot;Probabilité f(k)&quot;,
+  cex.lab = 1.2, cex.axis = 1.1
+)
+lines(k, dbinom(k, 20, p), lwd = 3)
+lines(k, dbinom(k, 50, p), lty = &quot;39&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;n=4&quot;, &quot;n=20&quot;, &quot;n=50&quot;),
+  lty = c(1, 1, 2), lwd = c(1, 3, 2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/binomiale-comparaison-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Quand <code>n</code> augmente, la distribution se décale et se concentre
+autour de <span class="math inline">\(np\)</span>.<br />
+On commence aussi à voir apparaître un comportement plus “gaussien” par
+approximation.</p>
+<hr />
+</div>
+</div>
+<div id="loi-multinomiale" class="section level2">
+<h2>3.2 Loi multinomiale</h2>
+<div id="probabilité-dune-configuration-particulière"
+class="section level3">
+<h3>Probabilité d’une configuration particulière</h3>
+<pre class="r"><code>k1 &lt;- 2; k2 &lt;- 7; k3 &lt;- 1
+p1 &lt;- 0.1; p2 &lt;- 0.4; p3 &lt;- 0.5
+
+factorial(k1 + k2 + k3) /
+  (factorial(k1) * factorial(k2) * factorial(k3)) *
+  p1^k1 * p2^k2 * p3^k3</code></pre>
+<pre><code>#&gt; [1] 0.00294912</code></pre>
+<pre class="r"><code>dmultinom(c(k1, k2, k3), prob = c(p1, p2, p3))</code></pre>
+<pre><code>#&gt; [1] 0.00294912</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi multinomiale généralise la binomiale à <strong>plus de deux
+catégories</strong>.<br />
+On calcule ici la probabilité d’obtenir exactement <span
+class="math inline">\((2,7,1)\)</span> observations dans trois
+classes.</p>
+</div>
+<div id="surface-des-probabilités-multinomiales" class="section level3">
+<h3>Surface des probabilités multinomiales</h3>
+<pre class="r"><code>library(scatterplot3d)
+
+p1 &lt;- 0.1; p2 &lt;- 0.4; p3 &lt;- 1 - p1 - p2
+n &lt;- 10
+x &lt;- NULL; y &lt;- NULL; z &lt;- NULL
+
+for (k2 in 0:n) {
+  for (k1 in 0:n) {
+    x &lt;- c(x, k1)
+    y &lt;- c(y, k2)
+    if ((n - k1 - k2) &gt;= 0) {
+      z &lt;- c(z, dmultinom(c(k1, k2, n - k1 - k2), prob = c(p1, p2, p3)))
+    } else {
+      z &lt;- c(z, 0)
+    }
+  }
+}
+
+scatterplot3d(
+  x, y, z,
+  type = &quot;h&quot;, pch = 16,
+  xlab = &quot;Nombre de boules noires k1&quot;,
+  ylab = &quot;&quot;,
+  zlab = &quot;Probabilité&quot;,
+  highlight.3d = TRUE,
+  box = FALSE
+)
+par(xpd = NA)
+text(x = 7.5, y = 0.5, labels = &quot;Nombre de boules rouges k2&quot;, srt = 38)</code></pre>
+<p><strong>Note pédagogique.</strong><br />
+Chunk laissé en <code>eval=FALSE</code> par défaut car il demande le
+package <code>scatterplot3d</code>.<br />
+L’intérêt conceptuel est de voir que la probabilité est répartie sur un
+<strong>simplexe discret</strong>, pas sur une ligne comme dans la
+binomiale.</p>
+<hr />
+</div>
+</div>
+<div id="loi-de-pascal-et-loi-binomiale-négative"
+class="section level2">
+<h2>3.3 Loi de Pascal et loi binomiale négative</h2>
+<pre class="r"><code>p &lt;- 0.2
+n &lt;- 4
+k &lt;- 2
+r &lt;- 2
+
+choose(n - 1, k - 1) * p^k * (1 - p)^(n - k)</code></pre>
+<pre><code>#&gt; [1] 0.0768</code></pre>
+<pre class="r"><code>dnbinom(n - k, k, p)</code></pre>
+<pre><code>#&gt; [1] 0.0768</code></pre>
+<pre class="r"><code>dnbinom(r, k, p)</code></pre>
+<pre><code>#&gt; [1] 0.0768</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi de Pascal ou binomiale négative s’intéresse au <strong>nombre
+d’échecs avant un certain nombre de succès</strong>.<br />
+Selon l’écriture choisie :</p>
+<ul>
+<li><code>n-k</code> = nombre d’échecs ;</li>
+<li><code>k</code> = nombre de succès attendus.</li>
+</ul>
+<div id="queue-droite-et-visualisation" class="section level3">
+<h3>Queue droite et visualisation</h3>
+<pre class="r"><code>p &lt;- 0.2
+n &lt;- 1:80
+k &lt;- 2
+
+plot(
+  n, dnbinom(n - k, k, p), type = &quot;l&quot;,
+  xlab = &quot;Nombre de tirages n (loi de Pascal)&quot;,
+  ylab = &quot;Probabilité f(n)&quot;,
+  cex.lab = 1.2, cex.axis = 1.1
+)
+lines(n, dnbinom(n - k, 1, 0.5), lwd = 3)
+lines(n, dnbinom(n - 2, 2, 0.02), lty = &quot;39&quot;, lwd = 2)
+lines(n, dnbinom(n - 15, 15, 0.2), lty = &quot;83&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;k=2, p=0.2&quot;, &quot;k=1, p=0.5&quot;, &quot;k=2, p=0.02&quot;, &quot;k=15, p=0.2&quot;),
+  lty = c(1, 1, 2, 3), lwd = c(1, 3, 2, 2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/pascal-tail-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Plus le succès est rare, plus la distribution s’étale vers la
+droite.<br />
+Autrement dit, si <span class="math inline">\(p\)</span> est faible, il
+faut souvent beaucoup de tirages pour accumuler les succès attendus.</p>
+<hr />
+</div>
+</div>
+<div id="loi-géométrique" class="section level2">
+<h2>3.4 Loi géométrique</h2>
+<pre class="r"><code>p &lt;- 0.2
+n &lt;- 4
+r &lt;- 3
+
+p * (1 - p)^(n - 1)</code></pre>
+<pre><code>#&gt; [1] 0.1024</code></pre>
+<pre class="r"><code>dgeom(r, p)</code></pre>
+<pre><code>#&gt; [1] 0.1024</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi géométrique est un cas particulier de la binomiale négative :
+elle décrit le nombre d’échecs avant le <strong>premier
+succès</strong>.</p>
+<div id="visualisation" class="section level3">
+<h3>Visualisation</h3>
+<pre class="r"><code>p &lt;- 0.2
+n &lt;- 1:50
+plot(
+  n, dgeom(n - 1, p), type = &quot;l&quot;,
+  xlab = &quot;Nombre de tirages n&quot;,
+  ylab = &quot;Probabilité f(n)&quot;,
+  cex.lab = 1.2, cex.axis = 1.1
+)
+lines(n, dgeom(n - 1, 0.05), lwd = 3)
+lines(n, dgeom(n - 1, 0.5), lty = &quot;39&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;p=0.2&quot;, &quot;p=0.05&quot;, &quot;p=0.5&quot;),
+  lty = c(1, 1, 2), lwd = c(1, 3, 2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/geometrie-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Quand <code>p</code> augmente, le premier succès arrive plus tôt en
+moyenne.<br />
+La masse de probabilité se rapproche donc des petites valeurs.</p>
+<hr />
+</div>
+</div>
+<div id="loi-hypergéométrique" class="section level2">
+<h2>3.5 Loi hypergéométrique</h2>
+<pre class="r"><code>k &lt;- 2
+Np &lt;- 10
+N &lt;- 50
+n &lt;- 4
+
+choose(Np, k) * choose(N - Np, n - k) / choose(N, n)</code></pre>
+<pre><code>#&gt; [1] 0.1524099</code></pre>
+<pre class="r"><code>dhyper(k, Np, N - Np, n)</code></pre>
+<pre><code>#&gt; [1] 0.1524099</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi hypergéométrique s’applique aux tirages <strong>sans
+remise</strong>.<br />
+C’est la vraie loi derrière les problèmes de contingence et certains
+tests exacts.</p>
+<div id="comparaison-graphique" class="section level3">
+<h3>Comparaison graphique</h3>
+<pre class="r"><code>k &lt;- 0:20
+N &lt;- 50
+
+plot(
+  k, dhyper(k, 10, N - 10, 4), type = &quot;l&quot;,
+  ylim = range(0, 0.7),
+  xlab = &quot;Nombre de boules noires k&quot;,
+  ylab = &quot;Probabilité f(k)&quot;,
+  cex.lab = 1.2, cex.axis = 1.1
+)
+lines(k, dhyper(k, 10, N - 10, 20), lwd = 3)
+lines(k, dhyper(k, 10, N - 10, 48), lty = &quot;39&quot;, lwd = 2)
+lines(k, dhyper(k, 40, N - 40, 20), lty = &quot;83&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;Np=10, n=4&quot;, &quot;Np=10, n=20&quot;, &quot;Np=10, n=48&quot;, &quot;Np=40, n=20&quot;),
+  lty = c(1, 1, 2, 3), lwd = c(1, 3, 2, 2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/hypergeo-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Plus l’échantillon prélevé est grand relativement à la population, plus
+l’effet du <strong>sans remise</strong> devient important.</p>
+<hr />
+</div>
+</div>
+<div id="loi-de-poisson" class="section level2">
+<h2>3.6 Loi de Poisson</h2>
+<pre class="r"><code>k &lt;- 2
+p &lt;- 0.02
+n &lt;- 50
+
+(n * p)^k * exp(-n * p) / factorial(k)</code></pre>
+<pre><code>#&gt; [1] 0.1839397</code></pre>
+<pre class="r"><code>dpois(k, n * p)</code></pre>
+<pre><code>#&gt; [1] 0.1839397</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi de Poisson approxime une binomiale quand :</p>
+<ul>
+<li><code>n</code> est grand ;</li>
+<li><code>p</code> est petit ;</li>
+<li><code>np</code> reste modéré.</li>
+</ul>
+<p>Elle est centrale pour modéliser des <strong>événements
+rares</strong>.</p>
+<div id="visualisation-1" class="section level3">
+<h3>Visualisation</h3>
+<pre class="r"><code>k &lt;- 0:20
+plot(
+  k, dpois(k, 50 * 0.02), type = &quot;l&quot;,
+  xlab = &quot;Nombre de boules noires k&quot;,
+  ylab = &quot;Probabilité f(k)&quot;,
+  cex.lab = 1.2, cex.axis = 1.1
+)
+lines(k, dpois(k, 50 * (1 / 200)), lwd = 3)
+lines(k, dpois(k, 200 * 0.02), lty = &quot;39&quot;, lwd = 2)
+lines(k, dpois(k, 500 * 0.02), lty = &quot;83&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;np=1&quot;, &quot;np=0.25&quot;, &quot;np=4&quot;, &quot;np=10&quot;),
+  lty = c(1, 1, 2, 3), lwd = c(1, 3, 2, 2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/poisson-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Dans une loi de Poisson, la moyenne et la variance sont toutes deux
+égales à <span class="math inline">\(\lambda = np\)</span>.<br />
+C’est utile, mais aussi dangereux en pratique : si la variance dépasse
+fortement la moyenne, il faut penser à la
+<strong>surdispersion</strong>.</p>
+<hr />
+</div>
+</div>
+</div>
+<div id="distributions-de-probabilité-continues" class="section level1">
+<h1>4. Distributions de probabilité continues</h1>
+<div id="loi-normale" class="section level2">
+<h2>4.1 Loi normale</h2>
+<div id="densité-ponctuelle-et-probabilité-cumulée"
+class="section level3">
+<h3>Densité ponctuelle et probabilité cumulée</h3>
+<pre class="r"><code>x &lt;- 160
+mu &lt;- 165
+sigma &lt;- 7
+
+1 / (sqrt(2 * pi) * sigma) * exp(-((x - mu)^2 / (2 * sigma^2)))</code></pre>
+<pre><code>#&gt; [1] 0.04415934</code></pre>
+<pre class="r"><code>dnorm(x, mu, sigma)</code></pre>
+<pre><code>#&gt; [1] 0.04415934</code></pre>
+<pre class="r"><code>pnorm(x, mu, sigma, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.7624747</code></pre>
+<pre class="r"><code>pnorm(x, mu, sigma)</code></pre>
+<pre><code>#&gt; [1] 0.2375253</code></pre>
+<p><strong>Interprétation.</strong><br />
+<code>dnorm()</code> renvoie une <strong>densité</strong>, pas une
+probabilité ponctuelle au sens discret.<br />
+Pour une variable continue, <span class="math inline">\(P(X =
+160)\)</span> est théoriquement nulle. Ce que mesure
+<code>dnorm(160, ...)</code>, c’est la hauteur de la courbe en 160.</p>
+</div>
+<div id="intervalle-de-référence-autour-de-95" class="section level3">
+<h3>Intervalle de référence autour de 95%</h3>
+<pre class="r"><code>mu &lt;- 165
+sigma &lt;- 7
+
+pnorm(mu + 1.96 * sigma, mu, sigma) - pnorm(mu - 1.96 * sigma, mu, sigma)</code></pre>
+<pre><code>#&gt; [1] 0.9500042</code></pre>
+<pre class="r"><code>mu + 1.96 * sigma</code></pre>
+<pre><code>#&gt; [1] 178.72</code></pre>
+<p><strong>Interprétation.</strong><br />
+On retrouve ici l’idée classique que, sous normalité,</p>
+<p><span class="math display">\[
+P(\mu - 1.96\sigma \le X \le \mu + 1.96\sigma) \approx 0.95
+\]</span></p>
+</div>
+<div id="quantiles-normaux" class="section level3">
+<h3>Quantiles normaux</h3>
+<pre class="r"><code>F &lt;- 0.5
+mu &lt;- 165
+sigma &lt;- 7
+qnorm(F, mu, sigma, lower.tail = TRUE)</code></pre>
+<pre><code>#&gt; [1] 165</code></pre>
+<pre class="r"><code>F &lt;- 0.025
+qnorm(F, mu, sigma, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 178.7197</code></pre>
+<p><strong>Interprétation.</strong><br />
+<code>qnorm()</code> est la fonction qui permet d’obtenir les
+<strong>seuils critiques</strong> d’une loi normale.</p>
+</div>
+<div id="comparaison-de-normales" class="section level3">
+<h3>Comparaison de normales</h3>
+<pre class="r"><code>x &lt;- seq(-10, 10, 0.01)
+plot(
+  x, dnorm(x, 0, 1), type = &quot;l&quot;,
+  xlab = &quot;Variable continue x&quot;,
+  ylab = &quot;Densité f(x)&quot;,
+  cex.lab = 1.2, cex.axis = 1.1
+)
+lines(x, dnorm(x, 4, 1), lwd = 3)
+lines(x, dnorm(x, 0, 4), lty = &quot;39&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;mu=0, sigma=1&quot;, &quot;mu=4, sigma=1&quot;, &quot;mu=0, sigma=4&quot;),
+  lty = c(1, 1, 2), lwd = c(1, 3, 2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/normale-comparaison-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+- Modifier <code>mu</code> décale la courbe. - Modifier
+<code>sigma</code> change l’étalement.</p>
+<hr />
+</div>
+</div>
+<div id="loi-normale-centrée-réduite" class="section level2">
+<h2>4.2 Loi normale centrée réduite</h2>
+<pre class="r"><code>x &lt;- -2.57
+
+1 / sqrt(2 * pi) * exp(-x^2 / 2)</code></pre>
+<pre><code>#&gt; [1] 0.01467825</code></pre>
+<pre class="r"><code>dnorm(x)</code></pre>
+<pre><code>#&gt; [1] 0.01467825</code></pre>
+<pre class="r"><code>pnorm(x)</code></pre>
+<pre><code>#&gt; [1] 0.005084926</code></pre>
+<pre class="r"><code>pnorm(1, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.1586553</code></pre>
+<pre class="r"><code>qnorm(0.025, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 1.959964</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi normale centrée réduite est la norme de référence pour la
+standardisation.<br />
+En pratique, beaucoup de statistiques deviennent exploitables après
+transformation en score <span class="math inline">\(z\)</span>.</p>
+<div id="zone-à-droite-dun-seuil" class="section level3">
+<h3>Zone à droite d’un seuil</h3>
+<pre class="r"><code>x &lt;- seq(-3, 3, 0.01)
+plot(x, dnorm(x), type = &quot;l&quot;, xlab = &quot;Variable continue x&quot;, ylab = &quot;Densité f(x)&quot;)
+x2 &lt;- seq(1, 3, 0.01)
+polygon(x = c(x2, 3, 1), y = c(dnorm(x2), 0, 0), col = &quot;grey&quot;)</code></pre>
+<p><img src="figure/Gael_4.Rmd/normale-centree-reduite-zone-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Le polygone grisé représente une <strong>probabilité en queue
+droite</strong>.<br />
+C’est exactement l’intuition visuelle d’une p value unilatérale.</p>
+<hr />
+</div>
+</div>
+<div id="loi-exponentielle" class="section level2">
+<h2>4.3 Loi exponentielle</h2>
+<pre class="r"><code>x &lt;- 2
+lambda &lt;- 1
+
+lambda * exp(-lambda * x)</code></pre>
+<pre><code>#&gt; [1] 0.1353353</code></pre>
+<pre class="r"><code>dexp(x)</code></pre>
+<pre><code>#&gt; [1] 0.1353353</code></pre>
+<pre class="r"><code>pexp(x)</code></pre>
+<pre><code>#&gt; [1] 0.8646647</code></pre>
+<pre class="r"><code>pexp(x, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.1353353</code></pre>
+<pre class="r"><code>qexp(0.025, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 3.688879</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi exponentielle modélise un <strong>temps d’attente</strong> sans
+mémoire.<br />
+Elle est utile comme brique conceptuelle vers les processus de Poisson
+et l’analyse de survie.</p>
+<hr />
+</div>
+<div id="loi-gamma" class="section level2">
+<h2>4.4 Loi gamma</h2>
+<pre class="r"><code>x &lt;- 2
+alpha &lt;- 1
+beta &lt;- 1
+
+1 / (beta^alpha * gamma(alpha)) * x^(alpha - 1) * exp(-x / beta)</code></pre>
+<pre><code>#&gt; [1] 0.1353353</code></pre>
+<pre class="r"><code>dgamma(x, shape = alpha, scale = beta)</code></pre>
+<pre><code>#&gt; [1] 0.1353353</code></pre>
+<pre class="r"><code>dgamma(x, shape = 1, scale = 3)</code></pre>
+<pre><code>#&gt; [1] 0.171139</code></pre>
+<pre class="r"><code>pgamma(x, shape = 1, scale = 3)</code></pre>
+<pre><code>#&gt; [1] 0.4865829</code></pre>
+<pre class="r"><code>pgamma(x, shape = 1, scale = 3, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.5134171</code></pre>
+<pre class="r"><code>qgamma(0.025, shape = 1, scale = 3, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 11.06664</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi gamma généralise l’exponentielle.<br />
+Elle sert souvent à modéliser des variables positives asymétriques.</p>
+<div id="comparaison-de-paramètres" class="section level3">
+<h3>Comparaison de paramètres</h3>
+<pre class="r"><code>x &lt;- seq(-0.1, 8, 0.01)
+plot(x, dgamma(x, shape = 1, scale = 1), type = &quot;l&quot;, xlim = range(0, 7),
+     xlab = &quot;Variable continue x&quot;, ylab = &quot;Densité f(x)&quot;)
+lines(x, dgamma(x, shape = 1, scale = 4), lwd = 3)
+lines(x, dgamma(x, shape = 4, scale = 1), lty = &quot;39&quot;, lwd = 2)
+lines(x, dgamma(x, shape = 2, scale = 2), lty = &quot;83&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;a=1,b=1&quot;, &quot;a=1,b=4&quot;, &quot;a=4,b=1&quot;, &quot;a=2,b=2&quot;),
+  lty = c(1,1,2,3), lwd = c(1,3,2,2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/gamma-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+La forme change fortement selon <code>shape</code> et
+<code>scale</code>.<br />
+C’est utile pour comprendre pourquoi toutes les variables positives
+asymétriques ne se ressemblent pas.</p>
+<hr />
+</div>
+</div>
+<div id="loi-du-chi2" class="section level2">
+<h2>4.5 Loi du <span class="math inline">\(\chi^2\)</span></h2>
+<pre class="r"><code>x &lt;- 2
+ddl &lt;- 4
+
+1 / (2^(ddl / 2) * gamma(ddl / 2)) * x^(ddl / 2 - 1) * exp(-x / 2)</code></pre>
+<pre><code>#&gt; [1] 0.1839397</code></pre>
+<pre class="r"><code>dchisq(x, ddl)</code></pre>
+<pre><code>#&gt; [1] 0.1839397</code></pre>
+<pre class="r"><code>pchisq(x, ddl)</code></pre>
+<pre><code>#&gt; [1] 0.2642411</code></pre>
+<pre class="r"><code>pchisq(x, ddl, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.7357589</code></pre>
+<pre class="r"><code>qchisq(0.025, ddl, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 11.14329</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi du <span class="math inline">\(\chi^2\)</span> apparaît dans
+:</p>
+<ul>
+<li>les tests d’ajustement ;</li>
+<li>les tableaux de contingence ;</li>
+<li>les estimations de variance.</li>
+</ul>
+<p>Elle est toujours <strong>positive</strong> et asymétrique à droite,
+surtout pour petits ddl.</p>
+<hr />
+</div>
+<div id="loi-de-fisher-snedecor" class="section level2">
+<h2>4.6 Loi de Fisher-Snedecor</h2>
+<pre class="r"><code>x &lt;- 2
+ddl1 &lt;- 2
+ddl2 &lt;- 3
+
+df(x, ddl1, ddl2)</code></pre>
+<pre><code>#&gt; [1] 0.1202425</code></pre>
+<pre class="r"><code>df(x, ddl2, ddl1)</code></pre>
+<pre><code>#&gt; [1] 0.1217848</code></pre>
+<pre class="r"><code>pf(x, ddl1, ddl2)</code></pre>
+<pre><code>#&gt; [1] 0.7194341</code></pre>
+<pre class="r"><code>pf(x, ddl1, ddl2, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.2805659</code></pre>
+<pre class="r"><code>qf(0.025, ddl1, ddl2, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 16.04411</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi de Fisher sert surtout à comparer des <strong>variances</strong>
+ou des <strong>rapports de variabilité expliquée</strong>.<br />
+C’est la loi de référence de l’ANOVA.</p>
+<hr />
+</div>
+<div id="loi-de-student" class="section level2">
+<h2>4.7 Loi de Student</h2>
+<pre class="r"><code>t &lt;- 2
+ddl &lt;- 3
+
+gamma((ddl + 1) / 2) / (sqrt(ddl * pi) * gamma(ddl / 2)) * (1 + t^2 / ddl)^(-((ddl + 1) / 2))</code></pre>
+<pre><code>#&gt; [1] 0.06750966</code></pre>
+<pre class="r"><code>dt(t, ddl)</code></pre>
+<pre><code>#&gt; [1] 0.06750966</code></pre>
+<pre class="r"><code>pt(t, ddl)</code></pre>
+<pre><code>#&gt; [1] 0.930337</code></pre>
+<pre class="r"><code>pt(t, ddl, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.06966298</code></pre>
+<pre class="r"><code>qt(0.025, ddl, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 3.182446</code></pre>
+<p><strong>Interprétation.</strong><br />
+La loi de Student ressemble à une normale, mais avec des <strong>queues
+plus épaisses</strong> quand les ddl sont faibles.</p>
+<div id="influence-des-ddl" class="section level3">
+<h3>Influence des ddl</h3>
+<pre class="r"><code>x &lt;- seq(-3, 3, 0.01)
+plot(x, dt(x, 1), type = &quot;l&quot;, ylim = range(0, 0.5),
+     xlab = &quot;Variable continue t&quot;, ylab = &quot;Densité f(t)&quot;)
+lines(x, dt(x, 3), lwd = 3)
+lines(x, dt(x, 30), lty = &quot;39&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;ddl=1&quot;, &quot;ddl=3&quot;, &quot;ddl=30&quot;),
+  lty = c(1, 1, 2), lwd = c(1, 3, 2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/student-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Quand les ddl augmentent, la loi de Student converge vers la loi
+normale.<br />
+C’est l’argument intuitif derrière le rôle de la taille
+d’échantillon.</p>
+<hr />
+</div>
+</div>
+</div>
+<div
+id="distributions-de-probabilité-ne-suivant-pas-une-loi-usuelle-simple"
+class="section level1">
+<h1>5. Distributions de probabilité ne suivant pas une loi usuelle
+simple</h1>
+<div id="distribution-de-mann-whitney" class="section level2">
+<h2>5.1 Distribution de Mann-Whitney</h2>
+<pre class="r"><code>k &lt;- 3
+n1 &lt;- 2
+n2 &lt;- 2
+
+dwilcox(k, n1, n2)</code></pre>
+<pre><code>#&gt; [1] 0.1666667</code></pre>
+<p><strong>Interprétation.</strong><br />
+La fonction <code>dwilcox()</code> donne la probabilité de la
+statistique de Wilcoxon-Mann-Whitney sous l’hypothèse nulle d’identité
+de distribution entre groupes.</p>
+<div id="visualisation-2" class="section level3">
+<h3>Visualisation</h3>
+<pre class="r"><code>k &lt;- 0:50
+plot(k, dwilcox(k, 2, 2), type = &quot;l&quot;,
+     xlab = &quot;Valeur de U&quot;, ylab = &quot;Probabilité f(U)&quot;)
+lines(k, dwilcox(k, 5, 5), lwd = 3)
+lines(k, dwilcox(k, 8, 8), lty = &quot;39&quot;, lwd = 2)
+lines(k, dwilcox(k, 8, 2), lty = &quot;83&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;2 vs 2&quot;, &quot;5 vs 5&quot;, &quot;8 vs 8&quot;, &quot;8 vs 2&quot;),
+  lty = c(1,1,2,3), lwd = c(1,3,2,2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/mann-whitney-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+La distribution dépend des tailles <code>n1</code> et
+<code>n2</code>.<br />
+Avec grands effectifs, elle tend vers une approximation normale.</p>
+<hr />
+</div>
+</div>
+<div id="lien-entre-w-et-u-dans-wilcoxon" class="section level2">
+<h2>5.2 Lien entre W et U dans Wilcoxon</h2>
+<pre class="r"><code>W &lt;- 12
+n1 &lt;- 4
+n2 &lt;- 2
+
+W - 0.5 * n1 * (n1 + 1)</code></pre>
+<pre><code>#&gt; [1] 2</code></pre>
+<p><strong>Interprétation.</strong><br />
+La somme des rangs <code>W</code> et la statistique <code>U</code>
+contiennent la même information, exprimée différemment.<br />
+La relation permet de passer de l’une à l’autre sans difficulté.</p>
+<div id="probabilité-à-droite" class="section level3">
+<h3>Probabilité à droite</h3>
+<pre class="r"><code>k &lt;- 2
+n1 &lt;- 4
+n2 &lt;- 2
+pwilcox(k, n1, n2, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.7333333</code></pre>
+<p><strong>Interprétation.</strong><br />
+Ici on calcule une probabilité de queue droite pour la statistique de
+Wilcoxon-Mann-Whitney.</p>
+<hr />
+</div>
+</div>
+<div id="construction-combinatoire-exacte-de-la-distribution-de-wu"
+class="section level2">
+<h2>5.3 Construction combinatoire exacte de la distribution de W/U</h2>
+<blockquote>
+<p>Cette section reprend le code long du livre. Elle est très utile pour
+comprendre <strong>comment naît la distribution exacte</strong>, mais
+elle devient vite coûteuse en mémoire.</p>
+</blockquote>
+<pre class="r"><code>n1 &lt;- 2
+n2 &lt;- 2
+n &lt;- n1 + n2
+
+time.ini &lt;- as.numeric(Sys.time())
+nb.seq &lt;- choose(n, n1)
+
+if (nb.seq &lt; 2^31 - 1) {
+  cat(&quot;Nombre de combinaisons : &quot;, nb.seq, &quot;\n\n&quot;)
+  comb &lt;- matrix(&quot;O&quot;, nrow = nb.seq, ncol = n)
+} else {
+  cat(&quot;Nombre de séquences possibles&quot;, nb.seq,
+      &quot;au-dessus de la limite de dimension d&#39;une matrice dans R\n\n&quot;)
+}
+
+rang &lt;- 1:n
+pos.seq &lt;- 1:length(rang)
+pos.seq.diff &lt;- pos.seq[!pos.seq %in% rang]
+rang.diff &lt;- rang[!rang %in% pos.seq]
+
+library(gtools)
+
+if (n1 &lt;= n2) {
+  n.tempo &lt;- n1
+  cat(&quot;Dans comb, O représente la classe 2 et A la classe 1\n\n&quot;)
+} else {
+  n.tempo &lt;- n2
+  cat(&quot;Dans comb, O représente la classe 1 et A la classe 2\n\n&quot;)
+}
+
+pos.col.A &lt;- combinations(n, n.tempo, pos.seq, set = FALSE)
+comb[matrix(
+  ncol = 2,
+  c(rep(1:nb.seq, each = ncol(pos.col.A)), as.vector(t(pos.col.A)))
+)] &lt;- &quot;A&quot;
+
+comb &lt;- as.data.frame(comb)
+
+if (length(pos.seq.diff) != 0) {
+  for (i in 1:length(rang.diff)) {
+    pos.col.A[pos.col.A == pos.seq.diff[i]] &lt;- rang.diff[i]
+  }
+}
+
+serie.W &lt;- apply(pos.col.A, 1, sum)
+serie.U &lt;- serie.W - 0.5 * n1 * (n1 + 1)
+comb.W.U &lt;- cbind(comb, serie.W, serie.U)
+if (nb.seq &lt; 100) comb.W.U
+
+W &lt;- sort(unique(serie.W))
+prob.W &lt;- table(serie.W) / length(serie.W)
+prob.W
+
+plot(W, as.vector(prob.W), type = &quot;b&quot;, pch = 16,
+     xlab = &quot;Valeur de W&quot;, ylab = &quot;Probabilité f(W)&quot;)
+
+library(lubridate)
+time.fin &lt;- as.numeric(Sys.time())
+cat(&quot;Temps de calcul total : &quot;,
+    as.character(seconds_to_period(round(time.fin - time.ini))), &quot;\n\n&quot;)</code></pre>
+<p><strong>Interprétation.</strong><br />
+Ce chunk montre le mécanisme exact du test :</p>
+<ol style="list-style-type: decimal">
+<li>on énumère toutes les affectations possibles des rangs entre deux
+groupes ;</li>
+<li>on calcule <code>W</code> puis <code>U</code> pour chaque
+configuration ;</li>
+<li>on déduit la distribution exacte sous <span
+class="math inline">\(H_0\)</span>.</li>
+</ol>
+<p><strong>Message pédagogique.</strong><br />
+C’est probablement la meilleure section pour comprendre qu’une loi
+exacte n’est pas un objet mystique tombé du ciel. C’est juste de la
+combinatoire, plus un peu de RAM sacrifiée au dieu du calcul.</p>
+<hr />
+</div>
+<div id="distribution-du-test-des-signes-de-wilcoxon"
+class="section level2">
+<h2>5.4 Distribution du test des signes de Wilcoxon</h2>
+<pre class="r"><code>k &lt;- 3
+n &lt;- 3
+
+dsignrank(k, n)</code></pre>
+<pre><code>#&gt; [1] 0.25</code></pre>
+<pre class="r"><code>psignrank(2, 3, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.625</code></pre>
+<pre class="r"><code>psignrank(2, 3)</code></pre>
+<pre><code>#&gt; [1] 0.375</code></pre>
+<p><strong>Interprétation.</strong><br />
+<code>signrank</code> correspond ici à la distribution de la somme des
+rangs signés dans le test de Wilcoxon apparié.</p>
+<div id="visualisation-3" class="section level3">
+<h3>Visualisation</h3>
+<pre class="r"><code>k &lt;- 0:50
+plot(k, dsignrank(k, 3), type = &quot;l&quot;,
+     xlab = &quot;Valeur de V&quot;, ylab = &quot;Probabilité f(V)&quot;)
+lines(k, dsignrank(k, 5), lwd = 3)
+lines(k, dsignrank(k, 10), lty = &quot;83&quot;, lwd = 2)
+legend(
+  &quot;topright&quot;,
+  legend = c(&quot;n=3&quot;, &quot;n=5&quot;, &quot;n=10&quot;),
+  lty = c(1,1,2), lwd = c(1,3,2), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/signes-wilcoxon-plot-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<hr />
+</div>
+</div>
+<div id="construction-combinatoire-exacte-de-v" class="section level2">
+<h2>5.5 Construction combinatoire exacte de V</h2>
+<pre class="r"><code>n &lt;- 3
+time.ini &lt;- as.numeric(Sys.time())
+seed &lt;- vector(&quot;list&quot;, n)
+for (i in 1:n) seed[[i]] &lt;- c(&quot;A&quot;, &quot;O&quot;)
+rang &lt;- 1:n
+
+library(gtools)
+nb.seq &lt;- 2^n
+
+if (nb.seq &lt; 2^31 - 1) {
+  cat(&quot;Nombre de séquences :&quot;, nb.seq, &quot;\n\n&quot;)
+  comb &lt;- expand.grid(seed)
+  comb.t &lt;- t(comb)
+} else {
+  cat(&quot;Nombre de séquences possibles au-dessus de la limite\n\n&quot;)
+}
+
+serie.V &lt;- NULL
+for (i in 1:ncol(comb.t)) {
+  if (any(comb.t[, i] == &quot;A&quot;)) {
+    serie.V &lt;- c(serie.V, tapply(rang, comb.t[, i], sum)[1])
+  } else {
+    serie.V &lt;- c(serie.V, 0)
+  }
+}
+
+if (ncol(comb.t) &lt; 100) {
+  comb.V &lt;- cbind(as.data.frame(t(comb.t)), serie.V)
+  comb.V
+}
+
+V &lt;- sort(unique(serie.V))
+prob.V &lt;- table(serie.V) / length(serie.V)
+prob.V
+plot(V, as.vector(prob.V), type = &quot;b&quot;, pch = 16,
+     xlab = &quot;Valeur de V&quot;, ylab = &quot;Probabilité f(V)&quot;)
+
+library(lubridate)
+time.fin &lt;- as.numeric(Sys.time())
+cat(&quot;Temps de calcul total :&quot;,
+    as.character(seconds_to_period(round(time.fin - time.ini))), &quot;\n\n&quot;)</code></pre>
+<p><strong>Interprétation.</strong><br />
+Même logique que précédemment : on énumère toutes les combinaisons de
+signes possibles, puis on calcule la somme des rangs associés.</p>
+<hr />
+</div>
+</div>
+<div id="ne-pas-confondre-loi-de-la-variable-mesurée-et-loi-de-la-vt"
+class="section level1">
+<h1>6. Ne pas confondre loi de la variable mesurée et loi de la VT</h1>
+<div id="simulation-de-la-fluctuation-dune-vt-t-due-à-léchantillonnage"
+class="section level2">
+<h2>Simulation de la fluctuation d’une VT t due à l’échantillonnage</h2>
+<pre class="r"><code>m.theo &lt;- 165
+n &lt;- 10
+t &lt;- NULL
+
+for (i in 1:500) {
+  Echantillon &lt;- rnorm(n, 165, 7)
+  m &lt;- mean(Echantillon)
+  s &lt;- sd(Echantillon)
+  t.calc &lt;- (m - m.theo) / (s / n^0.5)
+  t &lt;- c(t, t.calc)
+}
+
+hist(
+  t, freq = FALSE,
+  main = &quot;Fluctuation de la VT t&quot;,
+  ylim = range(0, 0.5),
+  xlab = &quot;Valeurs de la VT t&quot;,
+  ylab = &quot;Densité de la distribution&quot;,
+  cex.lab = 1.2, cex.axis = 1.1
+)
+VT.t &lt;- seq(-5, 10, 0.01)
+lines(VT.t, dt(VT.t, n - 1), lwd = 2)
+legend(
+  &quot;topright&quot;,
+  c(&quot;A cause de l&#39;échantillonnage&quot;, &quot;Prévue par le test t&quot;),
+  lty = c(NA, 1), lwd = c(NA, 2), pch = c(22, NA),
+  pt.cex = c(2.5, NA), pt.bg = c(&quot;white&quot;, NA),
+  bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/fluctuation-VT-t-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Le but est de montrer que :</p>
+<ul>
+<li>même si <span class="math inline">\(H_0\)</span> est vraie, la VT
+fluctue d’un échantillon à l’autre ;</li>
+<li>cette fluctuation suit en pratique la loi théorique attendue, ici la
+loi de Student.</li>
+</ul>
+<p><strong>Ce qu’il faut comprendre.</strong><br />
+Un test n’est pas une machine à produire des vérités. C’est une machine
+à situer une valeur observée dans une distribution attendue sous <span
+class="math inline">\(H_0\)</span>.</p>
+<hr />
+</div>
+</div>
+<div id="h0-loi-de-la-vt-et-p-value" class="section level1">
+<h1>7. H0, loi de la VT et p value</h1>
+<pre class="r"><code>pnorm(168, 165, 0.99, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.001221542</code></pre>
+<p><strong>Interprétation.</strong><br />
+Cette ligne donne la probabilité, sous une loi normale de moyenne 165 et
+écart-type 0.99, d’observer une valeur supérieure ou égale à 168.</p>
+<p>C’est exactement le mécanisme d’une p value unilatérale droite dans
+un cadre normal.</p>
+<hr />
+</div>
+<div id="conclusion-dun-test-risque-alpha-et-corrections-multiples"
+class="section level1">
+<h1>8. Conclusion d’un test, risque alpha et corrections multiples</h1>
+<div id="illustration-du-problème-des-comparaisons-multiples"
+class="section level2">
+<h2>8.1 Illustration du problème des comparaisons multiples</h2>
+<pre class="r"><code>nb.coups.partis &lt;- 1
+tentatives &lt;- 1:10
+p &lt;- 1/20
+
+nb.coups.vides &lt;- tentatives - nb.coups.partis
+probabilite &lt;- dbinom(nb.coups.partis, tentatives, p)
+data.frame(tentatives, nb.coups.partis, nb.coups.vides, probabilite)</code></pre>
+<pre><code>#&gt;    tentatives nb.coups.partis nb.coups.vides probabilite
+#&gt; 1           1               1              0   0.0500000
+#&gt; 2           2               1              1   0.0950000
+#&gt; 3           3               1              2   0.1353750
+#&gt; 4           4               1              3   0.1714750
+#&gt; 5           5               1              4   0.2036266
+#&gt; 6           6               1              5   0.2321343
+#&gt; 7           7               1              6   0.2572822
+#&gt; 8           8               1              7   0.2793349
+#&gt; 9           9               1              8   0.2985392
+#&gt; 10         10               1              9   0.3151247</code></pre>
+<p><strong>Interprétation.</strong><br />
+Plus on multiplie les essais ou les tests, plus la probabilité d’obtenir
+<strong>au moins un faux positif</strong> augmente.</p>
+<div id="probabilité-dau-moins-un-événement" class="section level3">
+<h3>Probabilité d’au moins un événement</h3>
+<pre class="r"><code>nb.coups.partis &lt;- 1:10
+tentatives &lt;- 10
+p &lt;- 1/20
+sum(dbinom(nb.coups.partis, tentatives, p))</code></pre>
+<pre><code>#&gt; [1] 0.4012631</code></pre>
+<p><strong>Interprétation.</strong><br />
+Cette somme revient à calculer la probabilité d’avoir <strong>au moins
+un succès</strong> sur 10 tentatives.</p>
+<hr />
+</div>
+</div>
+<div id="simulation-de-20-tests-sous-h0" class="section level2">
+<h2>8.2 Simulation de 20 tests sous H0</h2>
+<pre class="r"><code>m.theo &lt;- 165
+n &lt;- 10
+moyenne &lt;- NULL
+t &lt;- NULL
+p.value &lt;- NULL
+
+for (i in 1:20) {
+  Echantillon &lt;- rnorm(10, 165, 7)
+  m &lt;- mean(Echantillon)
+  moyenne &lt;- c(moyenne, m)
+  s &lt;- sd(Echantillon)
+  t.calc &lt;- (m - m.theo) / (s / n^0.5)
+  t &lt;- c(t, t.calc)
+  p &lt;- pt(t.calc, n - 1, lower.tail = FALSE)
+  p.value &lt;- c(p.value, p)
+}
+
+length(which(p.value &lt;= 0.05))</code></pre>
+<pre><code>#&gt; [1] 0</code></pre>
+<pre class="r"><code>data.frame(moyenne, t, p.value)</code></pre>
+<pre><code>#&gt;     moyenne           t    p.value
+#&gt; 1  164.6331 -0.16287177 0.56289111
+#&gt; 2  169.3402  1.78712797 0.05377910
+#&gt; 3  163.5165 -0.66879901 0.73979626
+#&gt; 4  166.8156  0.61251601 0.27767730
+#&gt; 5  164.9123 -0.05863976 0.52273980
+#&gt; 6  165.9548  0.40365131 0.34794574
+#&gt; 7  166.4184  0.68626892 0.25491766
+#&gt; 8  166.3782  0.46212224 0.32748075
+#&gt; 9  168.8479  1.74889413 0.05712116
+#&gt; 10 161.9754 -1.08740600 0.84744008
+#&gt; 11 164.0488 -0.43134618 0.66181775
+#&gt; 12 166.1237  0.62030815 0.27521844
+#&gt; 13 161.0226 -2.24845990 0.97443412
+#&gt; 14 164.1361 -0.38107272 0.64400548
+#&gt; 15 166.2012  0.43070941 0.33840534
+#&gt; 16 163.9643 -0.72340592 0.75609760
+#&gt; 17 163.6881 -0.58509853 0.71357175
+#&gt; 18 168.2240  1.20987111 0.12857325
+#&gt; 19 164.6078 -0.20992498 0.58079927
+#&gt; 20 163.2400 -0.68807331 0.74562454</code></pre>
+<p><strong>Interprétation.</strong><br />
+Sous <span class="math inline">\(H_0\)</span>, on s’attend à environ
+<strong>5%</strong> de tests significatifs par hasard si le seuil vaut
+0.05.<br />
+C’est le sens réel du risque <span
+class="math inline">\(\alpha\)</span>.</p>
+<div id="visualisation-des-vt-observées-face-au-seuil-critique"
+class="section level3">
+<h3>Visualisation des VT observées face au seuil critique</h3>
+<pre class="r"><code>x &lt;- seq(-5, 5, 0.01)
+plot(x, dt(x, 9), type = &quot;l&quot;, ylim = range(0, 0.55),
+     xlab = &quot;Valeurs de la VT t&quot;, ylab = &quot;Densité de la distribution&quot;, bty = &quot;l&quot;)
+t.seuil &lt;- qt(0.05, 9, lower.tail = FALSE)
+lines(c(t.seuil, t.seuil), c(0, 0.4), lty = 2)
+points(t, y = rep(0, 20), pch = &quot;|&quot;, cex = 2.5)
+legend(
+  x = -4, y = 0.6,
+  c(&quot;Loi de la VT t sous H0&quot;, &quot;Valeur de la VT t d&#39;un échantillon&quot;, &quot;Seuil de rejet de H0 (5%)&quot;),
+  lty = c(1, NA, 2), lwd = c(1, NA, 1.5), pch = c(NA, &quot;|&quot;, NA),
+  pt.cex = c(NA, 3, NA), bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/vingt-tests-visualisation-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+On visualise très bien que certaines valeurs franchissent le seuil juste
+par fluctuation d’échantillonnage.</p>
+<hr />
+</div>
+</div>
+<div id="corrections-multiples" class="section level2">
+<h2>8.3 Corrections multiples</h2>
+<div id="bonferroni" class="section level3">
+<h3>Bonferroni</h3>
+<pre class="r"><code>0.05 / (1:10)</code></pre>
+<pre><code>#&gt;  [1] 0.050000000 0.025000000 0.016666667 0.012500000 0.010000000 0.008333333
+#&gt;  [7] 0.007142857 0.006250000 0.005555556 0.005000000</code></pre>
+<pre class="r"><code>p.adjust(c(0.03, 0.8, 0.001, 0.015), method = &quot;bonferroni&quot;)</code></pre>
+<pre><code>#&gt; [1] 0.120 1.000 0.004 0.060</code></pre>
+<p><strong>Interprétation.</strong><br />
+Bonferroni est simple et robuste, mais souvent <strong>très
+conservateur</strong>.</p>
+</div>
+<div id="holm" class="section level3">
+<h3>Holm</h3>
+<pre class="r"><code>p.adjust(c(0.8, 0.03, 0.015, 0.001), method = &quot;holm&quot;)</code></pre>
+<pre><code>#&gt; [1] 0.800 0.060 0.045 0.004</code></pre>
+<p><strong>Interprétation.</strong><br />
+Holm contrôle aussi l’erreur familiale, mais est moins brutal que
+Bonferroni.</p>
+</div>
+<div id="benjamini-hochberg" class="section level3">
+<h3>Benjamini-Hochberg</h3>
+<pre class="r"><code>p.adjust(c(0.8, 0.03, 0.015, 0.001), method = &quot;BH&quot;)</code></pre>
+<pre><code>#&gt; [1] 0.800 0.040 0.030 0.004</code></pre>
+<p><strong>Interprétation.</strong><br />
+BH contrôle le <strong>False Discovery Rate</strong>.<br />
+C’est souvent plus adapté quand on fait beaucoup de tests et qu’on
+accepte qu’une fraction des découvertes soit fausse.</p>
+<hr />
+</div>
+</div>
+</div>
+<div id="test-unilatéral-versus-bilatéral" class="section level1">
+<h1>9. Test unilatéral versus bilatéral</h1>
+<pre class="r"><code>pnorm(166.9, 165, 0.99, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.02748002</code></pre>
+<pre class="r"><code>pnorm(165.8, 165, 0.99)</code></pre>
+<pre><code>#&gt; [1] 0.790478</code></pre>
+<pre class="r"><code>pnorm(166.9, 165, 0.99)</code></pre>
+<pre><code>#&gt; [1] 0.97252</code></pre>
+<pre class="r"><code>2 * pnorm(166.9, 165, 0.99, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 0.05496005</code></pre>
+<pre class="r"><code>2 * pnorm(164.5, 165, 0.99)</code></pre>
+<pre><code>#&gt; [1] 0.6135234</code></pre>
+<p><strong>Interprétation.</strong><br />
+- <strong>Unilatéral droit</strong> : on teste une augmentation. -
+<strong>Unilatéral gauche</strong> : on teste une diminution. -
+<strong>Bilatéral</strong> : on teste tout écart, quel que soit le
+sens.</p>
+<p>Le test bilatéral “paie” le fait d’être plus large en répartissant
+<span class="math inline">\(\alpha\)</span> dans les deux queues.</p>
+<div id="seuils-critiques-bilatéraux-et-unilatéraux"
+class="section level3">
+<h3>Seuils critiques bilatéraux et unilatéraux</h3>
+<pre class="r"><code>qnorm(0.05, 165, 0.99, lower.tail = FALSE)</code></pre>
+<pre><code>#&gt; [1] 166.6284</code></pre>
+<pre class="r"><code>qnorm(0.05, 165, 0.99)</code></pre>
+<pre><code>#&gt; [1] 163.3716</code></pre>
+<pre class="r"><code>alpha &lt;- 0.025
+Mseuil.inf &lt;- qnorm(alpha, 165, 0.99)
+Mseuil.sup &lt;- qnorm(alpha, 165, 0.99, lower.tail = FALSE)
+Mseuil.inf</code></pre>
+<pre><code>#&gt; [1] 163.0596</code></pre>
+<pre class="r"><code>Mseuil.sup</code></pre>
+<pre><code>#&gt; [1] 166.9404</code></pre>
+<p><strong>Interprétation.</strong><br />
+En bilatéral à 5%, les deux seuils utilisent 2.5% chacun.</p>
+<hr />
+</div>
+</div>
+<div id="risque-bêta-et-puissance" class="section level1">
+<h1>10. Risque bêta et puissance</h1>
+<div id="variation-de-la-puissance-selon-la-position-de-h1"
+class="section level2">
+<h2>10.1 Variation de la puissance selon la position de H1</h2>
+<div id="cas-unilatéral-droit" class="section level3">
+<h3>Cas unilatéral droit</h3>
+<pre class="r"><code>Mseuil &lt;- 166.63
+mu.h &lt;- seq(163, 170, 0.01)
+
+plot(
+  mu.h,
+  pnorm(Mseuil, mu.h, 0.99, lower.tail = FALSE),
+  type = &quot;l&quot;,
+  main = expression(paste(&quot;Variation pour &quot;, alpha, &quot; = 5% et &quot;, M[seuil], &quot; = 166,63&quot;)),
+  xlab = expression(mu[h]),
+  ylab = expression(paste(&quot;Puissance 1-&quot;, beta)),
+  bty = &quot;l&quot;
+)
+abline(v = 165, lty = &quot;39&quot;, lwd = 2)</code></pre>
+<p><img src="figure/Gael_4.Rmd/puissance-unilateral-droit-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Plus <span class="math inline">\(\mu_h\)</span> s’éloigne de la valeur
+nulle, plus la puissance augmente.<br />
+Un effet faible est difficile à détecter. C’est fâcheux, mais les
+mathématiques n’ont pas d’empathie.</p>
+</div>
+<div id="cas-unilatéral-gauche" class="section level3">
+<h3>Cas unilatéral gauche</h3>
+<pre class="r"><code>Mseuil &lt;- 163.37
+mu.h &lt;- seq(161, 168, 0.01)
+
+plot(
+  mu.h,
+  pnorm(Mseuil, mu.h, 0.99),
+  type = &quot;l&quot;,
+  main = expression(paste(&quot;Variation pour &quot;, alpha, &quot; = 5% et &quot;, M[seuil], &quot; = 163,37&quot;)),
+  xlab = expression(mu[h]),
+  ylab = expression(paste(&quot;Puissance 1-&quot;, beta)),
+  bty = &quot;l&quot;
+)
+abline(v = 165, lty = &quot;39&quot;, lwd = 2)</code></pre>
+<p><img src="figure/Gael_4.Rmd/puissance-unilateral-gauche-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cas-bilatéral" class="section level3">
+<h3>Cas bilatéral</h3>
+<pre class="r"><code>Mseuil.inf &lt;- 163.06
+Mseuil.sup &lt;- 166.94
+mu.h &lt;- seq(160, 170, 0.01)
+
+plot(
+  mu.h,
+  pnorm(Mseuil.inf, mu.h, 0.99) + pnorm(Mseuil.sup, mu.h, 0.99, lower.tail = FALSE),
+  type = &quot;l&quot;,
+  main = expression(paste(&quot;Variation pour &quot;, alpha, &quot; = 5%&quot;)),
+  xlab = expression(mu[h]),
+  ylab = expression(paste(&quot;Puissance 1-&quot;, beta)),
+  bty = &quot;l&quot;
+)
+abline(v = 165, lty = &quot;39&quot;, lwd = 2)</code></pre>
+<p><img src="figure/Gael_4.Rmd/puissance-bilateral-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+La puissance bilatérale est symétrique autour de la valeur nulle,
+puisqu’on rejette dans les deux directions.</p>
+<hr />
+</div>
+</div>
+<div id="faux-positifs-et-faux-négatifs" class="section level2">
+<h2>10.2 Faux positifs et faux négatifs</h2>
+<pre class="r"><code>x.seuil &lt;- qnorm(0.05, 165, 7, lower.tail = FALSE)
+faux.positif &lt;- pnorm(x.seuil, 165, 7, lower.tail = FALSE)
+faux.negatif &lt;- pnorm(x.seuil, 169, 7)
+
+x.seuil</code></pre>
+<pre><code>#&gt; [1] 176.514</code></pre>
+<pre class="r"><code>faux.positif</code></pre>
+<pre><code>#&gt; [1] 0.05</code></pre>
+<pre class="r"><code>faux.negatif</code></pre>
+<pre><code>#&gt; [1] 0.8584598</code></pre>
+<p><strong>Interprétation.</strong><br />
+- <code>faux.positif</code> correspond à <span
+class="math inline">\(\alpha\)</span> ; - <code>faux.negatif</code>
+correspond à <span class="math inline">\(\beta\)</span> sous une
+alternative donnée.</p>
+<hr />
+</div>
+<div id="effet-du-seuil-alpha-sur-la-puissance" class="section level2">
+<h2>10.3 Effet du seuil alpha sur la puissance</h2>
+<pre class="r"><code>alpha &lt;- 0.05
+Mseuil &lt;- qnorm(alpha, 165, 0.99, lower.tail = FALSE)
+puissance_05 &lt;- pnorm(Mseuil, 169, 0.99, lower.tail = FALSE)
+
+alpha &lt;- 0.001
+Mseuil2 &lt;- qnorm(alpha, 165, 0.99, lower.tail = FALSE)
+puissance_001 &lt;- pnorm(Mseuil2, 169, 0.99, lower.tail = FALSE)
+
+c(puissance_05 = puissance_05, puissance_001 = puissance_001)</code></pre>
+<pre><code>#&gt;  puissance_05 puissance_001 
+#&gt;     0.9917023     0.8289875</code></pre>
+<p><strong>Interprétation.</strong><br />
+Quand on rend le test plus strict, la puissance baisse.<br />
+C’est le compromis classique : moins de faux positifs, mais plus de faux
+négatifs.</p>
+<hr />
+</div>
+<div id="effet-de-la-taille-déchantillon" class="section level2">
+<h2>10.4 Effet de la taille d’échantillon</h2>
+<pre class="r"><code>alpha &lt;- 0.05
+n &lt;- 30
+Mseuil &lt;- qnorm(alpha, 165, 7 / n^0.5, lower.tail = FALSE)
+puissance_n30 &lt;- pnorm(Mseuil, 169, 7 / n^0.5, lower.tail = FALSE)
+
+n &lt;- 100
+Mseuil &lt;- qnorm(alpha, 165, 7 / n^0.5, lower.tail = FALSE)
+puissance_n100 &lt;- pnorm(Mseuil, 169, 7 / n^0.5, lower.tail = FALSE)
+
+c(puissance_n30 = puissance_n30, puissance_n100 = puissance_n100)</code></pre>
+<pre><code>#&gt;  puissance_n30 puissance_n100 
+#&gt;      0.9312267      0.9999764</code></pre>
+<p><strong>Interprétation.</strong><br />
+Augmenter <code>n</code> réduit l’erreur standard, sépare mieux <span
+class="math inline">\(H_0\)</span> et <span
+class="math inline">\(H_1\)</span>, et augmente la puissance.</p>
+<hr />
+</div>
+<div id="effet-de-lécart-testé" class="section level2">
+<h2>10.5 Effet de l’écart testé</h2>
+<pre class="r"><code>alpha &lt;- 0.05
+Mseuil &lt;- qnorm(alpha, 165, 0.99, lower.tail = FALSE)
+
+mu.h &lt;- 167
+puissance_167 &lt;- pnorm(Mseuil, mu.h, 0.99, lower.tail = FALSE)
+
+mu.h &lt;- 169
+puissance_169 &lt;- pnorm(Mseuil, mu.h, 0.99, lower.tail = FALSE)
+
+c(puissance_167 = puissance_167, puissance_169 = puissance_169)</code></pre>
+<pre><code>#&gt; puissance_167 puissance_169 
+#&gt;     0.6462993     0.9917023</code></pre>
+<p><strong>Interprétation.</strong><br />
+Plus l’effet réel est grand, plus le test a de chances de le
+détecter.</p>
+<hr />
+</div>
+</div>
+<div id="abaques-et-fonctions-de-puissance-dans-r"
+class="section level1">
+<h1>11. Abaques et fonctions de puissance dans R</h1>
+<div
+id="abaque-puissance-selon-delta-pour-plusieurs-tailles-déchantillon"
+class="section level2">
+<h2>11.1 Abaque puissance selon delta pour plusieurs tailles
+d’échantillon</h2>
+<pre class="r"><code>alpha &lt;- 0.05
+sigma &lt;- 7
+mu.h &lt;- seq(165, 190, 0.01)
+delta &lt;- mu.h - 165
+
+n &lt;- 30
+Mseuil &lt;- qnorm(alpha, 165, sigma / n^0.5, lower.tail = FALSE)
+plot(
+  delta,
+  pnorm(Mseuil, mu.h, sigma / n^0.5, lower.tail = FALSE),
+  type = &quot;l&quot;, lwd = 2,
+  xlab = expression(Delta[(mu[h]-165)]),
+  ylab = expression(1 - beta),
+  main = expression(paste(alpha[seuil], &quot; = 5% et &quot;, sigma, &quot; = 7 cm&quot;)),
+  xlim = range(0, 5),
+  bty = &quot;l&quot;
+)
+
+k &lt;- 1
+for (n in c(50, 100, 200, 500, 1000)) {
+  k &lt;- k + 1
+  Mseuil &lt;- qnorm(alpha, 165, sigma / n^0.5, lower.tail = FALSE)
+  lines(delta, pnorm(Mseuil, mu.h, sigma / n^0.5, lower.tail = FALSE), lty = k, lwd = 2)
+}
+legend(
+  &quot;bottomright&quot;,
+  c(&quot;n=30&quot;, &quot;n=50&quot;, &quot;n=100&quot;, &quot;n=200&quot;, &quot;n=500&quot;, &quot;n=1000&quot;),
+  lty = 1:6, lwd = 2, bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/abaque-delta-n-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Un abaque permet de lire rapidement le compromis entre <strong>taille
+d’effet</strong> et <strong>effectif nécessaire</strong>.</p>
+<hr />
+</div>
+<div id="power.t.test" class="section level2">
+<h2>11.2 <code>power.t.test()</code></h2>
+<pre class="r"><code>power.t.test(n = 20, delta = 4, sd = 7, sig.level = 0.05,
+             power = NULL, type = &quot;one.sample&quot;, alternative = &quot;one.sided&quot;)</code></pre>
+<pre><code>#&gt; 
+#&gt;      One-sample t test power calculation 
+#&gt; 
+#&gt;               n = 20
+#&gt;           delta = 4
+#&gt;              sd = 7
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.7933208
+#&gt;     alternative = one.sided</code></pre>
+<pre class="r"><code>power.t.test(n = NULL, delta = 2, sd = 20, sig.level = 0.05,
+             power = 0.8, type = &quot;one.sample&quot;, alternative = &quot;one.sided&quot;)</code></pre>
+<pre><code>#&gt; 
+#&gt;      One-sample t test power calculation 
+#&gt; 
+#&gt;               n = 619.6107
+#&gt;           delta = 2
+#&gt;              sd = 20
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.8
+#&gt;     alternative = one.sided</code></pre>
+<p><strong>Interprétation.</strong><br />
+- Première commande : calcule la <strong>puissance</strong> si
+<code>n</code> est fixé. - Deuxième commande : calcule le <strong>n
+nécessaire</strong> pour atteindre une puissance donnée.</p>
+<hr />
+</div>
+<div id="loi-non-centrale-et-puissance-via-ncp" class="section level2">
+<h2>11.3 Loi non centrale et puissance via <code>ncp</code></h2>
+<pre class="r"><code>n &lt;- 20
+m.theo &lt;- 165
+m.testee &lt;- 169
+sigma &lt;- 7
+ncp.test &lt;- (m.testee - m.theo) / (sigma / n^0.5)
+VT.t &lt;- seq(-5, 10, 0.01)
+
+plot(VT.t, dt(VT.t, n - 1), type = &quot;l&quot;, lwd = 2,
+     xlab = &quot;Valeurs de la VT t&quot;, ylab = &quot;Densité de la distribution&quot;, bty = &quot;l&quot;)
+lines(VT.t, dt(VT.t, n - 1, ncp = ncp.test), type = &quot;l&quot;, lwd = 2, col = &quot;grey&quot;)
+legend(
+  x = 4, y = 0.4,
+  c(expression(H[0]), expression(H[1])),
+  lty = c(1, 1), col = c(&quot;black&quot;, &quot;grey&quot;), lwd = 2, bty = &quot;n&quot;
+)</code></pre>
+<p><img src="figure/Gael_4.Rmd/ncp-student-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+La loi non centrale permet de modéliser directement la distribution de
+la VT <strong>sous</strong> <span class="math inline">\(H_1\)</span>, ce
+qui donne une approche élégante de la puissance.</p>
+<div id="puissance-calculée-à-partir-du-seuil-critique"
+class="section level3">
+<h3>Puissance calculée à partir du seuil critique</h3>
+<pre class="r"><code>alpha &lt;- 0.05
+t.seuil &lt;- qt(alpha, n - 1, lower.tail = FALSE)
+puissance &lt;- pt(t.seuil, n - 1, ncp = ncp.test, lower.tail = FALSE)
+puissance</code></pre>
+<pre><code>#&gt; [1] 0.7933208</code></pre>
+</div>
+<div id="vérification-par-power.t.test" class="section level3">
+<h3>Vérification par <code>power.t.test()</code></h3>
+<pre class="r"><code>power.t.test(n = 20, delta = 4, sd = 7, sig.level = 0.05,
+             power = NULL, type = &quot;one.sample&quot;, alternative = &quot;one.sided&quot;)</code></pre>
+<pre><code>#&gt; 
+#&gt;      One-sample t test power calculation 
+#&gt; 
+#&gt;               n = 20
+#&gt;           delta = 4
+#&gt;              sd = 7
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.7933208
+#&gt;     alternative = one.sided</code></pre>
+<p><strong>Interprétation.</strong><br />
+Les deux approches doivent donner des résultats cohérents :</p>
+<ul>
+<li>approche analytique avec <code>ncp</code> ;</li>
+<li>approche directement encapsulée dans
+<code>power.t.test()</code>.</li>
+</ul>
+<hr />
+</div>
+</div>
+</div>
+<div id="exercices-et-simulations-utiles-pour-réviser"
+class="section level1">
+<h1>12. Exercices et simulations utiles pour réviser</h1>
+<div id="variable-discrète-observée-histogramme-polygone-barplot"
+class="section level2">
+<h2>12.1 Variable discrète observée : histogramme, polygone,
+barplot</h2>
+<pre class="r"><code>nb.eleves &lt;- 122:130
+nb.colleges &lt;- c(1, 4, 24, 48, 59, 108, 92, 52, 12)
+proportion.colleges &lt;- nb.colleges / sum(nb.colleges)
+effectif &lt;- rep(nb.eleves, nb.colleges)
+
+hist(effectif, breaks = c(121.5:130.5), freq = FALSE,
+     main = NULL, xlab = &quot;Nombre d&#39;élèves par collège&quot;,
+     ylab = &quot;Proportion de collèges&quot;)</code></pre>
+<p><img src="figure/Gael_4.Rmd/exo-discrete-graphics-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(nb.eleves, proportion.colleges, type = &quot;b&quot;, pch = 16,
+     xlab = &quot;Nombre d&#39;élèves par collège&quot;, ylab = &quot;Proportion de collèges&quot;, bty = &quot;l&quot;)</code></pre>
+<p><img src="figure/Gael_4.Rmd/exo-discrete-graphics-2.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barplot(proportion.colleges, names.arg = nb.eleves,
+        xlab = &quot;Nombre d&#39;élèves par collège&quot;, ylab = &quot;Proportion de collèges&quot;)</code></pre>
+<p><img src="figure/Gael_4.Rmd/exo-discrete-graphics-3.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Très utile pour distinguer :</p>
+<ul>
+<li>histogramme pour variable quantitative ;</li>
+<li>diagramme en barres pour variable discrète ou qualitative ;</li>
+<li>polygone de fréquences pour visualiser une distribution
+discrète.</li>
+</ul>
+<hr />
+</div>
+<div id="approximation-de-probabilité-ponctuelle-en-variable-continue"
+class="section level2">
+<h2>12.2 Approximation de probabilité ponctuelle en variable
+continue</h2>
+<pre class="r"><code>mean &lt;- 43
+sigma &lt;- 2.3
+
+pnorm(43.5, mean, sigma) - pnorm(42.5, mean, sigma)</code></pre>
+<pre><code>#&gt; [1] 0.1720966</code></pre>
+<pre class="r"><code>pnorm(43.05, mean, sigma) - pnorm(42.95, mean, sigma)</code></pre>
+<pre><code>#&gt; [1] 0.01734395</code></pre>
+<pre class="r"><code>(43.5 - 42.5) * dnorm(43, mean, sigma)</code></pre>
+<pre><code>#&gt; [1] 0.1734532</code></pre>
+<p><strong>Interprétation.</strong><br />
+Pour une variable continue, on ne calcule pas une probabilité
+ponctuelle, mais une probabilité sur un
+<strong>intervalle</strong>.<br />
+La densité sert d’approximation locale quand l’intervalle est petit.</p>
+<hr />
+</div>
+<div id="distribution-de-u-et-seuils-critiques" class="section level2">
+<h2>12.3 Distribution de U et seuils critiques</h2>
+<pre class="r"><code>n1 &lt;- 2
+n2 &lt;- 2
+U.calc &lt;- 4
+U.seuil &lt;- 3
+
+alpha.seuil &lt;- pwilcox(U.seuil - 1, n1, n2, lower.tail = FALSE)
+p.value &lt;- pwilcox(U.calc - 1, n1, n2, lower.tail = FALSE)
+
+alpha.seuil</code></pre>
+<pre><code>#&gt; [1] 0.3333333</code></pre>
+<pre class="r"><code>p.value</code></pre>
+<pre><code>#&gt; [1] 0.1666667</code></pre>
+<p><strong>Interprétation.</strong><br />
+Ce chunk montre la logique exacte du test :</p>
+<ul>
+<li><code>U.seuil</code> fixe un niveau de rejet ;</li>
+<li><code>U.calc</code> fournit la valeur observée ;</li>
+<li>la p value compare la position de <code>U.calc</code> dans la
+distribution exacte.</li>
+</ul>
+<hr />
+</div>
+<div id="exemple-de-test-t-à-deux-échantillons-simulé"
+class="section level2">
+<h2>12.4 Exemple de test t à deux échantillons simulé</h2>
+<pre class="r"><code>library(gplots)
+
+n &lt;- 10
+F &lt;- rnorm(n / 2, 165, 7)
+H &lt;- rnorm(n / 2, 169, 7)
+obs1 &lt;- data.frame(c(F, H), c(rep(&quot;Femme&quot;, n / 2), rep(&quot;Homme&quot;, n / 2)))
+names(obs1) &lt;- c(&quot;Taille&quot;, &quot;Sexe&quot;)
+
+m &lt;- sapply(split(obs1[, 1], obs1[, 2]), mean)
+s &lt;- sapply(split(obs1[, 1], obs1[, 2]), sd)
+
+barplot2(
+  m,
+  xlim = c(0, 4), ylim = range(120, 200), space = 0.6,
+  names.arg = levels(obs1[, 2]), plot.ci = TRUE,
+  ci.l = (m - s), ci.u = (m + s),
+  xlab = names(obs1)[2], ylab = paste(&quot;Moyenne +/- écart type de&quot;, names(obs1)[1])
+)
+
+t.test(
+  split(obs1[, 1], obs1[, 2])[[2]],
+  split(obs1[, 1], obs1[, 2])[[1]],
+  var.equal = TRUE,
+  alternative = &quot;greater&quot;
+)</code></pre>
+<p><strong>Interprétation.</strong><br />
+Chunk utile pour relier :</p>
+<ul>
+<li>visualisation descriptive ;</li>
+<li>hypothèse directionnelle ;</li>
+<li>test t à deux échantillons.</li>
+</ul>
+<hr />
+</div>
+<div id="fluctuation-empirique-du-chi2" class="section level2">
+<h2>12.5 Fluctuation empirique du <span
+class="math inline">\(\chi^2\)</span></h2>
+<pre class="r"><code>n &lt;- 200
+k &lt;- 4
+proba.theo &lt;- rep(1 / k, k)
+X2.obs &lt;- NULL
+
+for (i in 1:500) {
+  obs &lt;- rmultinom(1, n, prob = proba.theo)
+  X2.obs &lt;- c(X2.obs, sum((obs - proba.theo * n)^2 / (proba.theo * n)))
+}
+
+hist(X2.obs, freq = FALSE,
+     main = expression(paste(&quot;Fluctuation de la VT &quot;, chi^2)),
+     ylim = range(0, 0.3),
+     xlab = expression(paste(&quot;Valeurs de la VT &quot;, chi^2)),
+     ylab = &quot;Densité de la distribution&quot;)
+VT.X2 &lt;- seq(-0.1, 40, 0.01)
+ddl &lt;- k - 1
+lines(VT.X2, dchisq(VT.X2, ddl))
+legend(&quot;topright&quot;, c(&quot;A cause de l&#39;échantillonnage&quot;, &quot;Prévue par le test&quot;),
+       lty = c(NA, 1), lwd = c(NA, 2), pch = c(22, NA), pt.cex = c(2.5, NA),
+       pt.bg = c(&quot;white&quot;, NA), bty = &quot;n&quot;)</code></pre>
+<p><img src="figure/Gael_4.Rmd/exo-chisq-fluctuation-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Très bon chunk pour comprendre que la statistique <span
+class="math inline">\(\chi^2\)</span> obtenue en pratique fluctue autour
+de la loi théorique attendue sous <span
+class="math inline">\(H_0\)</span>.</p>
+<hr />
+</div>
+<div id="fluctuation-empirique-de-u-de-mann-whitney"
+class="section level2">
+<h2>12.6 Fluctuation empirique de U de Mann-Whitney</h2>
+<pre class="r"><code>nf &lt;- 11
+nh &lt;- 9
+n &lt;- nf + nh
+mu.f &lt;- 165
+mu.h &lt;- 165
+Uh &lt;- NULL
+
+for (i in 1:5000) {
+  Echantillon &lt;- c(rnorm(nf, mu.f, 7), rnorm(nh, mu.h, 7))
+  Wh.calc &lt;- sum(rank(Echantillon)[(nf + 1):n])
+  Uh.calc &lt;- Wh.calc - 0.5 * nh * (nh + 1)
+  Uh &lt;- c(Uh, Uh.calc)
+}
+
+hist(Uh, freq = FALSE,
+     main = expression(paste(&quot;Fluctuation de la VT &quot;, U[h])),
+     ylim = range(0, max(hist(Uh, plot = FALSE)$density) * 1.3),
+     xlab = expression(paste(&quot;Valeurs de la VT &quot;, U[h])),
+     ylab = &quot;Densité de la distribution&quot;)
+VT.U &lt;- 0:(nf * nh)
+lines(VT.U, dwilcox(VT.U, nh, nf), lwd = 2)
+legend(&quot;topright&quot;,
+       c(&quot;A cause de l&#39;échantillonnage&quot;, &quot;Prévue par le test de Mann-Whitney&quot;),
+       lty = c(NA, 1), lwd = c(NA, 2), pch = c(22, NA), pt.cex = c(2.5, NA),
+       pt.bg = c(&quot;white&quot;, NA), bty = &quot;n&quot;)</code></pre>
+<p><img src="figure/Gael_4.Rmd/exo-U-fluctuation-1.png" alt="" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Interprétation.</strong><br />
+Même logique que précédemment, mais sur une statistique de rangs.</p>
+<hr />
+</div>
+</div>
+<div id="synthèse-ultra-courte-à-mémoriser" class="section level1">
+<h1>13. Synthèse ultra-courte à mémoriser</h1>
+<div id="ce-quil-faut-savoir-faire-en-pratique" class="section level2">
+<h2>Ce qu’il faut savoir faire en pratique</h2>
+<ol style="list-style-type: decimal">
+<li><strong>Identifier le bon type de loi</strong> : discrète ou
+continue.</li>
+<li>Savoir lire <code>d</code>, <code>p</code>, <code>q</code>,
+<code>r</code>.</li>
+<li>Distinguer :
+<ul>
+<li>variable mesurée ;</li>
+<li>variable de test ;</li>
+<li>loi de la VT sous <span class="math inline">\(H_0\)</span>.</li>
+</ul></li>
+<li>Comprendre que la p value est une <strong>aire de
+queue</strong>.</li>
+<li>Savoir que :
+<ul>
+<li><span class="math inline">\(\alpha\)</span> = faux positif ;</li>
+<li><span class="math inline">\(\beta\)</span> = faux négatif ;</li>
+<li>puissance = <span class="math inline">\(1 - \beta\)</span>.</li>
+</ul></li>
+<li>Retenir les effets principaux sur la puissance :
+<ul>
+<li><code>n</code> augmente -&gt; puissance augmente ;</li>
+<li><code>alpha</code> diminue -&gt; puissance diminue ;</li>
+<li><code>delta</code> augmente -&gt; puissance augmente ;</li>
+<li>variabilité augmente -&gt; puissance diminue.</li>
+</ul></li>
+</ol>
+</div>
+<div id="ce-quil-faut-éviter" class="section level2">
+<h2>Ce qu’il faut éviter</h2>
+<ul>
+<li>confondre <code>dnorm()</code> avec une probabilité ponctuelle
+;</li>
+<li>oublier <code>lower.tail = FALSE</code> quand on veut la queue
+droite ;</li>
+<li>utiliser unilatéral après avoir vu les données ;</li>
+<li>traiter la p value comme un score de vérité ;</li>
+<li>ignorer les comparaisons multiples.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="checklist-de-révision" class="section level1">
+<h1>14. Checklist de révision</h1>
+<div id="fonctions-r-à-connaître-sans-hésiter" class="section level2">
+<h2>Fonctions R à connaître sans hésiter</h2>
+<ul>
+<li>Binomiale : <code>dbinom</code>, <code>pbinom</code>,
+<code>qbinom</code>, <code>rbinom</code></li>
+<li>Normale : <code>dnorm</code>, <code>pnorm</code>,
+<code>qnorm</code>, <code>rnorm</code></li>
+<li>Student : <code>dt</code>, <code>pt</code>, <code>qt</code>,
+<code>rt</code></li>
+<li>Chi-deux : <code>dchisq</code>, <code>pchisq</code>,
+<code>qchisq</code>, <code>rchisq</code></li>
+<li>Fisher : <code>df</code>, <code>pf</code>, <code>qf</code>,
+<code>rf</code></li>
+<li>Poisson : <code>dpois</code>, <code>ppois</code>,
+<code>qpois</code>, <code>rpois</code></li>
+<li>Wilcoxon/Mann-Whitney : <code>dwilcox</code>, <code>pwilcox</code>,
+<code>qwilcox</code></li>
+<li>Sign-rank : <code>dsignrank</code>, <code>psignrank</code>,
+<code>qsignrank</code></li>
+<li>Correction multiple : <code>p.adjust</code></li>
+<li>Puissance : <code>power.t.test</code>,
+<code>power.prop.test</code></li>
+</ul>
+</div>
+<div id="questions-dauto-contrôle" class="section level2">
+<h2>Questions d’auto-contrôle</h2>
+<ul>
+<li>Suis-je en train de calculer une densité, une probabilité cumulée ou
+un quantile ?</li>
+<li>Ma loi est-elle discrète ou continue ?</li>
+<li>Le test est-il unilatéral ou bilatéral, et pourquoi ?</li>
+<li>Quel est le prix statistique de mon choix en termes de <span
+class="math inline">\(\alpha\)</span> et de puissance ?</li>
+<li>La loi théorique de la VT est-elle plausible ici ?</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="pour-aller-plus-loin" class="section level1">
+<h1>15. Pour aller plus loin</h1>
+<p>Si vous voulez enrichir ce document ensuite, les améliorations les
+plus utiles seraient :</p>
+<ul>
+<li>ajouter une section <strong>“quand utiliser quel test”</strong>
+;</li>
+<li>relier ce chapitre au <strong>chapitre sur les tests t,
+Wilcoxon,</strong> <span class="math inline">\(\chi^2\)</span>, ANOVA
+;</li>
+<li>remplacer certains graphiques base R par <code>ggplot2</code> pour
+une version plus propre ;</li>
+<li>ajouter des <strong>exercices guidés</strong> avec correction
+cachée.</li>
+</ul>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>#&gt; R version 4.5.3 (2026-03-11)
+#&gt; Platform: aarch64-apple-darwin20
+#&gt; Running under: macOS Ventura 13.6.3
+#&gt; 
+#&gt; Matrix products: default
+#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+#&gt; 
+#&gt; locale:
+#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+#&gt; 
+#&gt; time zone: Europe/Paris
+#&gt; tzcode source: internal
+#&gt; 
+#&gt; attached base packages:
+#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
+#&gt; 
+#&gt; loaded via a namespace (and not attached):
+#&gt;  [1] vctrs_0.7.1       cli_3.6.5         knitr_1.51        rlang_1.1.7      
+#&gt;  [5] xfun_0.56         stringi_1.8.7     otel_0.2.0        promises_1.5.0   
+#&gt;  [9] jsonlite_2.0.0    workflowr_1.7.2   glue_1.8.0        rprojroot_2.1.1  
+#&gt; [13] git2r_0.36.2      htmltools_0.5.9   httpuv_1.6.16     sass_0.4.10      
+#&gt; [17] rmarkdown_2.30    jquerylib_0.1.4   evaluate_1.0.5    tibble_3.3.1     
+#&gt; [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   stringr_1.6.0    
+#&gt; [25] compiler_4.5.3    fs_1.6.7          Rcpp_1.1.1        pkgconfig_2.0.3  
+#&gt; [29] rstudioapi_0.18.0 later_1.4.8       digest_0.6.39     R6_2.6.1         
+#&gt; [33] pillar_1.11.1     magrittr_2.0.4    bslib_0.10.0      tools_4.5.3      
+#&gt; [37] cachem_1.1.0</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -32,6 +32,11 @@ packages <- c("MASS", "pls", "rpart", "randomForest", "NbClust")
 to_install <- packages[!packages %in% rownames(installed.packages())]
 if(length(to_install) > 0) install.packages(to_install)
 
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(FactoMineR)
+library(factoextra)
 library(MASS)
 library(pls)
 library(rpart)
@@ -262,27 +267,48 @@ for(i in 1:nbrun){
   taux_v2[i] <- mean(predict(rf2, newdata = gymDF_v2[idx_test, ]) == gp[idx_test])
 }
 
-mean_v1 <- mean(taux_v1)
-sd_v1   <- sd(taux_v1)
-
-mean_v2 <- mean(taux_v2)
-sd_v2   <- sd(taux_v2)
-
-cat("V1 (11 vars) :", round(mean_v1 * 100, 2), "% (+/-", round(sd_v1 * 100, 2), "%)\n")
-cat("V2 ( 8 vars) :", round(mean_v2 * 100, 2), "% (+/-", round(sd_v2 * 100, 2), "%)\n")
-
-boxplot(
-  list("V1 - 11 vars" = taux_v1, "V2 - 8 vars" = taux_v2),
-  main = "RF CV : V1 vs V2",
-  ylab = "Taux bien classés",
-  col = c("lightblue", "lightcoral")
+# Comparaison statistique des taux CV RF
+rf_comp <- data.frame(
+  Accuracy = c(taux_v1, taux_v2),
+  Version = factor(rep(c("V1_11_var", "V2_8_var"), each = nbrun),
+                   levels = c("V1_11_var", "V2_8_var"))
 )
+
+test_rf <- t.test(taux_v1, taux_v2, paired = TRUE)
+test_rf
+
+# Résumé
+rf_summary <- rf_comp %>%
+  group_by(Version) %>%
+  summarise(
+    mean_accuracy = mean(Accuracy),
+    sd_accuracy = sd(Accuracy),
+    .groups = "drop"
+  )
+rf_summary
+
+# Graphique ggplot
+
+ggplot(rf_comp, aes(x = Version, y = Accuracy, fill = Version)) +
+  geom_boxplot(alpha = 0.6, width = 0.55, outlier.shape = NA) +
+  geom_jitter(width = 0.08, alpha = 0.35, size = 1.6) +
+  labs(
+    title = "Validation croisée RF : V1 (11 variables) vs V2 (8 variables)",
+    x = "Version de la matrice X",
+    y = "Taux de bien classés"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
 ```
 
-La validation RF montre ici : - V1 : `r round(mean_v1 * 100, 2)`% de bien classés - V2 : `r round(mean_v2 * 100, 2)`% de bien classés
+La validation RF montre ici : - V1 : % de bien classés - V2 : % de bien classés
 
 La version nettoyée est donc **au moins aussi bonne**, souvent légèrement meilleure, tout en étant plus lisible.\
 C’est le genre de nettoyage qu’on garde, pas celui qu’on justifie après coup à coups de poésie.
+
+Le t-test apparié compare les performances obtenues sur les mêmes répétitions de validation croisée. V2 est plus lisible, moins redondante, et au moins aussi performante que V1.
 
 # 4. Construction de la matrice finale pour l’analyse principale
 
@@ -489,6 +515,30 @@ par(mfrow = c(1, 1))
 Si le gradient des classes se fait surtout selon CP1, alors CP1 capture l’essentiel du signal lié à la dépense calorique.\
 C’est précisément ce qui justifie ensuite l’usage d’une méthode supervisée comme la PLS.
 
+```{r}
+acp_ind <- data.frame(
+  CP1 = resacp$scores[, 1],
+  CP2 = resacp$scores[, 2],
+  CP3 = resacp$scores[, 3],
+  Calories_Class = gp,
+  Gender = gym$Gender,
+  Workout_Type = gym$Workout_Type,
+  Experience_Level = gym$Experience_Level
+)
+
+ggplot(acp_ind, aes(x = CP1, y = CP2, color = Calories_Class)) +
+  geom_hline(yintercept = 0, linetype = 2, color = "grey70") +
+  geom_vline(xintercept = 0, linetype = 2, color = "grey70") +
+  geom_point(alpha = 0.65, size = 1.8) +
+  labs(
+    title = "ACP - individus colorés par classe de calories",
+    x = paste0("CP1 (", pct1, "%)"),
+    y = paste0("CP2 (", pct2, "%)")
+  ) +
+  theme_minimal()
+
+```
+
 ### 5.1.8 Cercle des corrélations
 
 ```{r cercle-acp}
@@ -506,15 +556,43 @@ Les variables les plus liées : - à **CP1** : `r paste(top_abs_names(corvar[,1]
 
 On peut généralement lire : - **CP1** comme un axe de performance / condition physique, - **CP2** comme un axe morphologique, - **CP3** comme un axe plus physiologique.
 
-### 5.1.9 Vérification des individus extrêmes sur CP3
+-   L'axe 1 est surtout structuré par Fat_Percentage, Session_Duration, Water_Intake et Workout_Frequency.
 
-```{r extremes-cp3}
-CP3 <- resacp$scores[, 3]
-top_CP3 <- order(CP3, decreasing = TRUE)[1:10]
-gym[top_CP3, c("Age", "Avg_BPM", "Gender", "Calories_Burned")]
+-   L'axe 2 est dominé par Weight et Height, ce qui correspond à une dimension morphologique.
+
+-   L'axe 3 est principalement porté par Age et Avg_BPM, suggérant une dimension plus physiologique.
+
+### 5.1.9. clarify separated groups / extreme individuals
+
+```{r}
+extreme_cp1_pos <- gym %>%
+  mutate(CP1 = resacp$scores[, 1],
+         CP2 = resacp$scores[, 2],
+         CP3 = resacp$scores[, 3]) %>%
+  arrange(desc(CP1)) %>%
+  select(CP1, Age, Weight, Height, Avg_BPM, Session_Duration,
+         Fat_Percentage, Water_Intake, Workout_Frequency,
+         Gender, Workout_Type, Experience_Level, Calories_Burned) %>%
+  slice(1:10)
+
+extreme_cp1_neg <- gym %>%
+  mutate(CP1 = resacp$scores[, 1],
+         CP2 = resacp$scores[, 2],
+         CP3 = resacp$scores[, 3]) %>%
+  arrange(CP1) %>% select(CP1, Age, Weight, Height, Avg_BPM, Session_Duration,
+         Fat_Percentage, Water_Intake, Workout_Frequency,
+         Gender, Workout_Type, Experience_Level, Calories_Burned) %>%
+  slice(1:10)
+
+extreme_cp1_pos
+extreme_cp1_neg
 ```
 
-Cette vérification permet de confirmer concrètement ce que raconte CP3, au lieu de réciter des interprétations hors-sol.
+Les individus très positifs sur CP1 présentent un profil opposé à ceux très négatifs sur CP1. Cette vérification permet de montrer concrètement d'où vient la séparation visuelle observée sur le plan factoriel. On ne se contente donc pas d'un graphique : on relie les groupes aux variables qui les structurent réellement.
+
+# d’où viennent les groupes bien séparés - L'examen des individus extrêmes sur CP1 ?????????
+
+L'examen des individus extrêmes sur CP1 permet de comprendre d'où vient la séparation visuelle observée sur le plan factoriel. Les profils très positifs et très négatifs sur CP1 diffèrent surtout sur les variables les plus corrélées à cet axe, notamment la durée de séance, le pourcentage de masse grasse, l'hydratation et la fréquence d'entraînement ??
 
 ## 5.2 Classification ascendante hiérarchique (CAH)
 
@@ -870,6 +948,7 @@ gymQuali$Experience_Level <- factor(gymQuali$Experience_Level)
 # AFCM non interactive
 resafcm <- MCA(gymQuali, ncp = 6, graph = FALSE)
 
+
 # Coordonnées des individus
 coord_afcm <- as.data.frame(resafcm$ind$coord[, 1:6])
 colnames(coord_afcm) <- paste0("AFCM_", 1:6)
@@ -911,6 +990,30 @@ plot(coord_afcm[, 1], coord_afcm[, 2],
 legend("topright", legend = names(cols_exp), col = cols_exp, pch = 16, cex = 0.8)
 
 par(mfrow = c(1, 1))
+```
+
+```{r}
+ggplot(mod_contrib_dim1 %>% slice_head(n = 10),
+       aes(x = reorder(Modalite, Contribution), y = Contribution)) +
+  geom_col(alpha = 0.85) +
+  coord_flip() +
+  labs(
+    title = "AFCM - modalités les plus contributives à l'axe 1",
+    x = "Modalité",
+    y = "Contribution (%)"
+  ) +
+  theme_minimal()
+
+ggplot(mod_contrib_dim2 %>% slice_head(n = 10),
+       aes(x = reorder(Modalite, Contribution), y = Contribution)) +
+  geom_col(alpha = 0.85) +
+  coord_flip() +
+  labs(
+    title = "AFCM - modalités les plus contributives à l'axe 2",
+    x = "Modalité",
+    y = "Contribution (%)"
+  ) +
+  theme_minimal()
 ```
 
 ## 7.2 PLS : régression sur composantes
@@ -965,7 +1068,7 @@ data_testCR <- data.frame(X_testCR, Calories = Y_testCR)
 
 C’est une étape importante : on centre-réduit le test **avec les paramètres de l’apprentissage**, sinon on triche sans même s’en rendre compte.
 
-### 7.2.4 Ajustement PLS
+### 7.2.4 Ajustement PLS sur l’échantillon d’apprentissage
 
 ```{r pls-fit}
 ncomp_max <- min(ncol(X_appCR), 15)
@@ -973,6 +1076,8 @@ ncomp_max <- min(ncol(X_appCR), 15)
 respls <- plsr(Calories ~ ., data = data_appCR, ncomp = ncomp_max)
 summary(respls)
 ```
+
+les pourcentages de variance expliquée affichés ici correspondent à l’échantillon **d’apprentissage**.
 
 ### 7.2.5 Représentation des individus sur le plan PLS 1-2
 
@@ -1052,7 +1157,9 @@ ncomp_opt
 Le nombre optimal de composantes retenu est ici **`r ncomp_opt`**.\
 On choisit donc le compromis qui minimise l’erreur de prédiction moyenne, pas celui qui fait joli dans un commentaire écrit avant les résultats.
 
-### 7.2.8 Évaluation sur le jeu test
+La validation croisée répétée est utilisée ici pour choisir un nombre de composantes défendable et estimer la stabilité de la performance au sein de l’échantillon d’apprentissage. Elle reste distincte de l’évaluation finale sur l’échantillon test.
+
+### 7.2.8 Évaluation finale sur l’échantillon test
 
 ```{r pls-test}
 pred_test_cr  <- as.vector(predict(respls, newdata = data_testCR, ncomp = ncomp_opt))

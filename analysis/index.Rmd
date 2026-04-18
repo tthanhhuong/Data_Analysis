@@ -20,7 +20,7 @@ editor_options:
 
 ### [Chapitre 1 - Preservation de R](Gael_1.html)
 
-### Chapitre 4 - Les étapes d'un test statistique
+### [Chapitre 4 - Les étapes d'un test statistique](Gael_4.html)
 
 Distribution de probabilité
 
