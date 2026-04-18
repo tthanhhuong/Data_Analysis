@@ -14,8 +14,6 @@ editor_options:
 
 ### [Script de Huong](EDC_Huong.html)
 
-### [Script](EDC_RScript.html)
-
 # **Les tests statistiques à l'aide de R **
 
 ### [Chapitre 1 - Preservation de R](Gael_1.html)
@@ -27,6 +25,8 @@ Distribution de probabilité
 [Excercices](4_Excercice.html)
 
 # **Data Mining**
+
+### [Data Mining Master Script](Data_Mining_Master_Script.html) 
 
 # **Modèle Linéaire**
 

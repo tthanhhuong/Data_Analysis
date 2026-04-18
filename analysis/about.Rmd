@@ -25,6 +25,54 @@ This is the general workflow:
 
 7.  `wflow_publish(republish=T, message = "Republish entire site")`
 
+    `# 1) Lấy toàn bộ file Rmd trong analysis`
+
+    `all_files <- list.files("analysis", pattern = "\\.Rmd$", full.names = TRUE)`
+
+    `# 2) Loại file lỗi ra`
+
+    `good_files <- setdiff(all_files, "analysis/trang_loi.Rmd")`
+
+    `# 3) Republish chỉ các file còn lại`
+
+    `wflow_publish(`
+
+    `files = good_files,`
+
+    `republish = TRUE,`
+
+    `combine = "and",`
+
+    `message = "Republish site except broken page"`
+
+    `)`
+
+    **Chỉ publish những file ngon :** `good_files <- c(`
+
+    `"analysis/index.Rmd",`
+
+    `"analysis/about.Rmd",`
+
+    `"analysis/license.Rmd",`
+
+    `"analysis/4_Exercice.Rmd",`
+
+    `"analysis/EDC_Jade.Rmd"`
+
+    `)`
+
+    `wflow_publish(`
+
+    `files = good_files,`
+
+    `republish = TRUE,`
+
+    `combine = "and",`
+
+    `message = "Republish selected working pages"`
+
+    `)`
+
 This ensures that the code version recorded at the top of an HTML file corresponds to the state of the Git repository at the time it was built.
 
 The only exception to this workflow is if you are updating the aesthetics of your website (e.g. anytime you make edits to`analysis/_site.yml`). In this case you’ll want to update all the published HTML files, regardless of whether or not their corresponding R Markdown files have been updated. To republish every HTML page, run [`wflow_publish()`](https://workflowr.github.io/workflowr/reference/wflow_publish.html) with`republish = TRUE`. This behavior is only previewed below by specifying `dry_run = TRUE`.

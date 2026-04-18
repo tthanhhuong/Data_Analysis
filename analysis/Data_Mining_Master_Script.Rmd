@@ -1,0 +1,1164 @@
+---
+title: "Data Mining - Script R Markdown tổng hợp"
+author: "Huong PHAM"
+date: "2026-04-16"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+---
+
+> 
+
+------------------------------------------------------------------------
+
+# Workflow chung của một bài Data Mining
+
+Trong đa số bài, nên nghĩ theo pipeline sau:
+
+1.  **Importer / vérifier les données**\
+    Kiểm tra kiểu dữ liệu, số dòng cột, missing values, biến định lượng hay định tính.
+
+2.  **Exploration univariée et bivariée**\
+    Xem phân phối, ngoại lệ, mức độ phân tán, tương quan, bảng chéo.
+
+3.  **Prétraitement**\
+    Centering, scaling, chọn biến, loại biến gần hằng, mã hóa biến định tính nếu cần.
+
+4.  **Méthode principale**
+
+    -   ACP nếu biến định lượng, mục tiêu mô tả / giảm chiều.
+    -   AFC/AFCM nếu bảng chéo / biến định tính.
+    -   CAH / k-means nếu phân cụm.
+    -   LDA / kNN / CART nếu phân loại có giám sát.
+    -   PLS nếu hồi quy với đa cộng tuyến hay nhiều biến giải thích.
+
+5.  **Validation / choix du modèle**\
+    Không được ngây thơ nhìn mỗi training accuracy. Phải xem CV, PRESS, xerror, stabilité.
+
+6.  **Interprétation substantielle**\
+    Cuối cùng phải trả lời được: trục nào mang ý nghĩa gì, nhóm nào tách nhau ra sao, mô hình nào đáng tin nhất.
+
+------------------------------------------------------------------------
+
+# Setup général
+
+```{r setup, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+options(stringsAsFactors = FALSE)
+setwd("/Users/thanhhuong/Downloads/M1/Data mining/TD/TD1")
+```
+
+```{r packages, eval=FALSE}
+# Cài package nếu máy chưa có
+install.packages(c("MASS", "class", "rpart", "rpart.plot", "pls", "NbClust", "FactoMineR", "rgl"))
+```
+
+```{r helpers}
+# Packages chính
+library(MASS)
+library(class)
+library(rpart)
+library(pls)
+
+# Helper cho panel pairs
+panel.hist <- function(x, ...) {
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(usr[1:2], 0, 1.5))
+  h <- hist(x, plot = FALSE)
+  breaks <- h$breaks; nB <- length(breaks)
+  y <- h$counts; y <- y / max(y)
+  rect(breaks[-nB], 0, breaks[-1], y, col = "lightgray", ...)
+}
+
+panel.cor <- function(x, y, digits = 2, prefix = "r=", cex.cor, ...) {
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- cor(x, y, use = "pairwise.complete.obs")
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if (missing(cex.cor)) cex.cor <- 1.2
+  text(0.5, 0.5, txt, cex = cex.cor)
+}
+
+# CV lặp lại cho kNN
+knn_cv_mean <- function(X, y, k = 3, nbcv = 4, nbrun = 30, seed = 123) {
+  set.seed(seed)
+  X <- as.matrix(X)
+  y <- as.factor(y)
+  acc <- numeric(nbrun)
+  n <- nrow(X)
+
+  for (run in seq_len(nbrun)) {
+    folds <- sample(rep(1:nbcv, length.out = n))
+    fold_acc <- numeric(nbcv)
+
+    for (f in seq_len(nbcv)) {
+      test_id <- which(folds == f)
+      train_id <- setdiff(seq_len(n), test_id)
+      pred <- knn(train = X[train_id, , drop = FALSE],
+                  test  = X[test_id, , drop = FALSE],
+                  cl    = y[train_id],
+                  k     = k)
+      fold_acc[f] <- mean(pred == y[test_id])
+    }
+    acc[run] <- mean(fold_acc)
+  }
+  mean(acc)
+}
+
+# CV lặp lại cho LDA
+lda_cv_mean <- function(X, y, nbcv = 4, nbrun = 30, seed = 123) {
+  set.seed(seed)
+  X <- as.matrix(X)
+  y <- as.factor(y)
+  acc <- numeric(nbrun)
+  n <- nrow(X)
+
+  for (run in seq_len(nbrun)) {
+    folds <- sample(rep(1:nbcv, length.out = n))
+    fold_acc <- numeric(nbcv)
+
+    for (f in seq_len(nbcv)) {
+      test_id <- which(folds == f)
+      train_id <- setdiff(seq_len(n), test_id)
+      fit <- lda(x = X[train_id, , drop = FALSE], grouping = y[train_id])
+      pred <- predict(fit, newdata = X[test_id, , drop = FALSE])$class
+      fold_acc[f] <- mean(pred == y[test_id])
+    }
+    acc[run] <- mean(fold_acc)
+  }
+  mean(acc)
+}
+```
+
+**Interpretation setup**
+
+-   `panel.hist` và `panel.cor` giúp `pairs()` dễ đọc hơn.
+-   `knn_cv_mean()` và `lda_cv_mean()` thay cho các helper file rời rạc.\
+-   Đây là điểm nâng cấp quan trọng: script bớt phụ thuộc vào file ngoài, đỡ cảnh mở lại sau 3 tuần rồi không nhớ thiếu cái gì.
+
+------------------------------------------------------------------------
+
+# 1. Exploration de données
+
+## 1.1. Données quantitatives: *crabes*
+
+### Mục tiêu
+
+-   Xác định kiểu dữ liệu.
+-   Xem phân phối từng biến.
+-   So sánh thang đo.
+-   Đánh giá tương quan giữa các biến morphométriques.
+
+```{r crabes-import, eval=FALSE}
+crabes <- read.table("crabes.txt", header = TRUE, sep = "", dec = ".")
+class(crabes)
+str(crabes)
+summary(crabes)
+```
+
+**Interpretation**
+
+-   `class()` và `str()` cho biết ta đang làm việc với `data.frame`, biến nào là định tính, biến nào là định lượng.
+-   `summary()` là bước đầu tiên để phát hiện:
+    -   giá trị bất thường,
+    -   biến lệch mạnh,
+    -   biến gần như không thay đổi,
+    -   hoặc lỗi import.
+
+```{r crabes-hist-box, eval=FALSE}
+# Histogram cho RW
+hist(crabes$RW, freq = FALSE, xlab = "RW", main = "Distribution de RW")
+lines(density(crabes$RW), col = "blue", lwd = 2, lty = 2)
+
+# Boxplot 1 biến
+boxplot(crabes$RW, main = "Boxplot de RW")
+
+# Boxplot nhiều biến định lượng
+boxplot(crabes[, 4:8], main = "Comparaison des variables quantitatives")
+```
+
+**Interpretation**
+
+-   Histogram + density giúp xem biến có gần chuẩn không, lệch phải/lệch trái, có nhiều mode không.
+-   Boxplot giúp nhìn nhanh:
+    -   median,
+    -   dispersion,
+    -   outliers.
+-   Nếu boxplot giữa các biến rất khác nhau về độ rộng, thường là dấu hiệu cần **centrer-réduire** trước các phương pháp dựa trên distance hoặc variance.
+
+```{r crabes-center-scale, eval=FALSE}
+# Moyennes và écarts-types
+moy <- apply(crabes[, 4:8], 2, mean)
+et  <- apply(crabes[, 4:8], 2, sd)
+
+# Centré uniquement
+crabesC  <- scale(crabes[, 4:8], center = TRUE, scale = FALSE)
+
+# Centré-réduit
+crabesCR <- scale(crabes[, 4:8], center = TRUE, scale = TRUE)
+
+boxplot(crabesC,  main = "Variables centrées")
+boxplot(crabesCR, main = "Variables centrées-réduites")
+```
+
+**Interpretation**
+
+-   **Centrer**: đưa trung bình của mỗi biến về 0.
+-   **Réduire**: chia cho độ lệch chuẩn để mọi biến có cùng đơn vị chuẩn hóa.
+-   Khi mục tiêu là ACP sur corrélations, kNN, CAH, k-means, LDA với biến khác thang đo, đây gần như là bước chuẩn.
+
+```{r crabes-correlations, eval=FALSE}
+matcor <- cor(crabes[, 4:8])
+matcor
+
+image(matcor)
+
+pairs(crabes[, 4:8],
+      lower.panel = panel.smooth,
+      upper.panel = panel.cor,
+      diag.panel  = panel.hist)
+```
+
+**Interpretation**
+
+-   Nếu nhiều cặp có `|r| > 0.8`, có thể có **multicolinéarité** hoặc một nhân tố chung chi phối.
+-   Trong bối cảnh morphométrique, tương quan mạnh thường phản ánh **facteur de taille globale**.
+-   Đây chính là tín hiệu kinh điển cho ACP: nhiều biến mang thông tin chồng lấp.
+
+------------------------------------------------------------------------
+
+## 1.2. Données qualitatives: *Fisher*
+
+### Mục tiêu
+
+-   Tóm tắt tần suất từng modalité.
+-   Lập bảng chéo giữa 2 biến định tính.
+-   Biểu diễn bằng barplot / pie chart.
+
+```{r fisher, eval=FALSE}
+fisher <- read.table("Fishertot.txt", header = TRUE, sep = ";")
+
+table(fisher$col_cheveux)
+table(fisher$col_yeux)
+
+tab_fisher <- table(fisher$col_cheveux, fisher$col_yeux)
+tab_fisher
+
+barplot(table(fisher$col_yeux), main = "Couleur des yeux")
+barplot(tab_fisher, col = rainbow(5), beside = FALSE, ylim = c(0, 3500))
+barplot(tab_fisher, col = rainbow(5), beside = TRUE)
+pie(table(fisher$col_cheveux))
+```
+
+**Interpretation**
+
+-   `table()` là công cụ nền tảng cho biến định tính.
+-   Bảng chéo giúp thấy mối liên hệ thô giữa hai biến trước khi sang AFC.
+-   `beside = TRUE` giúp so sánh nhóm trực tiếp hơn; `beside = FALSE` nhấn mạnh cấu trúc tổng thể.
+
+------------------------------------------------------------------------
+
+# 2. ACP (Analyse en composantes principales)
+
+## 2.1. Ảnh hưởng của centrage / réduction trên dữ liệu *amiard*
+
+### Mục tiêu
+
+-   So sánh dữ liệu brut, centré, centré-réduit.
+-   Kiểm tra tương quan giữa các biến.
+-   Làm ACP để giảm chiều và diễn giải cấu trúc dữ liệu.
+
+```{r amiard-import, eval=FALSE}
+amiard <- read.table("Amiard.php", header = TRUE, sep = "")
+
+amiardC  <- scale(amiard, center = TRUE, scale = FALSE)
+amiardCR <- scale(amiard, center = TRUE, scale = TRUE)
+
+apply(amiard, 2, mean)
+apply(amiard, 2, sd)
+
+par(mfrow = c(1, 3))
+boxplot(amiard,   main = "Brutes")
+boxplot(amiardC,  main = "Centrées")
+boxplot(amiardCR, main = "Réduites")
+par(mfrow = c(1, 1))
+```
+
+**Interpretation**
+
+-   Nếu dispersion giữa các biến quá khác nhau thì ACP trên covariance sẽ bị biến có variance lớn thống trị.
+-   Với dữ liệu có đơn vị khác nhau hoặc chênh scale lớn, thường nên làm ACP sur matrice des corrélations (`cor = TRUE`).
+
+```{r amiard-pairs, eval=FALSE}
+pairs(amiard,
+      lower.panel = panel.smooth,
+      upper.panel = panel.cor,
+      diag.panel  = panel.hist)
+```
+
+**Interpretation**
+
+-   Nếu khối biến morphométriques có tương quan rất cao, ta kỳ vọng **PC1** sẽ đại diện cho “taille globale”.
+-   Nếu khối biến phóng xạ hay sinh học khác tách riêng, có thể PC2 hoặc PC3 sẽ bắt được gradient đó.
+
+```{r amiard-pca, eval=FALSE}
+resAcpCR <- princomp(amiard, cor = TRUE, scores = TRUE)
+summary(resAcpCR)
+resAcpCR$loadings
+
+# Valeurs propres
+vp <- resAcpCR$sdev^2
+vp
+sum(vp)
+round(cumsum(vp) / sum(vp) * 100, 2)
+
+barplot(vp, main = "Valeurs propres")
+abline(h = 1, col = "red")  # règle de Kaiser
+
+# seuil de Saporta
+1 + 2 * sqrt((ncol(amiard) - 1) / (nrow(amiard) - 1))
+```
+
+**Interpretation**
+
+### Cách chọn số trục
+
+-   **Kaiser**: giữ các trục có valeur propre \> 1.
+-   **Coude (elbow)**: nhìn điểm gãy của scree plot.
+-   **80% inertie cumulée**: thực dụng, hay dùng khi cần tóm tắt nhiều thông tin.
+-   **Saporta**: chặt hơn Kaiser trong vài bối cảnh.
+
+### Cách viết kết luận
+
+Ví dụ:
+
+> Les deux premiers axes résument une part importante de l’inertie totale. L’axe 1 semble surtout traduire un gradient global de taille, tandis que l’axe 2 oppose davantage les variables de radioactivité aux variables morphométriques.
+
+```{r amiard-pca-plots, eval=FALSE}
+# Représentation des individus
+plot(resAcpCR$scores[, 1:2],
+     main = "Individus sur le plan 1-2",
+     xlab = "Axe 1",
+     ylab = "Axe 2",
+     pch  = 16)
+text(resAcpCR$scores[, 1], resAcpCR$scores[, 2], labels = rownames(amiard), pos = 3, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+
+# Cercle des corrélations
+corvar <- cor(amiard, resAcpCR$scores[, 1:2])
+plot(corvar[, 1], corvar[, 2],
+     xlim = c(-1, 1), ylim = c(-1, 1), asp = 1,
+     xlab = "Axe 1", ylab = "Axe 2",
+     main = "Cercle des corrélations", type = "n")
+symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = "blue", lty = 2)
+text(corvar[, 1], corvar[, 2], labels = colnames(amiard), cex = 0.8)
+arrows(0, 0, corvar[, 1] * 0.95, corvar[, 2] * 0.95, length = 0.1, angle = 15)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+```
+
+**Interpretation của plan factoriel**
+
+-   **Individus gần nhau** → profils semblables.
+-   **Biến cùng hướng** → corrélation positive.
+-   **Biến đối hướng** → corrélation négative.
+-   **Biến gần vòng tròn** → bien représentée sur ce plan.
+-   **Individus xa gốc** → profils marqués, đóng góp nhiều cho cấu trúc trục.
+
+------------------------------------------------------------------------
+
+## 2.2. ACP trên dữ liệu *villes*
+
+```{r villes-pca, eval=FALSE}
+# Nếu cột đầu là tên thành phố
+villes <- read.table("villes.csv", header = TRUE, sep = ";", dec = ".", row.names = 1)
+
+villesCR <- scale(villes)
+resacp <- princomp(villes, cor = TRUE, scores = TRUE)
+
+# Inertie cumulée
+cumsum(resacp$sdev^2 / sum(resacp$sdev^2))
+
+# Scree plot
+barplot(resacp$sdev^2, las = 2)
+
+# Saporta
+1 + 2 * sqrt((ncol(villes) - 1) / (nrow(villes) - 1))
+
+# Plan 1-2: observations
+par(mfrow = c(1, 2))
+plot(resacp$scores[, 1:2], pch = 20, main = "Observations")
+text(resacp$scores[, 1:2], labels = rownames(villes), cex = 0.6, pos = 3)
+abline(h = 0, v = 0, lty = 2)
+
+# Plan 1-2: variables
+corvar <- cor(villes, resacp$scores[, 1:2])
+plot(corvar[, 1], corvar[, 2], xlim = c(-1,1), ylim = c(-1,1), asp = 1,
+     xlab = "PC1", ylab = "PC2", main = "Variables", type = "n")
+symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = "blue", lty = 2)
+text(corvar[, 1], corvar[, 2], labels = colnames(villes), cex = 0.7, col = "red")
+arrows(0, 0, corvar[, 1] * 0.95, corvar[, 2] * 0.95, angle = 15, code = 2, length = 0.1)
+abline(h = 0, v = 0, lty = 2)
+```
+
+**Interpretation**
+
+-   Với dữ liệu villes, trục 1 thường đại diện cho **gradient global** (ví dụ mức đô thị hóa / quy mô / mức phát triển, tùy biến gốc).
+-   Trục 2 thường bổ sung một chiều tương phản khác, không còn trùng với trục 1.
+-   Đừng viết kiểu “PC1 giải thích 40% nên rất tốt” rồi hết. Phải nói **PC1 đối lập cái gì với cái gì** dựa trên loadings hoặc cercle des corrélations.
+
+------------------------------------------------------------------------
+
+# 3. AFC và AFCM
+
+## 3.1. AFC trên *Zola*
+
+### Khi nào dùng AFC?
+
+Dùng khi có **bảng chéo** hoặc tableau de contingence, và muốn phân tích quan hệ giữa hàng và cột.
+
+```{r afc-zola, eval=FALSE}
+# Cách gợi ý hiện đại: dùng FactoMineR
+library(FactoMineR)
+
+zola <- read.table("Zola_bis.txt", header = TRUE, row.names = 1)
+res_ca <- CA(zola, graph = FALSE)
+
+# Coordonnées lignes / colonnes
+head(res_ca$row$coord)
+head(res_ca$col$coord)
+
+# Graphique simple
+plot(res_ca$row$coord[,1:2], type = "n", xlab = "Dim 1", ylab = "Dim 2",
+     main = "AFC - oeuvres")
+text(res_ca$row$coord[,1], res_ca$row$coord[,2], labels = rownames(zola), col = "blue")
+abline(h = 0, v = 0, lty = 2, col = "grey")
+```
+
+**Interpretation**
+
+-   Trong AFC, **gần nhau** nghĩa là profils similaires relativement aux masses.
+-   Một œuvre gần một modalité / mot / catégorie cho thấy association relative mạnh hơn mức trung bình.
+-   Phải đọc theo logic “écart à l’indépendance”, không phải đơn thuần khoảng cách thô.
+
+------------------------------------------------------------------------
+
+## 3.2. AFCM trên *pbiom*
+
+### Khi nào dùng AFCM?
+
+Dùng khi dữ liệu là **nhiều biến định tính** trên cùng một tập cá thể.
+
+```{r afcm-pbiom, eval=FALSE}
+library(FactoMineR)
+
+pbiom <- read.table("pbiom.txt", header = TRUE)
+res_mca <- MCA(pbiom, graph = FALSE)
+
+# Coordonnées individus
+head(res_mca$ind$coord)
+
+# Représentation colorée selon SITPROF nếu có
+plot(res_mca$ind$coord[,1:2], type = "n", xlab = "Dim 1", ylab = "Dim 2",
+     main = "AFCM - individus")
+text(res_mca$ind$coord[,1], res_mca$ind$coord[,2], labels = seq_len(nrow(pbiom)), cex = 0.7)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+```
+
+**Interpretation**
+
+-   AFCM biến các câu trả lời định tính thành một không gian factoriel.
+-   Những cá thể gần nhau có **profils qualitatifs similaires**.
+-   Các modalités đóng góp mạnh cho một trục là chìa khóa để **đặt tên** cho trục đó.
+
+------------------------------------------------------------------------
+
+# 4. Clustering: CAH, heatmap, k-means
+
+## 4.1. CAH sur *villes*
+
+### Mục tiêu
+
+-   So sánh các méthodes d’agrégation: single, complete, Ward.D2.
+-   Chọn số cụm.
+-   So sánh clustering trên dữ liệu gốc và trên scores ACP.
+
+```{r cah-villes, eval=FALSE}
+villes <- read.table("villes.csv", header = TRUE, sep = ";", dec = ".", row.names = 1)
+villesCR <- scale(villes)
+
+distVilleCR <- dist(villesCR)
+
+hc_single   <- hclust(distVilleCR, method = "single")
+hc_complete <- hclust(distVilleCR, method = "complete")
+hc_ward     <- hclust(distVilleCR, method = "ward.D2")
+
+par(mfrow = c(1, 3))
+plot(hc_single,   hang = -1, main = "Single linkage")
+plot(hc_complete, hang = -1, main = "Complete linkage")
+plot(hc_ward,     hang = -1, main = "Ward.D2")
+par(mfrow = c(1, 1))
+
+rect.hclust(hc_ward, k = 4, border = 2:5)
+groupeWard4 <- cutree(hc_ward, k = 4)
+```
+
+**Interpretation**
+
+-   **Single linkage** dễ bị chaining, cụm kéo dài và kém ổn định.
+-   **Complete linkage** tạo cụm chặt hơn.
+-   **Ward.D2** thường là lựa chọn tốt nhất khi muốn cụm cân đối, tối thiểu hóa inertie intra-classe.
+-   Trong thực hành học thi Data Mining, nếu không có lý do khác, **Ward.D2** thường là lựa chọn an toàn nhất.
+
+```{r cah-nbclust, eval=FALSE}
+library(NbClust)
+
+ward_ch <- NbClust(data = villesCR,
+                   distance = "euclidean",
+                   min.nc = 2,
+                   max.nc = 15,
+                   method = "ward.D2",
+                   index = "ch")
+
+plot(2:15, ward_ch$All.index, type = "l", xlab = "Nombre de groupes", ylab = "Indice CH")
+abline(v = ward_ch$Best.nc[1], col = "red")
+ward_ch$Best.nc
+```
+
+**Interpretation**
+
+-   Chọn số cụm bằng **Calinski-Harabasz (CH)**: giá trị càng cao càng tốt.
+-   Không nên mù quáng tin duy nhất một chỉ số. Phải đối chiếu với dendrogram và tính hợp lý giải thích.
+
+------------------------------------------------------------------------
+
+## 4.2. CAH trên scores của ACP
+
+```{r cah-on-pca, eval=FALSE}
+resACPvillesCR <- princomp(villesCR, cor = FALSE, scores = TRUE)
+
+distACP <- dist(resACPvillesCR$scores[, 1:2])
+hcACP   <- hclust(distACP, method = "ward.D2")
+plot(hcACP, hang = -1, main = "Ward sur les scores ACP (PC1-PC2)")
+
+groupeScore <- cutree(hcACP, k = 4)
+
+par(mfrow = c(1, 2))
+plot(resACPvillesCR$scores[, 1:2], col = groupeScore, pch = 16,
+     xlab = "PC1", ylab = "PC2", main = "CAH sur scores ACP")
+text(resACPvillesCR$scores[, 1:2], labels = rownames(villes), pos = 4, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+
+plot(resACPvillesCR$scores[, 1:2], col = groupeWard4, pch = 16,
+     xlab = "PC1", ylab = "PC2", main = "CAH sur données initiales")
+text(resACPvillesCR$scores[, 1:2], labels = rownames(villes), pos = 4, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+```
+
+**Interpretation**
+
+-   Cluster trên scores ACP giúp giảm bruit và tập trung vào cấu trúc chính.
+-   Nếu phân nhóm trên données complètes và trên scores ACP khá giống nhau, đó là tín hiệu tốt: cấu trúc cụm tương đối ổn định.
+
+------------------------------------------------------------------------
+
+## 4.3. Heatmap và clustering biến
+
+```{r heatmap-villes, eval=FALSE}
+matcor  <- cor(villesCR)
+distvar <- as.dist(1 - matcor^2)
+hc_var  <- hclust(distvar, method = "ward.D2")
+
+plot(hc_var, hang = -1, main = "Clustering des variables")
+heatmap(villesCR,
+        Rowv = as.dendrogram(hc_ward),
+        Colv = as.dendrogram(hc_var),
+        scale = "none")
+```
+
+**Interpretation**
+
+-   Heatmap + double dendrogram rất hữu ích để thấy cùng lúc:
+    -   nhóm quan sát,
+    -   nhóm biến,
+    -   cấu trúc block trong dữ liệu.
+-   Dùng tốt khi muốn chuyển từ “plot đẹp” sang “đọc pattern thật”. Một ý niệm hiếm hoi giữa thời đại người ta thích tô màu hơn hiểu dữ liệu.
+
+------------------------------------------------------------------------
+
+## 4.4. k-means trên *villes*
+
+```{r kmeans-villes, eval=FALSE}
+set.seed(123)
+reskmean4 <- kmeans(villesCR, centers = 4, nstart = 50)
+reskmean4$cluster
+reskmean4$size
+reskmean4$tot.withinss
+
+plot(resACPvillesCR$scores[, 1:2], col = reskmean4$cluster, pch = 16,
+     xlab = "PC1", ylab = "PC2", main = "k-means (4 groupes)")
+text(resACPvillesCR$scores[, 1:2], labels = rownames(villes), pos = 4, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+```
+
+**Interpretation**
+
+-   `tot.withinss` càng nhỏ thì cụm càng compact, nhưng luôn giảm khi tăng số cụm.
+-   Vì thế phải kết hợp elbow plot, CH index, và tính giải thích được của các cụm.
+
+```{r kmeans-elbow, eval=FALSE}
+enrintra <- numeric(9)
+for (i in 2:10) {
+  km <- kmeans(villesCR, centers = i, nstart = 50)
+  enrintra[i - 1] <- km$tot.withinss
+}
+plot(2:10, enrintra, type = "b", xlab = "Nombre de groupes", ylab = "Withinss total")
+```
+
+**Interpretation**
+
+-   Điểm gãy của đường cong cho biết số nhóm hợp lý.
+-   So sánh k-means với Ward giúp thấy tính ổn định của cấu trúc phân nhóm.
+
+------------------------------------------------------------------------
+
+# 5. LDA (Analyse discriminante linéaire)
+
+## 5.1. Données *painting8* và *painting64*
+
+### Mục tiêu
+
+-   Phân loại tranh theo histogram màu.
+-   So sánh bộ biến 8 màu với 64 màu.
+-   Loại biến không phù hợp trước khi chạy LDA.
+
+```{r lda-import, eval=FALSE}
+data8  <- read.table("painting8.php",  header = FALSE, sep = "", row.names = 1)
+data64 <- read.table("painting64.php", header = FALSE, sep = "", row.names = 1)
+
+gp <- substr(rownames(data8), 1, 1)
+gp <- as.factor(gp)
+
+data8  <- as.matrix(data8)
+data64 <- as.matrix(data64)
+
+summary(data8)
+par(mfrow = c(1, 2))
+boxplot(data8,  main = "8 couleurs")
+boxplot(data64, main = "64 couleurs")
+par(mfrow = c(1, 1))
+```
+
+**Interpretation**
+
+-   Trước LDA, phải xem dữ liệu có cần scale không và có biến gần hằng không.
+-   Với histogram / proportions, vấn đề chính thường không phải scale khủng mà là **dépendance linéaire** và biến gần 0-variance.
+
+```{r lda-preprocessing, eval=FALSE}
+# Với 8 couleurs: bỏ 1 biến để tránh dépendance complète si somme = 1
+# (các proportions cộng lại bằng 1 -> ma trận hiệp phương sai suy biến)
+data8sel <- data8[, -8]
+
+# Với 64 couleurs: bỏ biến có variance quá thấp
+vecvar    <- apply(data64, 2, var)
+data64sel <- data64[, vecvar > 1e-4]
+dim(data64sel)
+```
+
+**Interpretation rất quan trọng**
+
+-   Nếu các proportions cộng đúng bằng 1, một biến là tổ hợp tuyến tính của các biến còn lại.\
+    =\> cần bỏ ít nhất 1 biến.
+-   Nếu variance gần 0, biến gần như không mang thông tin phân loại.\
+    =\> giữ lại chỉ làm ma trận xấu thêm.
+
+```{r lda-fit, eval=FALSE}
+reslda8  <- lda(x = data8sel,  grouping = gp)
+reslda64 <- lda(x = data64sel, grouping = gp)
+
+# Số trục discriminants tối đa = min(p, g - 1)
+reslda8
+reslda64
+```
+
+**Interpretation**
+
+-   Với `g` nhóm, số trục discriminants tối đa là `g - 1`.
+-   LDA tìm các tổ hợp tuyến tính tối đa hóa tách biệt giữa nhóm so với biến thiên trong nhóm.
+
+```{r lda-train-performance, eval=FALSE}
+pred8  <- predict(reslda8,  newdata = data8sel)
+pred64 <- predict(reslda64, newdata = data64sel)
+
+mean(pred8$class  == gp)
+mean(pred64$class == gp)
+
+table(pred8$class,  gp)
+table(pred64$class, gp)
+```
+
+**Interpretation**
+
+-   Đây là **training accuracy**, luôn lạc quan hơn thực tế.
+-   Dùng để so sánh sơ bộ giữa 8 màu và 64 màu, nhưng không được coi là performance cuối cùng.
+-   Nếu `data64` cho accuracy cao hơn rõ rệt, có thể kết luận bộ biến giàu thông tin hơn cho discrimination.
+
+```{r lda-plan, eval=FALSE}
+par(mfrow = c(1, 2))
+
+plot(pred8$x[, 1:2], type = "n", main = "LDA - 8 couleurs")
+abline(h = 0, v = 0)
+colmis8 <- ifelse(pred8$class != gp, "red", "black")
+text(pred8$x[, 1:2], labels = gp, col = colmis8)
+
+plot(pred64$x[, 1:2], type = "n", main = "LDA - 64 couleurs")
+abline(h = 0, v = 0)
+colmis64 <- ifelse(pred64$class != gp, "red", "black")
+text(pred64$x[, 1:2], labels = gp, col = colmis64)
+```
+
+**Interpretation**
+
+-   Điểm màu đỏ là quan sát bị phân loại sai.
+-   Nếu trên plan discriminant các nhóm tách xa nhau, đó là tín hiệu LDA đang hoạt động tốt.
+-   Nếu nhóm chồng lấn nhiều, accuracy khó cao trừ khi dữ liệu có cấu trúc phi tuyến mà LDA không bắt được.
+
+```{r lda-cv, eval=FALSE}
+lda_cv_mean(X = data64sel, y = gp, nbcv = 4, nbrun = 30)
+```
+
+**Interpretation**
+
+-   Đây mới là con số có giá trị hơn training accuracy.
+-   Nếu CV accuracy giảm mạnh so với training accuracy, mô hình có thể over-optimistic hoặc dữ liệu khó thật.
+
+------------------------------------------------------------------------
+
+# 6. kNN và CART
+
+## 6.1. kNN trên *painting64*
+
+### Mục tiêu
+
+-   Hiểu bản chất local classifier.
+-   So sánh training accuracy và validation accuracy.
+-   Chọn số láng giềng tối ưu.
+
+```{r knn-painting, eval=FALSE}
+data64 <- read.table("painting64.php", header = FALSE, sep = "", row.names = 1)
+gp     <- as.factor(substr(rownames(data64), 1, 1))
+data64 <- as.matrix(data64)
+
+resknn3 <- knn(train = data64, test = data64, cl = gp, k = 3)
+mean(resknn3 == gp)
+```
+
+**Interpretation**
+
+-   Đây là **training accuracy**, gần như luôn tốt hơn CV.
+-   kNN rất nhạy với scale và với curse of dimensionality.
+
+```{r knn-acp-visual, eval=FALSE}
+vecvar    <- apply(data64, 2, var)
+data64sel <- data64[, vecvar > 1e-4]
+resacp    <- princomp(scale(data64sel))
+
+plot(resacp$scores[, 1:2], type = "n", main = "ACP pour visualiser les voisinages")
+text(resacp$scores[, 1:2], labels = gp)
+```
+
+**Interpretation**
+
+-   ACP ở đây không phải mô hình chính, mà là công cụ để nhìn những quan sát nằm gần ranh giới nhóm.
+-   Rất hữu ích để hiểu vì sao kNN nhầm.
+
+```{r knn-cv, eval=FALSE}
+knn_cv_mean(X = data64, y = gp, k = 3, nbcv = 4, nbrun = 30)
+```
+
+**Interpretation**
+
+-   CV accuracy phản ánh đúng hơn năng lực tổng quát hóa.
+-   Nếu thấp hơn training accuracy nhiều, mô hình đang hưởng lợi từ học trên chính dữ liệu nó bị chấm.
+
+```{r knn-choose-k, eval=FALSE}
+enrres <- numeric(10)
+for (i in 1:10) {
+  enrres[i] <- knn_cv_mean(X = data64, y = gp, k = i, nbcv = 4, nbrun = 30)
+}
+plot(1:10, enrres, type = "b", xlab = "k", ylab = "Validation accuracy")
+```
+
+**Interpretation**
+
+-   `k` nhỏ quá: variance cao, nhạy với noise.
+-   `k` lớn quá: decision boundary quá trơn, bias cao.
+-   Chọn `k` tại vùng performance tốt và ổn định, không cần ám ảnh đúng 1 điểm tuyệt đối nếu các điểm lân cận gần như nhau.
+
+------------------------------------------------------------------------
+
+## 6.2. CART, LDA, kNN trên dữ liệu *puces*
+
+### Mục tiêu
+
+So sánh thực hành giữa ba cách phân loại có triết lý rất khác nhau:
+
+-   **LDA**: tuyến tính, mô hình hóa.
+-   **kNN**: local, phi tham số.
+-   **CART**: dễ giải thích, phi tuyến, nhưng cần pruning.
+
+```{r puces-import, eval=FALSE}
+Xpuces <- read.table("X_puces.xls", header = TRUE, sep = ";")
+Xpuces <- as.matrix(Xpuces)
+Ypuces <- read.table("gp_puces.xls")
+Ypuces <- as.factor(Ypuces[, 1])
+
+table(Ypuces)
+```
+
+### CART
+
+```{r cart-fit, eval=FALSE}
+puces <- data.frame(Xpuces, Ypuces = Ypuces)
+
+# Arbre par défaut
+resrpart <- rpart(Ypuces ~ ., data = puces)
+plot(resrpart)
+text(resrpart, use.n = TRUE)
+
+pred_rpart <- predict(resrpart, type = "class")
+mean(pred_rpart == Ypuces)
+```
+
+**Interpretation**
+
+-   CART rất dễ đọc vì cho rule phân nhánh rõ ràng.
+-   Nhưng training accuracy không đủ, vì cây sâu sẽ học cả noise.
+
+```{r cart-pruning, eval=FALSE}
+# Arbre très grand
+resrpart_full <- rpart(Ypuces ~ ., data = puces,
+                       control = rpart.control(minsplit = 1, cp = 0))
+plot(resrpart_full)
+text(resrpart_full, use.n = TRUE)
+
+printcp(resrpart_full)
+plotcp(resrpart_full)
+```
+
+**Interpretation**
+
+-   `printcp()` cho bảng pruning.
+-   `xerror` là lỗi CV nội bộ, hữu ích hơn `rel error` training.
+-   Thường chọn cây tại:
+    -   `xerror` nhỏ nhất, hoặc
+    -   quy tắc **1-SE** nếu muốn cây gọn và ổn định hơn.
+
+```{r cart-pruned-compare, eval=FALSE}
+par(mfrow = c(1, 2))
+res_cp1 <- rpart(Ypuces ~ ., data = puces,
+                 control = rpart.control(minsplit = 1, cp = 0.15))
+plot(res_cp1); text(res_cp1, use.n = TRUE)
+
+res_cp2 <- rpart(Ypuces ~ ., data = puces,
+                 control = rpart.control(minsplit = 1, cp = 0.08))
+plot(res_cp2); text(res_cp2, use.n = TRUE)
+par(mfrow = c(1, 1))
+```
+
+**Interpretation**
+
+-   Cây quá nhỏ: underfit.\
+-   Cây quá lớn: overfit.\
+-   Pruning là bước bắt buộc nếu muốn CART có giá trị thực tế.
+
+### LDA trên *puces*
+
+```{r lda-puces, eval=FALSE}
+reslda <- lda(x = Xpuces, grouping = Ypuces)
+predlda <- predict(reslda)
+
+mean(predlda$class == Ypuces)
+table(predlda$class, Ypuces)
+
+plot(predlda$x[, 1:2], type = "n", main = "LDA - puces")
+text(predlda$x[, 1:2], labels = Ypuces)
+```
+
+**Interpretation**
+
+-   Nếu nhóm tách khá tuyến tính, LDA thường rất mạnh và gọn.
+-   Nếu cấu trúc lớp phức tạp, CART hoặc kNN có thể bắt tốt hơn.
+
+```{r lda-puces-cv, eval=FALSE}
+lda_cv_mean(X = Xpuces, y = Ypuces, nbcv = 4, nbrun = 30)
+```
+
+### kNN trên *puces*
+
+```{r knn-puces, eval=FALSE}
+enrres <- numeric(10)
+for (i in 1:10) {
+  enrres[i] <- knn_cv_mean(X = Xpuces, y = Ypuces, k = i, nbcv = 4, nbrun = 30)
+}
+plot(1:10, enrres, type = "b", xlab = "k", ylab = "Validation accuracy")
+
+resknn4 <- knn(train = Xpuces, test = Xpuces, cl = Ypuces, k = 4)
+mean(resknn4 == Ypuces)
+knn_cv_mean(X = Xpuces, y = Ypuces, k = 4, nbcv = 4, nbrun = 30)
+
+resknn5 <- knn(train = Xpuces, test = Xpuces, cl = Ypuces, k = 5)
+mean(resknn5 == Ypuces)
+knn_cv_mean(X = Xpuces, y = Ypuces, k = 5, nbcv = 4, nbrun = 30)
+```
+
+**Interpretation**
+
+-   So sánh `k = 4` và `k = 5` không chỉ bằng training accuracy mà chủ yếu bằng CV.
+-   Nếu chênh lệch CV rất nhỏ, ưu tiên mô hình đơn giản hơn hoặc ổn định hơn.
+
+### Kết luận so sánh LDA / kNN / CART
+
+-   **LDA** tốt khi structure gần tuyến tính và covariance giữa nhóm không quá khác.
+-   **kNN** linh hoạt nhưng nhạy với scale, dimension, và sample size.
+-   **CART** rất giải thích được, nhưng hiệu năng thường cần pruning kỹ.
+-   Bài thi hay rapport tốt không chỉ ghi mô hình nào điểm cao nhất, mà phải nói **tại sao mô hình đó hợp với hình học dữ liệu**.
+
+------------------------------------------------------------------------
+
+# 7. PLS (Partial Least Squares)
+
+## 7.1. Données *prostate*
+
+### Khi nào dùng PLS?
+
+-   Nhiều biến giải thích tương quan mạnh với nhau.
+-   Hồi quy tuyến tính cổ điển bị đa cộng tuyến.
+-   Muốn xây composantes vừa tóm tắt X vừa hữu ích cho dự đoán Y.
+
+```{r prostate-import, eval=FALSE}
+prostate <- read.table("prostate.txt", header = TRUE, row.names = 1)
+summary(prostate)
+
+# svi là biến nhị phân trong script gốc, có thể loại để đơn giản hóa ví dụ
+# nhưng trong thực hành thật phải có lý do khoa học/statistique rõ ràng
+# ở đây giữ cách làm gần script TD gốc
+prostate <- prostate[, -5]
+
+table(prostate$train)
+boxplot(prostate$lpsa ~ prostate$train, main = "Comparaison train vs test")
+```
+
+**Interpretation**
+
+-   Phải kiểm tra train/test có phân phối khá tương đồng không, ít nhất với `lpsa`.
+-   Nếu train và test lệch nhau quá mạnh, đánh giá ngoài mẫu sẽ méo.
+
+```{r prostate-split-scale, eval=FALSE}
+# Tách train / test
+prostateTrain <- subset(prostate, train == TRUE)
+prostateTest  <- subset(prostate, train == FALSE)
+
+# Bỏ cột train khỏi dữ liệu mô hình
+prostateTrain <- prostateTrain[, setdiff(colnames(prostateTrain), "train")]
+prostateTest  <- prostateTest[,  setdiff(colnames(prostateTest),  "train")]
+
+# Tách X / y
+x_train <- subset(prostateTrain, select = -lpsa)
+y_train <- prostateTrain$lpsa
+
+x_test  <- subset(prostateTest, select = -lpsa)
+y_test  <- prostateTest$lpsa
+
+# Centrer-réduire X theo thống kê của train
+meanTrain <- apply(x_train, 2, mean)
+sdTrain   <- apply(x_train, 2, sd)
+
+x_train_cr <- scale(x_train, center = meanTrain, scale = sdTrain)
+x_test_cr  <- scale(x_test,  center = meanTrain, scale = sdTrain)
+
+prostateTrainCR <- data.frame(x_train_cr, lpsa = y_train)
+prostateTestCR  <- data.frame(x_test_cr,  lpsa = y_test)
+```
+
+**Interpretation**
+
+-   Đây là bước rất hay bị làm sai.
+-   **Test phải được chuẩn hóa theo mean và SD của train**, không phải theo chính test.
+-   Nếu chuẩn hóa riêng test, bạn đang làm rò rỉ thông tin hoặc ít nhất phá logic của bài toán dự đoán.
+
+```{r pls-fit, eval=FALSE}
+res_pls <- plsr(lpsa ~ ., data = prostateTrainCR, ncomp = 7)
+summary(res_pls)
+
+# % variance expliquée, scores, loadings
+res_pls
+```
+
+**Interpretation**
+
+-   Khác PCA, PLS xây composantes có tính đến cả quan hệ với `Y = lpsa`.
+-   Vì thế số composantes tối ưu không nhất thiết là số trục giải thích X tốt nhất, mà là số trục dự đoán Y tốt nhất.
+
+```{r pls-plots, eval=FALSE}
+par(mfrow = c(1, 2))
+
+# Plan des individus
+plot(res_pls$scores[, 1], res_pls$scores[, 2], pch = 16,
+     xlab = "Comp 1", ylab = "Comp 2", main = "Scores PLS")
+text(res_pls$scores[, 1], res_pls$scores[, 2], labels = rownames(prostateTrainCR), pos = 3, cex = 0.8)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+
+# Cercle / corrélations variables-composantes
+corVar <- cor(prostateTrainCR, res_pls$scores)
+plot(corVar[, 1], corVar[, 2], xlim = c(-1,1), ylim = c(-1,1), type = "n",
+     xlab = "Comp 1", ylab = "Comp 2", main = "Corrélations variables-composantes")
+angle <- seq(0, 2*pi, length = 500)
+points(cos(angle), sin(angle), type = "l")
+text(corVar[, 1], corVar[, 2], labels = rownames(corVar), pos = 4)
+arrows(0, 0, corVar[, 1], corVar[, 2], length = 0.1)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+```
+
+**Interpretation**
+
+-   Biến nào cùng hướng trên 2 composantes đầu thì có xu hướng đồng biến trong cấu trúc dự đoán.
+-   Quan sát xa gốc là những profile nổi bật, có thể ảnh hưởng mạnh đến mô hình.
+
+```{r pls-rss-r2, eval=FALSE}
+# RSS pour 1 à 7 composantes
+RSS_pls <- numeric(7)
+for (i in 1:7) {
+  RSS_pls[i] <- sqrt(sum(res_pls$residuals[, 1, i]^2))
+}
+plot(1:7, RSS_pls, type = "b", xlab = "Nb composantes", ylab = "RSS")
+
+# R2 training pour 4 composantes
+cor(prostateTrainCR$lpsa, res_pls$fitted.values[, 1, 4])^2
+R2(res_pls)
+```
+
+**Interpretation**
+
+-   RSS training giảm dần khi thêm composantes, nhưng điều đó **không đủ** để chọn mô hình.
+-   Cần xem validation vì training fit luôn đẹp dần theo số composantes.
+
+```{r pls-cv, eval=FALSE}
+# CV 2-fold répété
+PRESS100CV <- matrix(NA, 100, 7)
+R2100CV    <- matrix(NA, 100, 7)
+
+for (i in 1:100) {
+  res_cv <- plsr(lpsa ~ ., data = prostateTrainCR,
+                 validation = "CV", segments = 2, ncomp = 7)
+
+  PRESS100CV[i, ] <- as.numeric(res_cv$validation$PRESS)
+
+  for (h in 1:7) {
+    R2100CV[i, h] <- cor(prostateTrainCR$lpsa, res_cv$validation$pred[, 1, h])^2
+  }
+}
+
+PRESS100moy <- apply(PRESS100CV, 2, mean)
+R2100moy    <- apply(R2100CV, 2, mean)
+
+par(mfrow = c(1, 2))
+plot(1:7, PRESS100moy, type = "b", ylab = "PRESS moyen", xlab = "Nb composantes")
+plot(1:7, R2100moy, type = "b", ylab = "R² CV moyen", xlab = "Nb composantes")
+par(mfrow = c(1, 1))
+```
+
+**Interpretation cực kỳ quan trọng**
+
+-   **PRESS nhỏ nhất** thường là tiêu chí mạnh để chọn số composantes.
+-   **R² CV** giúp hiểu lợi ích dự đoán thực tế của từng số composantes.
+-   Nếu PRESS giảm mạnh đến 2-3 composantes rồi gần như phẳng, đừng cố nhồi thêm. Đó là cách overfit mặc vest học thuật.
+
+```{r pls-test-prediction, eval=FALSE}
+# Giả sử chọn 3 composantes
+pred_test <- predict(res_pls, newdata = prostateTestCR, ncomp = 3)
+cor(prostateTestCR$lpsa, pred_test)^2
+```
+
+**Interpretation**
+
+-   Đây là đánh giá ngoài mẫu trên test set.
+-   Nếu R² test thấp hơn nhiều so với training, mô hình chưa tổng quát hóa tốt.
+-   Khi viết nhận xét, phải nói rõ:
+    -   performance training,
+    -   performance CV,
+    -   performance test,
+    -   và chọn số composantes dựa trên cân bằng giữa 3 thứ đó.
+
+------------------------------------------------------------------------
+
+# 8. Mẫu khung interpretation cho từng phương pháp
+
+## 8.1. Exploration
+
+> Les variables présentent des dispersions différentes, ce qui justifie un centrage-réduction avant les méthodes fondées sur les distances ou les variances. Les corrélations élevées entre plusieurs variables suggèrent une redondance d’information et plaident en faveur d’une ACP.
+
+## 8.2. ACP
+
+> Les deux premiers axes résument xx% de l’inertie totale. L’axe 1 correspond principalement à [...], tandis que l’axe 2 oppose [...]. Les individus situés à proximité présentent des profils semblables. Les variables proches du cercle sont bien représentées sur le plan factoriel.
+
+## 8.3. AFC / AFCM
+
+> L’analyse met en évidence une structure d’association entre les profils de lignes et de colonnes. Les modalités / individus proches dans le plan factoriel présentent des profils similaires relativement à la structure moyenne du tableau.
+
+## 8.4. CAH / k-means
+
+> La classification met en évidence x groupes relativement homogènes. La méthode de Ward donne une partition plus équilibrée et plus interprétable que les autres méthodes d’agrégation. Les résultats sont cohérents avec la projection ACP.
+
+## 8.5. LDA
+
+> LDA fournit une bonne séparation entre les groupes sur les premiers axes discriminants. Le taux de bien classés sur l’échantillon d’apprentissage est de xx%, mais le taux de validation croisée est plus pertinent pour juger la capacité de généralisation.
+
+## 8.6. kNN
+
+> Le choix du nombre de voisins a été optimisé par validation croisée. Les meilleurs résultats sont obtenus pour k = x. Un k trop faible rend le modèle instable, alors qu’un k trop élevé lisse excessivement la frontière de décision.
+
+## 8.7. CART
+
+> L’arbre complet est trop complexe et susceptible de surapprentissage. Le choix d’un arbre élagué repose sur l’erreur de validation croisée (`xerror`) afin d’obtenir un compromis entre performance et interprétabilité.
+
+## 8.8. PLS
+
+> Le nombre de composantes a été choisi à partir du PRESS moyen et du R² en validation croisée. Bien que les performances d’apprentissage augmentent avec le nombre de composantes, le gain devient marginal au-delà de x composantes, ce qui justifie un modèle plus parcimonieux.
+
+------------------------------------------------------------------------
+
+# 9. Pièges fréquents à éviter
+
+1.  **Confondre training accuracy và validation accuracy**.\
+    Đây là lỗi rất hay gặp và rất dở.
+
+2.  **Quên scale dữ liệu** trước kNN / CAH / k-means / ACP sur corrélations.
+
+3.  **Diễn giải trục mà không nhìn loadings / corrélations**.\
+    Chỉ nhìn plot rồi bịa nghĩa là con đường ngắn nhất tới nhận xét vô giá trị.
+
+4.  **Chọn số composantes chỉ theo training fit** trong PLS.
+
+5.  **Không loại biến phụ thuộc tuyến tính / quasi-constantes** trước LDA.
+
+6.  **Tin một chỉ số duy nhất** để chọn số cụm.
+
+------------------------------------------------------------------------
+
+# 10. Kết luận học nhanh
+
+Nếu cần học nhanh để đi thi hoặc viết rapport, hãy nhớ logic ngắn gọn này:
+
+-   **ACP**: dữ liệu định lượng, nhiều biến tương quan, mục tiêu mô tả cấu trúc và giảm chiều.
+-   **AFC/AFCM**: dữ liệu định tính / bảng chéo.
+-   **CAH / k-means**: phân nhóm không giám sát.
+-   **LDA / kNN / CART**: phân loại có giám sát.
+-   **PLS**: hồi quy khi X nhiều và tương quan mạnh.
+
+Thứ tự làm gần như luôn là:\
+**exploration -\> prétraitement -\> méthode -\> validation -\> interpretation**.
+
+Đó là bộ khung đủ chắc để không bị lạc giữa đống output, thứ mà R sản xuất ra với sự vô cảm rất nhất quán.
