@@ -1,0 +1,1330 @@
+---
+title: "Étude de cas - Analyse du jeu de données Gym"
+author: "Groupe"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 8,
+  fig.height = 5
+)
+
+top_abs_names <- function(x, n = 3){
+  names(sort(abs(x), decreasing = TRUE))[1:n]
+}
+```
+
+# 0. Chargement des packages et importation des données
+
+## 0.1 Packages
+
+```{r packages}
+packages <- c("MASS", "pls", "rpart", "randomForest", "NbClust")
+to_install <- packages[!packages %in% rownames(installed.packages())]
+if(length(to_install) > 0) install.packages(to_install)
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(FactoMineR)
+library(factoextra)
+library(MASS)
+library(pls)
+library(rpart)
+library(randomForest)
+library(NbClust)
+```
+
+## 0.2 Importation des données
+
+```{r importation}
+setwd("/Users/thanhhuong/R/Data_Analysis")
+gym <- read.csv("/Users/thanhhuong/Downloads/M1/Etude de cas/gym_members_exercise_tracking.csv", header = TRUE, sep = ",", dec = ".")
+
+# Renommage propre des variables
+colnames(gym) <- c(
+  "Age", "Gender", "Weight", "Height", "Max_BPM", "Avg_BPM",
+  "Resting_BPM", "Session_Duration", "Calories_Burned",
+  "Workout_Type", "Fat_Percentage", "Water_Intake",
+  "Workout_Frequency", "Experience_Level", "BMI"
+)
+
+dim(gym)
+str(gym)
+summary(gym)
+```
+
+Le jeu de données contient `r nrow(gym)` individus et `r ncol(gym)` variables.\
+On travaille ici sur une logique simple et défendable : **exploration factorielle**, **segmentation**, puis **modèles supervisés**.
+
+# 1. Préparation des données
+
+## 1.1 Mise en forme des variables qualitatives
+
+```{r quali}
+gym$Gender <- factor(gym$Gender)
+gym$Workout_Type <- factor(gym$Workout_Type)
+gym$Experience_Level <- factor(gym$Experience_Level)
+
+table(gym$Gender)
+table(gym$Workout_Type)
+table(gym$Experience_Level)
+```
+
+## 1.2 Séparation quanti / quali
+
+```{r separation}
+gymQuanti <- gym[, c(
+  "Age", "Weight", "Height", "Max_BPM", "Avg_BPM",
+  "Resting_BPM", "Session_Duration", "Calories_Burned",
+  "Fat_Percentage", "Water_Intake", "Workout_Frequency", "BMI"
+)]
+
+gymQuali <- gym[, c("Gender", "Workout_Type", "Experience_Level")]
+```
+
+## 1.3 Création des classes de calories
+
+```{r classes-calories}
+t1 <- as.numeric(quantile(gym$Calories_Burned, 1/3))
+t2 <- as.numeric(quantile(gym$Calories_Burned, 2/3))
+
+gym$Calories_Class <- cut(
+  gym$Calories_Burned,
+  breaks = c(-Inf, t1, t2, Inf),
+  labels = c("Faible", "Moderee", "Haute"),
+  include.lowest = TRUE
+)
+
+gp <- factor(gym$Calories_Class, levels = c("Faible", "Moderee", "Haute"))
+
+t1
+t2
+table(gp)
+```
+
+Les seuils tertiles sont ici : - **Faible** : calories \< `r round(t1, 1)` - **Modérée** : `r round(t1, 1)` à `r round(t2, 1)` - **Haute** : calories \> `r round(t2, 1)`
+
+Le découpage produit `r paste(table(gp), collapse = " / ")` individus par classe, ce qui est très correct pour une classification supervisée.
+
+# 2. Vérifications préalables au nettoyage
+
+## 2.1 Corrélations entre les BPM et avec les calories
+
+```{r bpm-corr}
+cor_bpm <- cor(gym[, c("Max_BPM", "Avg_BPM", "Resting_BPM")])
+cor_bpm_cal <- cor(gym[, c("Max_BPM", "Avg_BPM", "Resting_BPM", "Calories_Burned")])
+
+round(cor_bpm, 3)
+round(cor_bpm_cal[, "Calories_Burned"], 3)
+```
+
+`Max_BPM` et `Resting_BPM` sont très peu liés à `Calories_Burned` (`r round(cor_bpm_cal["Max_BPM","Calories_Burned"], 3)` et `r round(cor_bpm_cal["Resting_BPM","Calories_Burned"], 3)`), alors que `Avg_BPM` garde une corrélation exploitable (`r round(cor_bpm_cal["Avg_BPM","Calories_Burned"], 3)`).\
+Autrement dit, deux variables font surtout de la figuration statistique.
+
+## 2.2 Redondance du BMI avec Weight et Height
+
+```{r bmi-corr}
+cor_bmi <- cor(gym[, c("BMI", "Weight", "Height")])
+round(cor_bmi, 3)
+```
+
+Le `BMI` est fortement redondant avec `Weight` (`r round(cor_bmi["BMI","Weight"], 3)`) et dépend structurellement de `Height`.\
+Le garder en plus du poids et de la taille reviendrait à faire entrer trois fois à moitié la même information.
+
+## 2.3 Variables dérivées BPM testées puis rejetées
+
+```{r bpm-derived}
+gym$BPM_amplitude <- gym$Max_BPM - gym$Resting_BPM
+gym$BPM_effort    <- gym$Avg_BPM - gym$Resting_BPM
+gym$BPM_ratio     <- gym$Avg_BPM / gym$Max_BPM
+
+cor_bpm_derived <- cor(gym[, c("BPM_amplitude", "BPM_effort", "BPM_ratio", "Calories_Burned")])
+cor_bpm_vs_avg  <- cor(gym[, c("BPM_effort", "BPM_ratio", "Avg_BPM")])
+
+round(cor_bpm_derived[, "Calories_Burned"], 3)
+round(cor_bpm_vs_avg[, "Avg_BPM"], 3)
+```
+
+Les variables dérivées n’apportent pas de vrai gain : - `BPM_amplitude` reste peu informative, - `BPM_effort` et `BPM_ratio` sont surtout redondantes avec `Avg_BPM`.
+
+## 2.4 Conclusion du nettoyage
+
+On retire donc : - `BMI` - `Max_BPM` - `Resting_BPM`
+
+On conserve : - `Age` - `Weight` - `Height` - `Avg_BPM` - `Session_Duration` - `Fat_Percentage` - `Water_Intake` - `Workout_Frequency`
+
+# 3. Comparaison ACP V1 (11 variables) vs V2 (8 variables)
+
+## 3.1 Construction des matrices V1 et V2
+
+```{r acp-v1-v2-data}
+gymX_v1 <- gym[, c(
+  "Age", "Weight", "Height", "Max_BPM", "Avg_BPM",
+  "Resting_BPM", "Session_Duration", "Fat_Percentage",
+  "Water_Intake", "Workout_Frequency", "BMI"
+)]
+
+gymX_v2 <- gym[, c(
+  "Age", "Weight", "Height", "Avg_BPM",
+  "Session_Duration", "Fat_Percentage",
+  "Water_Intake", "Workout_Frequency"
+)]
+
+gymXCR_v1 <- scale(gymX_v1)
+gymXCR_v2 <- scale(gymX_v2)
+
+round(apply(gymXCR_v2, 2, mean), 5)
+round(apply(gymXCR_v2, 2, sd), 5)
+```
+
+## 3.2 ACP sur V1 et V2
+
+```{r acp-v1-v2}
+resacp_v1 <- princomp(gymXCR_v1, cor = TRUE, scores = TRUE)
+resacp_v2 <- princomp(gymXCR_v2, cor = TRUE, scores = TRUE)
+
+var_v1 <- round(resacp_v1$sdev^2 / sum(resacp_v1$sdev^2) * 100, 2)
+var_v2 <- round(resacp_v2$sdev^2 / sum(resacp_v2$sdev^2) * 100, 2)
+
+cum_v1 <- round(cumsum(resacp_v1$sdev^2) / sum(resacp_v1$sdev^2) * 100, 2)
+cum_v2 <- round(cumsum(resacp_v2$sdev^2) / sum(resacp_v2$sdev^2) * 100, 2)
+
+var_v1
+cum_v1
+var_v2
+cum_v2
+```
+
+Dans la version nettoyée, CP1 explique `r var_v2[1]`% de la variance et les trois premiers axes cumulent `r cum_v2[3]`%.\
+La logique est la suivante : **moins de bruit, plus de variance utile concentrée tôt**, ce qui est exactement ce qu’on voulait.
+
+## 3.3 Corrélations variables / axes
+
+```{r corvar-v1-v2}
+corvar_v1 <- cor(gymXCR_v1, resacp_v1$scores[, 1:3])
+corvar_v2 <- cor(gymXCR_v2, resacp_v2$scores[, 1:3])
+
+round(corvar_v1, 3)
+round(corvar_v2, 3)
+```
+
+## 3.4 Focus sur CP2
+
+```{r focus-cp2}
+c(
+  V1_Weight = round(corvar_v1["Weight", 2], 3),
+  V1_Height = round(corvar_v1["Height", 2], 3),
+  V1_BMI    = round(corvar_v1["BMI", 2], 3),
+  V2_Weight = round(corvar_v2["Weight", 2], 3),
+  V2_Height = round(corvar_v2["Height", 2], 3)
+)
+```
+
+Dans V1, CP2 mélange encore la corpulence avec le BMI.\
+Dans V2, CP2 devient un axe morphologique plus propre, principalement structuré par `Weight` et `Height`.
+
+## 3.5 Validation Random Forest : V1 vs V2
+
+```{r rf-v1-v2}
+gymDF_v1 <- data.frame(
+  gymXCR_v1,
+  Gender = gym$Gender,
+  Workout_Type = gym$Workout_Type,
+  Exp_Level = gym$Experience_Level,
+  Calories_Class = gp
+)
+
+gymDF_v2 <- data.frame(
+  gymXCR_v2,
+  Gender = gym$Gender,
+  Workout_Type = gym$Workout_Type,
+  Exp_Level = gym$Experience_Level,
+  Calories_Class = gp
+)
+
+set.seed(123)
+nbrun <- 30
+taux_v1 <- taux_v2 <- rep(NA, nbrun)
+
+for(i in 1:nbrun){
+  idx_test <- sample(1:nrow(gymDF_v1), size = floor(nrow(gymDF_v1) / 2))
+  idx_app  <- setdiff(1:nrow(gymDF_v1), idx_test)
+
+  rf1 <- randomForest(Calories_Class ~ ., data = gymDF_v1[idx_app, ], ntree = 200)
+  rf2 <- randomForest(Calories_Class ~ ., data = gymDF_v2[idx_app, ], ntree = 200)
+
+  taux_v1[i] <- mean(predict(rf1, newdata = gymDF_v1[idx_test, ]) == gp[idx_test])
+  taux_v2[i] <- mean(predict(rf2, newdata = gymDF_v2[idx_test, ]) == gp[idx_test])
+}
+
+# Comparaison statistique des taux CV RF
+rf_comp <- data.frame(
+  Accuracy = c(taux_v1, taux_v2),
+  Version = factor(rep(c("V1_11_var", "V2_8_var"), each = nbrun),
+                   levels = c("V1_11_var", "V2_8_var"))
+)
+
+test_rf <- t.test(taux_v1, taux_v2, paired = TRUE)
+test_rf
+
+# Résumé
+rf_summary <- rf_comp %>%
+  group_by(Version) %>%
+  summarise(
+    mean_accuracy = mean(Accuracy),
+    sd_accuracy = sd(Accuracy),
+    .groups = "drop"
+  )
+rf_summary
+
+# Graphique ggplot
+
+ggplot(rf_comp, aes(x = Version, y = Accuracy, fill = Version)) +
+  geom_boxplot(alpha = 0.6, width = 0.55, outlier.shape = NA) +
+  geom_jitter(width = 0.08, alpha = 0.35, size = 1.6) +
+  labs(
+    title = "Validation croisée RF : V1 (11 variables) vs V2 (8 variables)",
+    x = "Version de la matrice X",
+    y = "Taux de bien classés"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+```
+
+La validation RF montre ici : - V1 : % de bien classés - V2 : % de bien classés
+
+La version nettoyée est donc **au moins aussi bonne**, souvent légèrement meilleure, tout en étant plus lisible.\
+C’est le genre de nettoyage qu’on garde, pas celui qu’on justifie après coup à coups de poésie.
+
+Le t-test apparié compare les performances obtenues sur les mêmes répétitions de validation croisée. V2 est plus lisible, moins redondante, et au moins aussi performante que V1.
+
+# 4. Construction de la matrice finale pour l’analyse principale
+
+## 4.1 Matrice X finale
+
+```{r matrice-finale}
+gymX <- gym[, c(
+  "Age", "Weight", "Height", "Avg_BPM",
+  "Session_Duration", "Fat_Percentage",
+  "Water_Intake", "Workout_Frequency"
+)]
+
+gymXCR <- scale(gymX, center = TRUE, scale = TRUE)
+
+vecvar <- apply(gymXCR, 2, var)
+gymXCRsel <- gymXCR[, vecvar > 0.0001]
+
+dim(gymXCRsel)
+round(apply(gymXCRsel, 2, mean), 5)
+round(apply(gymXCRsel, 2, sd), 5)
+```
+
+On retient finalement `r ncol(gymXCRsel)` variables quantitatives centrées-réduites pour l’analyse principale.
+
+```{r couleurs}
+cols_gender <- c("Female" = "coral", "Male" = "steelblue")
+cols_wt     <- c("Cardio" = "green3", "HIIT" = "red", "Strength" = "blue", "Yoga" = "purple")
+cols_exp    <- c("1" = "lightblue", "2" = "orange", "3" = "darkred")
+cols_cal    <- c("Faible" = "gold", "Moderee" = "darkorange", "Haute" = "red3")
+```
+
+# 5. ACP + CAH : exploration et profilage des adhérents
+
+## 5.1 Analyse en composantes principales (ACP)
+
+### 5.1.1 Calcul de l’ACP
+
+```{r acp-main}
+resacp <- princomp(gymXCRsel, cor = TRUE, scores = TRUE)
+summary(resacp)
+
+pct_var <- round(resacp$sdev^2 / sum(resacp$sdev^2) * 100, 2)
+cum_pct <- round(cumsum(resacp$sdev^2) / sum(resacp$sdev^2) * 100, 2)
+
+pct_var
+cum_pct
+```
+
+L’ACP sur la matrice nettoyée montre que : - CP1 explique `r pct_var[1]`% - CP2 explique `r pct_var[2]`% - CP3 explique `r pct_var[3]`%
+
+Les 3 premiers axes cumulent `r cum_pct[3]`% de l’information.
+
+### 5.1.2 Valeurs propres et choix du nombre d’axes
+
+```{r scree}
+barplot(
+  resacp$sdev^2,
+  names.arg = paste0("CP", 1:ncol(gymXCRsel)),
+  main = "Valeurs propres (éboulis)",
+  ylab = "Variance expliquée",
+  col = "steelblue",
+  las = 2
+)
+abline(h = 1, col = "red", lty = 2)
+
+saporta <- 1 + 2 * sqrt((ncol(gymXCRsel) - 1) / (nrow(gymXCRsel) - 1))
+saporta
+```
+
+Selon les critères usuels : - Kaiser retient les axes dont la valeur propre est \> 1 - Saporta fixe ici un seuil à `r round(saporta, 3)` - le cumul atteint `r cum_pct[3]`% sur 3 axes et `r cum_pct[4]`% sur 4 axes
+
+Dans une logique de compromis entre **résumé** et **interprétabilité**, retenir **3 axes** est raisonnable.
+
+### 5.1.3 Fonctions de tracé
+
+```{r fonctions-acp}
+pct1 <- round(pct_var[1], 1)
+pct2 <- round(pct_var[2], 1)
+pct3 <- round(pct_var[3], 1)
+pcts <- c(pct1, pct2, pct3)
+
+plot_acp_plan <- function(ax1, ax2, couleurs, titre, legende_labels, legende_cols, pcts) {
+  plot(
+    resacp$scores[, ax1], resacp$scores[, ax2],
+    type = "n", asp = 1,
+    main = titre,
+    xlab = paste0("CP", ax1, " (", pcts[ax1], "%)"),
+    ylab = paste0("CP", ax2, " (", pcts[ax2], "%)")
+  )
+  abline(h = 0, v = 0, lty = 2, col = "grey")
+  points(resacp$scores[, ax1], resacp$scores[, ax2], col = couleurs, pch = 16, cex = 0.7)
+  legend(
+    "bottomleft",
+    legend = legende_labels,
+    col = legende_cols,
+    pch = 16,
+    cex = 0.6,
+    pt.cex = 0.7,
+    bty = "n"
+  )
+}
+
+plot_cercle <- function(ax1, ax2, corvar, pcts) {
+  plot(
+    corvar[, ax1], corvar[, ax2],
+    xlim = c(-1, 1), ylim = c(-1, 1),
+    xlab = paste0("CP", ax1, " (", pcts[ax1], "%)"),
+    ylab = paste0("CP", ax2, " (", pcts[ax2], "%)"),
+    main = paste0("Cercle des corrélations - Plan CP", ax1, "-CP", ax2),
+    type = "n", asp = 1
+  )
+  angles <- seq(0, 2 * pi, length = 1000)
+  points(cos(angles), sin(angles), type = "l", col = "blue", lty = 2)
+  abline(h = 0, v = 0, lty = 2, col = "grey")
+  arrows(0, 0, corvar[, ax1] * 0.95, corvar[, ax2] * 0.95, length = 0.1, angle = 15)
+  text(corvar[, ax1], corvar[, ax2], labels = rownames(corvar), cex = 0.8, col = "darkblue")
+}
+```
+
+### 5.1.4 ACP colorée par genre
+
+```{r acp-genre}
+couleurs_gender <- cols_gender[gym$Gender]
+
+par(mfrow = c(1, 2))
+plot_acp_plan(1, 2, couleurs_gender,
+              "Genre - Plan CP1-CP2",
+              c("Female", "Male"),
+              c("coral", "steelblue"),
+              pcts)
+
+plot_acp_plan(1, 3, couleurs_gender,
+              "Genre - Plan CP1-CP3",
+              c("Female", "Male"),
+              c("coral", "steelblue"),
+              pcts)
+
+par(mfrow = c(1, 1))
+```
+
+Le genre tend surtout à se projeter sur l’axe morphologique.\
+Cela se comprend bien si poids et taille restent des variables structurantes du nuage.
+
+### 5.1.5 ACP colorée par type d’entraînement
+
+```{r acp-workout}
+couleurs_wt <- cols_wt[gym$Workout_Type]
+
+par(mfrow = c(1, 2))
+plot_acp_plan(1, 2, couleurs_wt,
+              "Type d'entraînement - Plan CP1-CP2",
+              names(cols_wt), cols_wt, pcts)
+
+plot_acp_plan(1, 3, couleurs_wt,
+              "Type d'entraînement - Plan CP1-CP3",
+              names(cols_wt), cols_wt, pcts)
+
+par(mfrow = c(1, 1))
+```
+
+S’il n’y a pas de séparation nette visuelle, cela suggère que `Workout_Type` structure peu les axes principaux.\
+C’est cohérent avec l’idée que la dépense calorique dépend ici davantage de **durée**, **intensité moyenne** et **profil corporel** que de l’étiquette du sport elle-même.
+
+### 5.1.6 ACP colorée par niveau d’expérience
+
+```{r acp-exp}
+couleurs_exp <- cols_exp[as.character(gym$Experience_Level)]
+
+par(mfrow = c(1, 2))
+plot_acp_plan(1, 2, couleurs_exp,
+              "Niveau d'expérience - Plan CP1-CP2",
+              c("Niveau 1", "Niveau 2", "Niveau 3"),
+              cols_exp, pcts)
+
+plot_acp_plan(1, 3, couleurs_exp,
+              "Niveau d'expérience - Plan CP1-CP3",
+              c("Niveau 1", "Niveau 2", "Niveau 3"),
+              cols_exp, pcts)
+
+par(mfrow = c(1, 1))
+```
+
+Si un gradient apparaît surtout sur CP1, cela signifie que l’expérience suit principalement l’axe de **performance / condition physique**.
+
+### 5.1.7 ACP colorée par classe de calories
+
+```{r acp-calories}
+couleurs_cal <- cols_cal[as.character(gp)]
+
+par(mfrow = c(1, 2))
+plot_acp_plan(1, 2, couleurs_cal,
+              "Classes de calories - Plan CP1-CP2",
+              c("Faible", "Moderee", "Haute"),
+              cols_cal, pcts)
+
+plot_acp_plan(1, 3, couleurs_cal,
+              "Classes de calories - Plan CP1-CP3",
+              c("Faible", "Moderee", "Haute"),
+              cols_cal, pcts)
+
+par(mfrow = c(1, 1))
+```
+
+Si le gradient des classes se fait surtout selon CP1, alors CP1 capture l’essentiel du signal lié à la dépense calorique.\
+C’est précisément ce qui justifie ensuite l’usage d’une méthode supervisée comme la PLS.
+
+```{r}
+acp_ind <- data.frame(
+  CP1 = resacp$scores[, 1],
+  CP2 = resacp$scores[, 2],
+  CP3 = resacp$scores[, 3],
+  Calories_Class = gp,
+  Gender = gym$Gender,
+  Workout_Type = gym$Workout_Type,
+  Experience_Level = gym$Experience_Level
+)
+
+ggplot(acp_ind, aes(x = CP1, y = CP2, color = Calories_Class)) +
+  geom_hline(yintercept = 0, linetype = 2, color = "grey70") +
+  geom_vline(xintercept = 0, linetype = 2, color = "grey70") +
+  geom_point(alpha = 0.65, size = 1.8) +
+  labs(
+    title = "ACP - individus colorés par classe de calories",
+    x = paste0("CP1 (", pct1, "%)"),
+    y = paste0("CP2 (", pct2, "%)")
+  ) +
+  theme_minimal()
+
+```
+
+### 5.1.8 Cercle des corrélations
+
+```{r cercle-acp}
+corvar <- cor(gymXCRsel, resacp$scores[, 1:3])
+
+par(mfrow = c(1, 2))
+plot_cercle(1, 2, corvar, pcts)
+plot_cercle(1, 3, corvar, pcts)
+par(mfrow = c(1, 1))
+
+round(corvar, 3)
+```
+
+Les variables les plus liées : - à **CP1** : `r paste(top_abs_names(corvar[,1], 4), collapse = ", ")` - à **CP2** : `r paste(top_abs_names(corvar[,2], 4), collapse = ", ")` - à **CP3** : `r paste(top_abs_names(corvar[,3], 4), collapse = ", ")`
+
+On peut généralement lire : - **CP1** comme un axe de performance / condition physique, - **CP2** comme un axe morphologique, - **CP3** comme un axe plus physiologique.
+
+-   L'axe 1 est surtout structuré par Fat_Percentage, Session_Duration, Water_Intake et Workout_Frequency.
+
+-   L'axe 2 est dominé par Weight et Height, ce qui correspond à une dimension morphologique.
+
+-   L'axe 3 est principalement porté par Age et Avg_BPM, suggérant une dimension plus physiologique.
+
+### 5.1.9. clarify separated groups / extreme individuals
+
+```{r}
+# extreme_cp1_pos <- gym %>%
+#   mutate(CP1 = resacp$scores[, 1],
+#          CP2 = resacp$scores[, 2],
+#          CP3 = resacp$scores[, 3]) %>%
+#   arrange(desc(CP1)) %>%
+#   select(CP1, Age, Weight, Height, Avg_BPM, Session_Duration,
+#          Fat_Percentage, Water_Intake, Workout_Frequency,
+#          Gender, Workout_Type, Experience_Level, Calories_Burned) %>%
+#   slice(1:10)
+# 
+# extreme_cp1_neg <- gym %>%
+#   mutate(CP1 = resacp$scores[, 1],
+#          CP2 = resacp$scores[, 2],
+#          CP3 = resacp$scores[, 3]) %>%
+#   arrange(CP1) %>% select(CP1, Age, Weight, Height, Avg_BPM, Session_Duration,
+#          Fat_Percentage, Water_Intake, Workout_Frequency,
+#          Gender, Workout_Type, Experience_Level, Calories_Burned) %>%
+#   slice(1:10)
+# extreme_cp1_pos
+# extreme_cp1_neg
+```
+
+Les individus très positifs sur CP1 présentent un profil opposé à ceux très négatifs sur CP1. Cette vérification permet de montrer concrètement d'où vient la séparation visuelle observée sur le plan factoriel. On ne se contente donc pas d'un graphique : on relie les groupes aux variables qui les structurent réellement.
+
+# d’où viennent les groupes bien séparés - L'examen des individus extrêmes sur CP1 ?????????
+
+L'examen des individus extrêmes sur CP1 permet de comprendre d'où vient la séparation visuelle observée sur le plan factoriel. Les profils très positifs et très négatifs sur CP1 diffèrent surtout sur les variables les plus corrélées à cet axe, notamment la durée de séance, le pourcentage de masse grasse, l'hydratation et la fréquence d'entraînement ??
+
+## 5.2 Classification ascendante hiérarchique (CAH)
+
+### 5.2.1 CAH sur les scores ACP
+
+```{r cah}
+distACP <- dist(resacp$scores[, 1:3])
+hclustWard <- hclust(distACP, method = "ward.D2")
+
+plot(hclustWard, hang = -1, main = "CAH Ward sur scores ACP", labels = FALSE, ylab = "Ultramétrique")
+```
+
+### 5.2.2 Choix du nombre de classes
+
+```{r cah-nbclust}
+nbclust_ward <- NbClust(
+  data = resacp$scores[, 1:3],
+  distance = "euclidean",
+  min.nc = 2,
+  max.nc = 10,
+  method = "ward.D2",
+  index = "ch"
+)
+
+plot(
+  2:10, nbclust_ward$All.index,
+  type = "l",
+  xlab = "Nb de classes",
+  ylab = "Indice CH",
+  main = "Choix du nombre de classes (Calinski-Harabasz)"
+)
+
+k_cah <- which.max(nbclust_ward$All.index) + 1
+abline(v = k_cah, col = "red", lty = 2)
+
+k_cah
+```
+
+L’indice CH suggère ici `r k_cah` groupes.
+
+### 5.2.3 Coupure de l’arbre et visualisation
+
+```{r cah-cutree}
+groupeCAH <- cutree(hclustWard, k = k_cah)
+table(groupeCAH)
+
+plot(hclustWard, hang = -1, main = paste("CAH Ward -", k_cah, "groupes"), labels = FALSE)
+rect.hclust(hclustWard, k = k_cah)
+
+par(mfrow = c(1, 2))
+plot(
+  resacp$scores[, 1], resacp$scores[, 2],
+  col = groupeCAH, pch = 16, cex = 0.7,
+  main = paste0("CAH ", k_cah, " groupes - Plan CP1-CP2"),
+  xlab = paste0("CP1 (", pct1, "%)"),
+  ylab = paste0("CP2 (", pct2, "%)")
+)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+
+plot(
+  resacp$scores[, 1], resacp$scores[, 3],
+  col = groupeCAH, pch = 16, cex = 0.7,
+  main = paste0("CAH ", k_cah, " groupes - Plan CP1-CP3"),
+  xlab = paste0("CP1 (", pct1, "%)"),
+  ylab = paste0("CP3 (", pct3, "%)")
+)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+
+par(mfrow = c(1, 1))
+```
+
+### 5.2.4 Description des profils
+
+```{r cah-profils}
+gymX_df <- as.data.frame(gymXCRsel)
+gymX_df$Groupe <- as.factor(groupeCAH)
+
+
+table(gym$Gender, groupeCAH)
+table(gym$Workout_Type, groupeCAH)
+table(gym$Experience_Level, groupeCAH)
+table(gp, groupeCAH)
+```
+
+La CAH permet ici de dégager des profils synthétiques d’adhérents.\
+L’interprétation se fait à partir : - des moyennes centrées-réduites par groupe, - de la répartition des variables qualitatives, - et du lien éventuel avec les classes de calories.
+
+# 6. CART et Random Forest : détection des facteurs discriminants
+
+## 6.1 Préparation des jeux de données
+
+```{r df-supervise}
+gymDF <- data.frame(
+  as.data.frame(gymXCRsel),
+  Gender = gym$Gender,
+  Workout_Type = gym$Workout_Type,
+  Exp_Level = gym$Experience_Level,
+  Calories_Class = gp
+)
+
+gymDF_reg <- data.frame(
+  as.data.frame(gymXCRsel),
+  Gender = gym$Gender,
+  Workout_Type = gym$Workout_Type,
+  Exp_Level = gym$Experience_Level,
+  Calories_Burned = gym$Calories_Burned
+)
+```
+
+## 6.2 CART classification
+
+### 6.2.1 Arbre initial
+
+```{r cart-class}
+resrpart <- rpart(
+  Calories_Class ~ .,
+  data = gymDF,
+  control = rpart.control(minsplit = 5)
+)
+
+plot(resrpart)
+text(resrpart, use.n = TRUE, cex = 0.7)
+title("Arbre CART - Classification")
+
+predCART <- predict(resrpart, type = "class")
+taux_cart_app <- mean(predCART == gp)
+
+taux_cart_app
+table(predCART, gp)
+printcp(resrpart)
+plotcp(resrpart)
+```
+
+Le taux d’apprentissage de l’arbre initial est de `r round(taux_cart_app * 100, 2)`%.\
+C’est utile, mais encore optimiste, parce qu’un arbre adore apprendre par cœur dès qu’on le laisse respirer.
+
+### 6.2.2 Élagage
+
+```{r cart-prune}
+cp_opt_class <- resrpart$cptable[which.min(resrpart$cptable[, "xerror"]), "CP"]
+
+resrpart_lag <- prune(resrpart, cp = cp_opt_class)
+
+plot(resrpart_lag)
+text(resrpart_lag, use.n = TRUE, cex = 0.7)
+title("Arbre CART élagué")
+
+predCART_lag <- predict(resrpart_lag, type = "class")
+taux_cart_lag <- mean(predCART_lag == gp)
+
+cp_opt_class
+taux_cart_lag
+table(predCART_lag, gp)
+```
+
+Après élagage, le taux devient `r round(taux_cart_lag * 100, 2)`%.\
+La perte apparente de performance est normale : on échange un peu d’optimisme contre un modèle plus défendable.
+
+## 6.3 CART de régression sur Calories_Burned
+
+```{r cart-reg}
+resrpart_reg <- rpart(
+  Calories_Burned ~ .,
+  data = gymDF_reg,
+  method = "anova",
+  control = rpart.control(minsplit = 5)
+)
+
+plot(resrpart_reg)
+text(resrpart_reg, use.n = FALSE, cex = 0.7)
+title("Arbre CART régression - Calories brûlées")
+
+printcp(resrpart_reg)
+plotcp(resrpart_reg)
+
+cp_reg <- resrpart_reg$cptable[which.min(resrpart_reg$cptable[, "xerror"]), "CP"]
+resrpart_reg_lag <- prune(resrpart_reg, cp = cp_reg)
+
+plot(resrpart_reg_lag)
+text(resrpart_reg_lag, use.n = FALSE, cex = 0.7)
+title("Arbre CART régression élagué")
+
+pred_reg <- predict(resrpart_reg_lag)
+RMSE_cart <- sqrt(mean((gym$Calories_Burned - pred_reg)^2))
+R2_cart <- cor(gym$Calories_Burned, pred_reg)^2
+
+cp_reg
+RMSE_cart
+R2_cart
+```
+
+L’arbre de régression donne ici : - `RMSE = r round(RMSE_cart, 2)` - `R² = r round(R2_cart, 4)`
+
+Il fournit une lecture simple : **quelles variables coupent d’abord**, et **à quel niveau de calories on arrive ensuite**.
+
+## 6.4 Random Forest
+
+```{r rf-main}
+set.seed(42)
+resRF <- randomForest(
+  Calories_Class ~ .,
+  data = gymDF,
+  ntree = 500,
+  importance = TRUE
+)
+
+print(resRF)
+
+predRF <- predict(resRF)
+taux_rf_app <- mean(predRF == gp)
+
+taux_rf_app
+table(predRF, gp)
+```
+
+Le taux de bien classés sur l’échantillon complet est de `r round(taux_rf_app * 100, 2)`%.\
+L’erreur OOB affichée par la forêt est la mesure la plus utile ici pour juger la généralisation sans se raconter d’histoires.
+
+### 6.4.1 Importance des variables
+
+```{r rf-importance}
+varImpPlot(resRF, main = "Importance des variables - Random Forest", cex = 0.8)
+
+importance_tri <- importance(resRF)
+importance_tri[order(importance_tri[, "MeanDecreaseGini"], decreasing = TRUE), ]
+```
+
+Les variables dominantes sont en général les premières du classement `MeanDecreaseGini`.\
+On s’attend souvent à voir sortir : - `Session_Duration` - `Avg_BPM` - `Fat_Percentage` - `Exp_Level`
+
+si le signal observé dans l’ACP et le CART est cohérent.
+
+### 6.4.2 Stabilisation de l’erreur OOB
+
+```{r rf-oob}
+plot(resRF, main = "Erreur OOB selon le nombre d'arbres")
+legend("topright", legend = c("OOB", levels(gp)),
+       col = 1:(length(levels(gp)) + 1), lty = 1, cex = 0.8)
+```
+
+Si la courbe se stabilise rapidement, le nombre d’arbres choisi est suffisant.
+
+# 7. AFCM + PLS : intégration des variables qualitatives dans une régression supervisée
+
+## 7.1 AFCM : transformation des variables qualitatives
+
+### 7.1.1 Chargement des fonctions
+
+```{r}
+# Tắt việc hỏi chuyển trang đồ thị
+options(device.ask.default = FALSE)
+grDevices::devAskNewPage(FALSE)
+
+# Tạo môi trường riêng để nạp fonctions_afc.R
+afc_env <- new.env(parent = globalenv())
+
+# Ghi đè các hàm tương tác hay gây treo khi knit
+afc_env$readline <- function(prompt = "") {
+  cat(prompt, " [auto=6]\n")
+  "6"
+}
+
+afc_env$menu <- function(choices, ...) {
+  cat("menu() détecté -> choix automatique = 1\n")
+  1
+}
+
+afc_env$scan <- function(file = "", what = "", nmax = 1, quiet = TRUE, ...) {
+  cat("scan() détecté -> valeur automatique = 6\n")
+  if (is.numeric(what)) return(6)
+  if (is.integer(what)) return(6L)
+  "6"
+}
+
+afc_env$devAskNewPage <- function(ask = FALSE) {
+  grDevices::devAskNewPage(FALSE)
+}
+
+afc_env$par <- function(...) {
+  graphics::par(ask = FALSE, ...)
+}
+
+# Charger le fichier dans cet environnement
+sys.source("fonctions_afc.R", envir = afc_env)
+```
+
+```{r afcm-source}
+if(!file.exists("fonctions_afc.R")){
+  stop("Le fichier 'fonctions_afc.R' doit être présent dans le dossier de travail.")
+}
+
+source("fonctions_afc.R")
+```
+
+### 7.1.2 Version retenue : codage des quali en entiers puis tableau disjonctif complet
+
+```{r afcm-prep}
+gymQuali_num <- matrix(
+  c(
+    as.integer(gym$Gender),
+    as.integer(gym$Workout_Type),
+    as.integer(gym$Experience_Level)
+  ),
+  nrow = nrow(gym),
+  ncol = 3
+)
+
+colnames(gymQuali_num) <- c("Gender", "Workout_Type", "Exp_Level")
+rownames(gymQuali_num) <- 1:nrow(gym)
+
+head(gymQuali_num)
+apply(gymQuali_num, 2, min)
+apply(gymQuali_num, 2, max)
+any(is.na(gymQuali_num))
+```
+
+```{r afcm-main}
+# gymQuali_num <- matrix(
+#   c(as.integer(gym$Gender),
+#     as.integer(gym$Workout_Type),
+#     as.integer(gym$Experience_Level)),
+#   nrow = nrow(gym),
+#   ncol = 3
+# )
+# 
+# colnames(gymQuali_num) <- c("Gender", "Workout_Type", "Exp_Level")
+# rownames(gymQuali_num) <- 1:nrow(gym)
+# 
+# gymDC <- afc_env$Codisjc(gymQuali_num)$U
+# resafcm <- afc_env$afc(gymDC, k = 6)
+# 
+# coord_afcm <- resafcm$C[, 1:6]
+# colnames(coord_afcm) <- paste0("AFCM_", 1:6)
+# 
+# dim(coord_afcm)
+# head(coord_afcm)
+# summary(coord_afcm)
+```
+
+```{r afcm}
+# Package pour l'AFCM
+if (!require(FactoMineR)) install.packages("FactoMineR")
+library(FactoMineR)
+
+# Variables qualitatives
+gymQuali <- gym[, c("Gender", "Workout_Type", "Experience_Level")]
+
+# S'assurer que ce sont bien des facteurs
+gymQuali$Gender <- factor(gymQuali$Gender)
+gymQuali$Workout_Type <- factor(gymQuali$Workout_Type)
+gymQuali$Experience_Level <- factor(gymQuali$Experience_Level)
+
+# AFCM non interactive
+resafcm <- MCA(gymQuali, ncp = 6, graph = FALSE)
+
+
+# Coordonnées des individus
+coord_afcm <- as.data.frame(resafcm$ind$coord[, 1:6])
+colnames(coord_afcm) <- paste0("AFCM_", 1:6)
+
+dim(coord_afcm)
+head(coord_afcm)
+summary(coord_afcm)
+```
+
+On retient ici `r ncol(coord_afcm)` axes AFCM, ce qui est cohérent avec : $$
+(2 + 4 + 3) - 3 = 6
+$$ soit le nombre maximal d’axes utiles pour 3 variables qualitatives ayant 2, 4 et 3 modalités.
+
+### 7.1.3 Vérification rapide de cohérence des axes AFCM
+
+```{r afcm-check}
+aggregate(coord_afcm[, 1] ~ gym$Gender, FUN = mean)
+aggregate(coord_afcm[, 1] ~ gym$Workout_Type, FUN = mean)
+aggregate(coord_afcm[, 1] ~ gym$Experience_Level, FUN = mean)
+```
+
+Si les moyennes diffèrent selon les modalités, les axes AFCM capturent bien de l’information discriminante sur les variables qualitatives.\
+Autrement dit, cette étape n’est pas décorative.
+
+### 7.1.4 Représentation simple des individus sur le plan AFCM 1-2
+
+```{r afcm-plot}
+par(mfrow = c(1, 2))
+plot(coord_afcm[, 1], coord_afcm[, 2],
+     col = cols_gender[gym$Gender], pch = 16, cex = 0.7,
+     main = "AFCM 1-2 colorée par Gender",
+     xlab = "AFCM 1", ylab = "AFCM 2")
+legend("topright", legend = names(cols_gender), col = cols_gender, pch = 16, cex = 0.8)
+
+plot(coord_afcm[, 1], coord_afcm[, 2],
+     col = cols_exp[as.character(gym$Experience_Level)], pch = 16, cex = 0.7,
+     main = "AFCM 1-2 colorée par Exp_Level",
+     xlab = "AFCM 1", ylab = "AFCM 2")
+legend("topright", legend = names(cols_exp), col = cols_exp, pch = 16, cex = 0.8)
+
+par(mfrow = c(1, 1))
+```
+
+```{r}
+ggplot(mod_contrib_dim1 %>% slice_head(n = 10),
+       aes(x = reorder(Modalite, Contribution), y = Contribution)) +
+  geom_col(alpha = 0.85) +
+  coord_flip() +
+  labs(
+    title = "AFCM - modalités les plus contributives à l'axe 1",
+    x = "Modalité",
+    y = "Contribution (%)"
+  ) +
+  theme_minimal()
+
+ggplot(mod_contrib_dim2 %>% slice_head(n = 10),
+       aes(x = reorder(Modalite, Contribution), y = Contribution)) +
+  geom_col(alpha = 0.85) +
+  coord_flip() +
+  labs(
+    title = "AFCM - modalités les plus contributives à l'axe 2",
+    x = "Modalité",
+    y = "Contribution (%)"
+  ) +
+  theme_minimal()
+```
+
+## 7.2 PLS : régression sur composantes
+
+### 7.2.1 Constitution de la matrice X complète
+
+```{r pls-x}
+gymXpls <- data.frame(
+  as.data.frame(gymXCRsel),
+  coord_afcm
+)
+
+dim(gymXpls)
+head(gymXpls)
+
+Y_cal <- gym$Calories_Burned
+```
+
+La matrice PLS contient donc : - `r ncol(gymXCRsel)` variables quantitatives nettoyées - `r ncol(coord_afcm)` axes AFCM - soit `r ncol(gymXpls)` prédicteurs au total
+
+### 7.2.2 Découpage apprentissage / test
+
+```{r pls-split}
+set.seed(42)
+idx_app  <- sample(1:nrow(gymXpls), size = floor(0.7 * nrow(gymXpls)))
+idx_test <- setdiff(1:nrow(gymXpls), idx_app)
+
+X_app  <- gymXpls[idx_app, ]
+X_test <- gymXpls[idx_test, ]
+Y_app  <- Y_cal[idx_app]
+Y_test <- Y_cal[idx_test]
+```
+
+### 7.2.3 Centrage-réduction sur l’apprentissage uniquement
+
+```{r pls-scale}
+mean_app <- apply(X_app, 2, mean)
+sd_app   <- apply(X_app, 2, sd)
+
+X_appCR  <- scale(X_app, center = mean_app, scale = sd_app)
+X_testCR <- scale(X_test, center = mean_app, scale = sd_app)
+
+mean_Y <- mean(Y_app)
+sd_Y   <- sd(Y_app)
+
+Y_appCR <- (Y_app - mean_Y) / sd_Y
+Y_testCR <- (Y_test - mean_Y) / sd_Y
+
+data_appCR  <- data.frame(X_appCR, Calories = Y_appCR)
+data_testCR <- data.frame(X_testCR, Calories = Y_testCR)
+```
+
+C’est une étape importante : on centre-réduit le test **avec les paramètres de l’apprentissage**, sinon on triche sans même s’en rendre compte.
+
+### 7.2.4 Ajustement PLS sur l’échantillon d’apprentissage
+
+```{r pls-fit}
+ncomp_max <- min(ncol(X_appCR), 15)
+
+respls <- plsr(Calories ~ ., data = data_appCR, ncomp = ncomp_max)
+summary(respls)
+```
+
+les pourcentages de variance expliquée affichés ici correspondent à l’échantillon **d’apprentissage**.
+
+### 7.2.5 Représentation des individus sur le plan PLS 1-2
+
+```{r pls-scores}
+plot(
+  respls$scores[, 1], respls$scores[, 2],
+  main = "Plan PLS 1-2 (apprentissage)",
+  xlab = "PLS1", ylab = "PLS2",
+  pch = 16, cex = 0.7,
+  col = cols_cal[as.character(gp[idx_app])]
+)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+legend("topright", legend = names(cols_cal), col = cols_cal, pch = 16, cex = 0.8)
+```
+
+Contrairement à l’ACP, la PLS oriente les axes vers la prédiction de `Calories_Burned`.\
+Si un gradient clair des classes apparaît sur PLS1, c’est bon signe : le plan n’est plus juste descriptif, il devient prédictif.
+
+### 7.2.6 Cercle des corrélations PLS
+
+```{r pls-cercle}
+corvar_pls <- cor(data_appCR[, -ncol(data_appCR)], respls$scores[, 1:2])
+
+plot(corvar_pls[, 1], corvar_pls[, 2],
+     xlim = c(-1, 1), ylim = c(-1, 1),
+     xlab = "PLS1", ylab = "PLS2",
+     main = "Cercle des corrélations - PLS",
+     type = "n", asp = 1)
+symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, lty = 2)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+arrows(0, 0, corvar_pls[, 1] * 0.95, corvar_pls[, 2] * 0.95, length = 0.1, angle = 15)
+text(corvar_pls[, 1], corvar_pls[, 2], labels = rownames(corvar_pls), cex = 0.7, col = "purple")
+```
+
+Les variables les plus liées au plan PLS sont en général celles qui portent le mieux la prédiction des calories.
+
+### 7.2.7 Choix du nombre optimal de composantes par CV répétée
+
+```{r pls-cv}
+set.seed(123)
+
+PRESS100CV <- matrix(NA, 100, ncomp_max)
+R2_100CV   <- matrix(NA, 100, ncomp_max)
+
+for(i in 1:100){
+  idx_cv_test <- sample(1:nrow(data_appCR), size = floor(nrow(data_appCR) / 2))
+  idx_cv_app  <- setdiff(1:nrow(data_appCR), idx_cv_test)
+
+  mod_cv <- plsr(Calories ~ ., data = data_appCR[idx_cv_app, ], ncomp = ncomp_max)
+
+  for(h in 1:ncomp_max){
+    pred_cv <- as.vector(predict(mod_cv, newdata = data_appCR[idx_cv_test, ], ncomp = h))
+    obs_cv  <- data_appCR$Calories[idx_cv_test]
+
+    PRESS100CV[i, h] <- sum((obs_cv - pred_cv)^2)
+    R2_100CV[i, h] <- 1 - sum((obs_cv - pred_cv)^2) /
+      sum((obs_cv - mean(data_appCR$Calories[idx_cv_app]))^2)
+  }
+}
+
+PRESS100moy <- colMeans(PRESS100CV, na.rm = TRUE)
+R2_100moy   <- colMeans(R2_100CV, na.rm = TRUE)
+
+par(mfrow = c(1, 2))
+plot(1:ncomp_max, PRESS100moy, type = "b",
+     xlab = "Nb de composantes", ylab = "PRESS moyen",
+     main = "PRESS moyen (100 runs)")
+plot(1:ncomp_max, R2_100moy, type = "b",
+     xlab = "Nb de composantes", ylab = "R² CV moyen",
+     main = "R² CV moyen (100 runs)")
+par(mfrow = c(1, 1))
+
+ncomp_opt <- which.min(PRESS100moy)
+ncomp_opt
+```
+
+Le nombre optimal de composantes retenu est ici **`r ncomp_opt`**.\
+On choisit donc le compromis qui minimise l’erreur de prédiction moyenne, pas celui qui fait joli dans un commentaire écrit avant les résultats.
+
+La validation croisée répétée est utilisée ici pour choisir un nombre de composantes défendable et estimer la stabilité de la performance au sein de l’échantillon d’apprentissage. Elle reste distincte de l’évaluation finale sur l’échantillon test.
+
+### 7.2.8 Évaluation finale sur l’échantillon test
+
+```{r pls-test}
+pred_test_cr  <- as.vector(predict(respls, newdata = data_testCR, ncomp = ncomp_opt))
+pred_test_raw <- pred_test_cr * sd_Y + mean_Y
+
+R2_test_pls   <- 1 - sum((Y_test - pred_test_raw)^2) / sum((Y_test - mean(Y_test))^2)
+RMSE_test_pls <- sqrt(mean((Y_test - pred_test_raw)^2))
+MAE_test_pls  <- mean(abs(Y_test - pred_test_raw))
+
+cat("R² test   :", round(R2_test_pls, 4), "\n")
+cat("RMSE test :", round(RMSE_test_pls, 2), "\n")
+cat("MAE test  :", round(MAE_test_pls, 2), "\n")
+```
+
+Les performances sur le jeu test sont : - `R² = r round(R2_test_pls, 4)` - `RMSE = r round(RMSE_test_pls, 2)` - `MAE = r round(MAE_test_pls, 2)`
+
+Un bon résultat ici signifie que la combinaison : - des variables physiologiques, - des variables comportementales, - et des axes AFCM issus des qualitatives
+
+permet de prédire correctement la dépense calorique.
+
+### 7.2.9 Scores VIP
+
+```{r pls-vip}
+vip_scores <- function(model, ncomp){
+  SS  <- c(model$Yloadings[, 1:ncomp])^2 * colSums(model$scores[, 1:ncomp]^2)
+  W   <- model$loading.weights[, 1:ncomp]
+  p   <- nrow(W)
+  VIP <- sqrt(p * rowSums(sweep(W^2, 2, SS, "*")) / sum(SS))
+  VIP
+}
+
+vip <- vip_scores(respls, ncomp = ncomp_opt)
+vip_df <- data.frame(Variable = names(vip), VIP = vip)
+vip_df <- vip_df[order(vip_df$VIP, decreasing = TRUE), ]
+
+vip_df
+
+par(mar = c(10, 4, 4, 2))
+barplot(
+  vip_df$VIP,
+  names.arg = vip_df$Variable,
+  las = 2, cex.names = 0.65,
+  col = ifelse(vip_df$VIP >= 1, "steelblue", "lightgrey"),
+  main = "Scores VIP - PLS",
+  ylab = "VIP"
+)
+abline(h = 1, col = "red", lty = 2)
+par(mar = c(5, 4, 4, 2))
+```
+
+Les variables avec **VIP \> 1** sont celles qui contribuent le plus à la projection prédictive.\
+On vérifiera si la hiérarchie retrouvée est cohérente avec le CART et la Random Forest.
+
+# 8. LDA sur les classes de calories
+
+## 8.1 Ajustement LDA
+
+```{r lda-fit}
+gymXlda <- as.matrix(gymXCRsel)
+
+reslda <- lda(x = gymXlda, grouping = gp)
+respred <- predict(reslda, newdata = gymXlda)
+
+taux_lda_app <- mean(respred$class == gp)
+
+taux_lda_app
+table(respred$class, gp)
+tapply(respred$class == gp, gp, mean) * 100
+```
+
+Le taux de bien classés sur l’échantillon complet est de `r round(taux_lda_app * 100, 2)`%.\
+La LDA est intéressante ici parce qu’elle donne une lecture linéaire, claire et souvent étonnamment robuste.
+
+## 8.2 Plan discriminant 1-2
+
+```{r lda-plan}
+plot(respred$x[, 1:2], type = "n",
+     main = "Plan discriminant LDA - Classes de calories",
+     xlab = "LD1", ylab = "LD2")
+abline(v = 0, h = 0, lty = 2, col = "grey")
+
+cols_lda <- c("Faible" = "gold", "Moderee" = "darkorange", "Haute" = "red3")
+colmoi <- cols_lda[as.character(gp)]
+colmoi[respred$class != gp] <- "black"
+
+text(respred$x[, 1:2], labels = as.character(gp), col = colmoi, cex = 0.6)
+
+legend("topright",
+       legend = c("Faible", "Moderee", "Haute", "Erreur classif."),
+       col = c("gold", "darkorange", "red3", "black"),
+       pch = 1, cex = 0.8)
+```
+
+Si les erreurs se concentrent entre classes adjacentes, c’est un comportement logique.\
+Confondre **Faible** avec **Haute** directement serait beaucoup plus gênant.
+
+## 8.3 Cercle des corrélations LDA
+
+```{r lda-cercle}
+corvar_lda <- cor(gymXlda, respred$x[, 1:2])
+
+plot(corvar_lda[, 1], corvar_lda[, 2],
+     xlim = c(-1, 1), ylim = c(-1, 1),
+     xlab = "LD1", ylab = "LD2",
+     main = "Cercle des corrélations - LDA",
+     type = "n", asp = 1)
+angles <- seq(0, 2 * pi, length = 500)
+points(cos(angles), sin(angles), type = "l", lty = 2)
+abline(h = 0, v = 0, lty = 2, col = "grey")
+arrows(0, 0, corvar_lda[, 1] * 0.95, corvar_lda[, 2] * 0.95, length = 0.1, angle = 15)
+text(corvar_lda[, 1], corvar_lda[, 2], labels = rownames(corvar_lda), cex = 0.8, col = "darkblue")
+
+round(corvar_lda, 3)
+```
+
+Les variables les plus corrélées à LD1 sont `r paste(top_abs_names(corvar_lda[,1], 4), collapse = ", ")`.\
+Cet axe représente donc le principal gradient de discrimination des classes de calories.
+
+## 8.4 Validation croisée LDA
+
+```{r lda-cv}
+set.seed(123)
+nbrun_lda <- 30
+taux_lda  <- rep(NA, nbrun_lda)
+
+for(i in 1:nbrun_lda){
+  idx_test_lda <- sample(1:nrow(gymXlda), size = floor(nrow(gymXlda) / 2))
+  idx_app_lda  <- setdiff(1:nrow(gymXlda), idx_test_lda)
+
+  if(length(unique(gp[idx_app_lda])) < 3) next
+
+  reslda_loc   <- lda(x = gymXlda[idx_app_lda, ], grouping = gp[idx_app_lda])
+  pred_lda_loc <- predict(reslda_loc, newdata = gymXlda[idx_test_lda, ])
+  taux_lda[i]  <- mean(pred_lda_loc$class == gp[idx_test_lda])
+}
+
+mean_lda_cv <- mean(taux_lda, na.rm = TRUE)
+sd_lda_cv   <- sd(taux_lda, na.rm = TRUE)
+
+cat("Taux moyen LDA (CV 2-blocs, 30 runs) :", round(mean_lda_cv * 100, 2), "%\n")
+cat("Ecart-type :", round(sd_lda_cv * 100, 2), "%\n")
+
+boxplot(taux_lda,
+        main = "Distribution des taux bien classés LDA (30 runs)",
+        ylab = "Taux bien classés",
+        col = "lightcoral")
+```
+
+La validation croisée donne ici : - taux moyen = `r round(mean_lda_cv * 100, 2)`% - écart-type = `r round(sd_lda_cv * 100, 2)`%
+
+Si ce taux reste proche du taux d’apprentissage, la LDA ne sur-ajuste pas fortement et la séparation linéaire est crédible.
+
+# 9. Conclusion générale
+
+Le pipeline retenu permet de répondre à plusieurs objectifs complémentaires :
+
+1.  **Comprendre la structure des données** avec l’ACP.\
+2.  **Identifier des profils d’adhérents** avec la CAH.\
+3.  **Repérer les variables les plus discriminantes** avec le CART et la Random Forest.\
+4.  **Prédire la dépense calorique** avec la PLS en intégrant aussi l’information qualitative via l’AFCM.\
+5.  **Tester une frontière linéaire entre classes** avec la LDA.
+
+Sur le fond, le message analytique attendu est généralement le suivant : - `Session_Duration` joue un rôle majeur, - `Avg_BPM` affine la prédiction, - `Fat_Percentage` et `Experience_Level` interviennent aussi, - `Workout_Type` semble souvent secondaire dans ce jeu de données.
+
+# 10. Session information
+
+```{r session-info}
+sessionInfo()
+```

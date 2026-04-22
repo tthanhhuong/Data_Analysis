@@ -1,6 +1,6 @@
 ---
 title: "ETUDE DE CAS 1 - Gym Members Exercise Dataset"
-author: "Votre nom"
+author: "Huong PHAM"
 date: "2026-03-17"
 output:
   html_document:
@@ -19,26 +19,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Introduction
-
-Cette étude porte sur le jeu de données **Gym Members Exercise Dataset**.\
-L’objectif est de suivre une démarche d’analyse structurée permettant :
-
-1.  de préparer et nettoyer les données ;
-2.  de décrire les caractéristiques de l’échantillon ;
-3.  d’explorer la structure des variables quantitatives par ACP ;
-4.  de réaliser une classification non supervisée par CAH ;
-5.  de construire des modèles de classification pour prédire une **classe de dépense calorique** ;
-6.  de construire des modèles de régression pour prédire directement **Calories_Burned**.
-
-La stratégie retenue combine ainsi une approche **descriptive**, **exploratoire**, **non supervisée** et **supervisée**.
-
 # 1. Chargement des packages et importation des données
 
 ## 1.1. Packages nécessaires
 
 ```{r packages}
-packages <- c("corrplot", "MASS", "rpart", "rpart.plot", "randomForest", "pls")
+packages <- c("corrplot", "MASS", "rpart", "rpart.plot", "randomForest", "pls", "ggplot2", "tidyr")
 to_install <- packages[!packages %in% rownames(installed.packages())]
 if (length(to_install) > 0) install.packages(to_install)
 
@@ -48,6 +34,8 @@ library(rpart)
 library(rpart.plot)
 library(randomForest)
 library(pls)
+library(ggplot2)
+library(tidyr)
 ```
 
 ## 1.2. Importation du jeu de données
@@ -95,9 +83,6 @@ dup_count <- sum(duplicated(gym))
 na_counts
 dup_count
 ```
-
-Les sorties précédentes permettent de confirmer si le jeu de données nécessite un traitement complémentaire.\
-En l’absence de valeurs manquantes importantes ou de doublons, l’analyse peut être poursuivie directement.
 
 ## 2.3. Choix des variables retenues
 
@@ -158,14 +143,6 @@ round(corr_bpm_cal, 3)
 round(corr_bmi, 3)
 ```
 
-Ces résultats permettent d’évaluer :
-
--   la proximité entre les différentes mesures de fréquence cardiaque ;
--   leur lien avec `Calories_Burned` ;
--   la redondance potentielle entre `BMI`, `Weight` et `Height`.
-
-Si `BMI` est fortement corrélé à ses composantes, il est logique de ne pas l’inclure dans les analyses principales afin d’éviter une information répétée.
-
 ## 2.5. Création de la variable cible de classification
 
 Afin de réaliser des modèles de classification, on transforme la variable continue `Calories_Burned` en trois classes de niveau de dépense calorique : **Faible**, **Modérée** et **Haute**, à partir des terciles.
@@ -193,8 +170,6 @@ tab_classe
 prop_classe
 ```
 
-La répartition obtenue permet de vérifier que les classes sont globalement équilibrées, ce qui est souhaitable pour les modèles de classification.
-
 # 3. Analyse descriptive
 
 ## 3.1. Description des variables quantitatives
@@ -211,8 +186,6 @@ ecarts_types
 resume_quanti
 ```
 
-Cette étape permet d’apprécier l’ordre de grandeur des variables, leur dispersion et d’éventuelles asymétries ou valeurs extrêmes.
-
 ## 3.2. Distribution des variables qualitatives
 
 On examine ensuite la distribution des variables qualitatives du jeu de données.
@@ -223,8 +196,6 @@ table(gym$Workout_Type)
 table(gym$Experience_Level)
 table(gym$Classe_Calories)
 ```
-
-Cette description donne une première idée de la composition de l’échantillon selon le sexe, le type d’entraînement, le niveau d’expérience et la classe de dépense calorique.
 
 ## 3.3. Visualisation des distributions
 
@@ -238,8 +209,6 @@ boxplot(gym$Fat_Percentage, main = "Fat_Percentage")
 boxplot(gym$Workout_Frequency..days.week., main = "Workout_Frequency")
 par(mfrow = c(1, 1))
 ```
-
-Ces graphiques sont utiles pour repérer rapidement les variables les plus hétérogènes et vérifier si certaines distributions présentent des valeurs extrêmes.
 
 ## 3.4. Corrélations entre variables quantitatives
 
@@ -258,8 +227,7 @@ corrplot(
 )
 ```
 
-Une forte corrélation entre deux variables suggère qu’elles véhiculent une information proche.\
-À l’inverse, des corrélations faibles traduisent des dimensions plus indépendantes du comportement physique étudié.
+La matrice de corrélation met en évidence plusieurs relations intéressantes. La plus marquée concerne la corrélation positive entre Session_Duration et Workout_Frequency, ce qui suggère que les individus s’entraînant plus souvent ont également tendance à faire des séances plus longues. À l’inverse, Fat_Percentage est négativement corrélée à Session_Duration, à Water_Intake et à Workout_Frequency, ce qui traduit un profil globalement moins actif chez les individus présentant un pourcentage de masse grasse plus élevé. Les corrélations entre Weight, Height et Water_Intake sont positives mais plus modérées.
 
 ## 3.5. Corrélations avec la variable cible continue
 
@@ -274,7 +242,7 @@ cor_target <- cor(
 round(cor_target[, "Calories_Burned"], 2)
 ```
 
-Cette étape permet d’identifier les variables quantitatives les plus directement associées à la dépense calorique, ce qui sera utile pour l’interprétation des modèles prédictifs.
+L’analyse des corrélations avec Calories_Burned montre clairement que la variable la plus liée à la dépense calorique est Session_Duration, avec une corrélation très forte de 0,91. Workout_Frequency et Fat_Percentage présentent également des liens marqués, respectivement positif et négatif. Avg_BPM et Water_Intake ont des corrélations positives plus modérées, tandis que l’âge, le poids et la taille contribuent peu à la variation de Calories_Burned.
 
 # 4. Analyse en composantes principales (ACP)
 
@@ -288,8 +256,6 @@ gymCR <- scale(gym_quanti, center = TRUE, scale = TRUE)
 round(apply(gymCR, 2, mean), 5)
 round(apply(gymCR, 2, sd), 5)
 ```
-
-Les moyennes proches de 0 et les écarts-types proches de 1 confirment que la standardisation a bien été effectuée.
 
 ## 4.2. Réalisation de l’ACP
 
@@ -305,8 +271,6 @@ round(vp, 3)
 round(vp / sum(vp) * 100, 2)
 round(cumsum(vp) / sum(vp) * 100, 2)
 ```
-
-Les valeurs propres et pourcentages de variance expliquée permettent de mesurer combien d’information est capturée par chaque composante principale.
 
 ## 4.3. Choix du nombre d’axes
 
@@ -325,8 +289,7 @@ round(saporta_threshold, 3)
 saporta_n
 ```
 
-Le critère de Kaiser retient les axes dont la valeur propre est supérieure à 1.\
-Le critère de Saporta est plus exigeant et permet parfois une sélection plus prudente des dimensions réellement informatives.
+Le critère de Kaiser conduit à retenir 3 axes, tandis que le seuil de Saporta en suggère 2. Cette légère divergence est classique. Dans ce contexte, retenir 2 axes peut suffire pour l’interprétation graphique, alors que conserver 3 axes pour certaines analyses ultérieures, comme la CAH, permet de préserver davantage d’information. Le choix effectué est donc cohérent : 2 axes pour lire la structure, 3 axes pour classer les individus de manière plus robuste. 
 
 ## 4.4. Représentation des valeurs propres
 
@@ -350,7 +313,7 @@ abline(h = 1, col = "red", lty = 2)
 par(mfrow = c(1, 1))
 ```
 
-Le scree plot permet de visualiser le décrochement des valeurs propres et d’aider au choix du nombre d’axes à interpréter.
+On observe un coude assez visible après les axes 2 ou 3, ce qui renforce l’idée qu’au-delà de ces composantes, l’information supplémentaire devient marginale. Les axes suivants captent surtout une part résiduelle de variance, moins utile pour une lecture synthétique des données
 
 ## 4.5. Variance expliquée par les premiers axes
 
@@ -364,7 +327,7 @@ pct2
 pct3
 ```
 
-Les deux premiers axes expliquent ensemble `r round(pct1 + pct2, 2)` % de la variance totale, ce qui donne une idée de la qualité de la représentation plane de l’ACP.
+L’axe 1 explique à lui seul 32,5 % de la variance, l’axe 2 en explique 19,7 %, et l’axe 3 environ 13,0 %. Cela signifie que le premier axe structure fortement les données, tandis que le second complète cette opposition principale.
 
 ## 4.6. Représentation des individus
 
@@ -414,8 +377,9 @@ plot_acp_groups(gym$Experience_Level, "ACP - Individus colorés par Experience_L
 plot_acp_groups(gym$Classe_Calories, "ACP - Individus colorés par Classe_Calories")
 ```
 
-Ces graphiques permettent d’observer si certains groupes se distinguent visuellement sur les premiers axes de l’ACP.\
-Une séparation partielle ou nette suggère que la structure multidimensionnelle des données est liée aux variables qualitatives étudiées.
+La coloration par Classe_Calories est probablement celle qui apporte la lecture la plus informative, car la structure des corrélations suggère que les individus à forte dépense calorique se situent du côté des valeurs élevées de durée, fréquence et hydratation, alors que les individus à faible dépense se rapprochent du pôle défini par un pourcentage de masse grasse plus élevé.
+
+La coloration par Gender et Experience_Level semble également pouvoir révéler une organisation partielle du nuage, sans pour autant produire une séparation parfaitement nette.
 
 ## 4.7. Cercle des corrélations
 
@@ -454,8 +418,9 @@ arrows(
 round(corvar, 3)
 ```
 
-Les variables proches du cercle et fortement projetées sur un axe contribuent davantage à la définition de cet axe.\
-Des variables orientées dans la même direction sont positivement associées, tandis que des directions opposées traduisent une opposition.
+L’axe 1 est fortement et positivement corrélé à Session_Duration, Water_Intake et Workout_Frequency, et fortement négativement corrélé à Fat_Percentage. Il peut donc être interprété comme un axe de niveau d’activité ou d’engagement sportif, opposant les individus actifs, réguliers et à faible masse grasse aux individus moins actifs et plus gras.
+
+L’axe 2 est surtout marqué négativement par Weight et Height, et positivement par Session_Duration et Workout_Frequency. Il semble donc opposer davantage un pôle morphologique à un pôle comportemental d’entraînement. En revanche, Age et Avg_BPM contribuent peu aux deux premiers axes, ce qui signifie qu’ils structurent moins fortement la variabilité globale résumée par le plan 1-2
 
 # 5. Classification ascendante hiérarchique (CAH)
 
@@ -484,9 +449,6 @@ gym$Cluster_CAH <- as.factor(groupes_cah)
 table(gym$Cluster_CAH)
 ```
 
-Le dendrogramme permet d’identifier une partition en groupes relativement homogènes.\
-Ici, on retient une solution à **3 classes**.
-
 ## 5.2. Projection des clusters sur le plan ACP
 
 ```{r cah-projection}
@@ -509,7 +471,7 @@ legend(
 )
 ```
 
-La représentation sur le plan factoriel aide à visualiser la séparation entre les groupes construits par la CAH.
+La projection des clusters sur le plan factoriel montre que les groupes se répartissent de manière relativement structurée dans l’espace ACP. Cela confirme que les premiers axes captent bien la structure des données.
 
 ## 5.3. Profil des clusters
 
@@ -522,8 +484,7 @@ table(gym$Cluster_CAH, gym$Experience_Level)
 table(gym$Cluster_CAH, gym$Classe_Calories)
 ```
 
-L’étude des moyennes et des tableaux croisés permet d’interpréter chaque cluster :\
-certains groupes peuvent par exemple correspondre à des individus plus endurants, plus intensifs, ou à plus forte dépense calorique.
+Le profil moyen des clusters permet une interprétation très parlante. Le cluster 1 regroupe les individus ayant les séances les plus longues, la fréquence d’entraînement la plus élevée, le plus faible taux de masse grasse et une hydratation élevée. Il correspond très clairement à un profil sportif confirmé et il est presque entièrement composé d’individus de niveau d’expérience 3. Le cluster 2 rassemble plutôt des individus plus petits, plus légers, avec une masse grasse plus élevée, une hydratation faible et des séances plus courtes. Il est majoritairement féminin et principalement constitué d’individus de niveaux 1 et 2. Le cluster 3 correspond à des individus plus grands et plus lourds, très majoritairement masculins, avec un profil intermédiaire en termes de durée, fréquence et dépense calorique. Enfin, le croisement avec Classe_Calories confirme cette lecture: le cluster 1 concentre surtout les dépenses élevées, le cluster 2 surtout les faibles dépenses, et le cluster 3 occupe une position intermédiaire
 
 # 6. Préparation des bases pour la modélisation
 
@@ -556,8 +517,6 @@ train_lda <- data_lda[index_train, ]
 test_lda  <- data_lda[index_test, ]
 ```
 
-Ce découpage permet d’évaluer les performances des modèles sur des données non utilisées pendant l’apprentissage.
-
 # 7. Modèles de classification de `Classe_Calories`
 
 ## 7.1. Analyse discriminante linéaire (LDA)
@@ -576,8 +535,7 @@ tab_lda
 round(acc_lda, 4)
 ```
 
-La matrice de confusion permet d’identifier quelles classes sont les mieux reconnues.\
-L’accuracy mesure la proportion globale de bonnes classifications sur l’échantillon test.
+La LDA atteint une accuracy de 0,8562 sur l’échantillon test, ce qui correspond à une performance déjà solide. La matrice de confusion montre que les classes extrêmes, Faible et Haute, sont bien reconnues, tandis que les erreurs concernent surtout la classe intermédiaire Modérée, qui se confond partiellement avec les deux autres. Ce résultat est logique: les profils intermédiaires sont souvent moins bien séparés que les profils extrêmes. 
 
 ## 7.2. Arbre de décision CART
 
@@ -621,8 +579,7 @@ tab_cart
 round(acc_cart, 4)
 ```
 
-L’intérêt de CART est son caractère facilement interprétable.\
-Les variables apparaissant haut dans l’arbre sont souvent les plus discriminantes pour la classification.
+Le modèle CART de classification, après élagage selon la règle du 1-SE, atteint une accuracy de 0,8699, légèrement supérieure à celle de la LDA. Les erreurs restent concentrées autour de la classe Modérée, ce qui confirme qu’elle constitue la zone de transition entre les profils faibles et élevés. L’intérêt principal du CART réside dans son interprétabilité: il permet d’identifier des seuils décisionnels simples à partir de variables comme la durée de séance, la fréquence, l’âge ou l’Avg_BPM. En revanche, ses performances restent un peu limitées par rapport à un modèle d’ensemble.
 
 ## 7.3. Random Forest
 
@@ -651,8 +608,7 @@ tab_rf
 round(acc_rf, 4)
 ```
 
-L’erreur OOB fournit une estimation interne de la performance du modèle.\
-Le graphique d’importance permet d’identifier les variables les plus utiles pour prédire la classe de dépense calorique.
+La Random Forest fournit la meilleure performance en classification, avec une accuracy de 0,8801 sur le test et une erreur OOB de 10,87 %, ce qui confirme sa bonne robustesse. L’importance des variables montre que Session_Duration est de loin la variable la plus discriminante, suivie par Avg_BPM, Fat_Percentage, Experience_Level et Age. À l’inverse, Workout_Type semble peu contributive ici. La forêt aléatoire améliore la qualité de prédiction par rapport à LDA et CART, ce qui suggère que les relations entre variables explicatives et classes de dépense calorique comportent des non-linéarités et des interactions qu’un modèle plus souple capte mieux
 
 # 8. Modèles de régression pour `Calories_Burned`
 
@@ -693,12 +649,14 @@ pred_cart_reg <- predict(cart_reg, newdata = test_reg)
 
 r2_cart_reg <- cor(test_reg$Calories_Burned, pred_cart_reg)^2
 rmse_cart_reg <- sqrt(mean((test_reg$Calories_Burned - pred_cart_reg)^2))
+mae_cart_reg <- mean(abs(test_reg$Calories_Burned - pred_cart_reg))
 
 round(r2_cart_reg, 4)
 round(rmse_cart_reg, 2)
+round(mae_cart_reg, 2)
 ```
 
-Le coefficient de détermination $R^2$ évalue la part de variabilité expliquée sur l’échantillon test, tandis que le RMSE mesure l’erreur moyenne de prédiction en unités de calories.
+L’arbre de régression obtient de bonnes performances avec un R² test de 0,9121, un RMSE de 79,16 et un MAE de 60,52. Cela signifie que le modèle explique une grande partie de la variabilité de Calories_Burned, tout en maintenant une erreur de prédiction raisonnable. Les variables utilisées dans l’arbre sont cohérentes avec les analyses précédentes, notamment Session_Duration, Avg_BPM et Fat_Percentage. Le modèle reste toutefois moins précis qu’une approche de type PLS.
 
 ## 8.2. Régression PLS
 
@@ -734,22 +692,68 @@ pred_pls <- as.vector(pred_pls)
 
 r2_pls <- cor(test_pls$Calories_Burned, pred_pls)^2
 rmse_pls <- sqrt(mean((test_pls$Calories_Burned - pred_pls)^2))
-
+mae_pls <- mean(abs(test_pls$Calories_Burned - pred_pls))
 round(r2_pls, 4)
 round(rmse_pls, 2)
+round(mae_pls, 2)
+
 ```
 
-Le nombre optimal de composantes est choisi automatiquement à partir du RMSEP en validation croisée.\
-La comparaison du $R^2$ et du RMSE avec ceux de CART permet de déterminer le modèle de régression le plus performant.
+La PLS donne les meilleures performances en régression. La validation croisée montre une chute très rapide du RMSEP entre 1 et 4 composantes, puis une stabilisation à partir de 5-6 composantes, avec un optimum retenu à 6 composantes. Sur le jeu test, le modèle atteint un R² de 0,9683, un RMSE de 47,49 et un MAE de 36,67, ce qui traduit une excellente qualité de prédiction. Ces résultats montrent que la dépense calorique peut être très bien expliquée par une combinaison linéaire latente des variables quantitatives retenues.
 
 # 9. Comparaison finale des performances
+
+```{r metrics-functions}
+macro_class_metrics <- function(obs, pred) {
+  tab <- table(obs, pred)
+  classes <- rownames(tab)
+
+  precision <- recall <- f1 <- numeric(length(classes))
+
+  for (i in seq_along(classes)) {
+    cl <- classes[i]
+
+    TP <- tab[cl, cl]
+    FP <- sum(tab[, cl]) - TP
+    FN <- sum(tab[cl, ]) - TP
+
+    precision[i] <- ifelse((TP + FP) == 0, NA, TP / (TP + FP))
+    recall[i]    <- ifelse((TP + FN) == 0, NA, TP / (TP + FN))
+    f1[i]        <- ifelse(
+      is.na(precision[i]) | is.na(recall[i]) | (precision[i] + recall[i] == 0),
+      NA,
+      2 * precision[i] * recall[i] / (precision[i] + recall[i])
+    )
+  }
+
+  c(
+    Precision_macro = mean(precision, na.rm = TRUE),
+    Recall_macro    = mean(recall, na.rm = TRUE),
+    F1_macro        = mean(f1, na.rm = TRUE)
+  )
+}
+```
 
 ## 9.1. Résumé des modèles de classification
 
 ```{r resume-classification}
-resume_classification <- data.frame( Modele = c("LDA", "CART classification", "Random Forest"), Accuracy_test = c(acc_lda, acc_cart, acc_rf) )
 
-resume_classification
+
+met_lda  <- macro_class_metrics(test_lda$Classe_Calories, pred_lda)
+met_cart <- macro_class_metrics(test_class$Classe_Calories, pred_cart)
+met_rf   <- macro_class_metrics(test_class$Classe_Calories, pred_rf)
+
+resume_classification <- data.frame(
+  Modele = c("LDA", "CART classification", "Random Forest"),
+  Accuracy_test = c(acc_lda, acc_cart, acc_rf),
+  Precision_macro = c(met_lda["Precision_macro"], met_cart["Precision_macro"], met_rf["Precision_macro"]),
+  Recall_macro = c(met_lda["Recall_macro"], met_cart["Recall_macro"], met_rf["Recall_macro"]),
+  F1_macro = c(met_lda["F1_macro"], met_cart["F1_macro"], met_rf["F1_macro"])
+)
+
+resume_classification_aff <- resume_classification
+resume_classification_aff[, -1] <- lapply(resume_classification_aff[, -1], round, 4)
+resume_classification_aff
 ```
 
 ## 9.2. Résumé des modèles de régression
@@ -758,31 +762,158 @@ resume_classification
 resume_regression <- data.frame(
   Modele = c("CART régression", "PLS"),
   R2_test = c(r2_cart_reg, r2_pls),
-  RMSE_test = c(rmse_cart_reg, rmse_pls)
+  RMSE_test = c(rmse_cart_reg, rmse_pls),
+  MAE_test = c(mae_cart_reg, mae_pls)
 )
 
 data.frame(
   Modele = resume_regression$Modele,
   R2_test = round(resume_regression$R2_test, 4),
-  RMSE_test = round(resume_regression$RMSE_test, 2)
+  RMSE_test = round(resume_regression$RMSE_test, 2),
+  MAE_test = round(resume_regression$MAE_test, 2)
 )
 ```
 
+## 9.3. Visualisation comparative des performances
+
+```{r comparaison-ggplot}
+# Table commune pour visualiser tous les modèles en une seule figure
+perf_all <- data.frame(
+  Modele = c("LDA", "CART classification", "Random Forest", "CART régression", "PLS"),
+  Type_modele = c("Classification", "Classification", "Classification", "Régression", "Régression"),
+  Accuracy = c(acc_lda, acc_cart, acc_rf, NA, NA),
+  R2 = c(NA, NA, NA, r2_cart_reg, r2_pls),
+  RMSE = c(NA, NA, NA, rmse_cart_reg, rmse_pls)
+)
+
+# Passage au format long pour ggplot
+perf_long <- pivot_longer(
+  perf_all,
+  cols = c("Accuracy", "R2", "RMSE"),
+  names_to = "Metrique",
+  values_to = "Valeur"
+)
+
+# On enlève les NA
+perf_long <- perf_long[!is.na(perf_long$Valeur), ]
+
+# Ordre des métriques
+perf_long$Metrique <- factor(perf_long$Metrique, levels = c("Accuracy", "R2", "RMSE"))
+
+# Plot comparatif
+ggplot(perf_long, aes(x = reorder(Modele, Valeur), y = Valeur, fill = Type_modele)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = round(Valeur, 3)), hjust = -0.1, size = 3.8) +
+  facet_wrap(~ Metrique, scales = "free_x", ncol = 1) +
+  coord_flip() +
+  labs(
+    title = "Comparaison visuelle des performances des modèles",
+    x = "Modèle",
+    y = "Valeur de la métrique",
+    fill = "Type"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    strip.text = element_text(face = "bold"),
+    plot.title = element_text(face = "bold"),
+    legend.position = "bottom"
+  )
+```
+
+```{r metrics-compare-functions}
+# Données classification -> format long
+plot_classif <- data.frame(
+  Modele = rep(resume_classification$Modele, times = 4),
+  Metric = rep(c("Accuracy", "Precision macro", "Recall macro", "F1 macro"),
+               each = nrow(resume_classification)),
+  Valeur = c(
+    resume_classification$Accuracy_test,
+    resume_classification$Precision_macro,
+    resume_classification$Recall_macro,
+    resume_classification$F1_macro
+  ),
+  Famille = "Classification"
+)
+
+# Données régression -> format long
+plot_reg <- data.frame(
+  Modele = rep(resume_regression$Modele, times = 3),
+  Metric = rep(c("R2", "RMSE", "MAE"),
+               each = nrow(resume_regression)),
+  Valeur = c(
+    resume_regression$R2_test,
+    resume_regression$RMSE_test,
+    resume_regression$MAE_test
+  ),
+  Famille = "Régression"
+)
+
+plot_all <- rbind(plot_classif, plot_reg)
+
+# Ordre des modèles
+plot_all$Modele <- factor(
+  plot_all$Modele,
+  levels = c("LDA", "CART classification", "Random Forest", "CART régression", "PLS")
+)
+
+# Ordre des métriques
+plot_all$Metric <- factor(
+  plot_all$Metric,
+  levels = c("Accuracy", "Precision macro", "Recall macro", "F1 macro", "R2", "RMSE", "MAE")
+)
+
+ggplot(plot_all, aes(x = Modele, y = Valeur, fill = Famille)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = round(Valeur, 3)),
+            vjust = -0.3, size = 3.2) +
+  facet_wrap(~ Metric, scales = "free_y", ncol = 3) +
+  labs(
+    title = "Comparaison visuelle des performances des modèles",
+    subtitle = "Classification : Accuracy, Precision, Recall, F1 | Régression : R², RMSE, MAE",
+    x = "Modèle",
+    y = "Valeur de l'indicateur",
+    fill = "Famille"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.x = element_text(angle = 35, hjust = 1),
+    strip.text = element_text(face = "bold"),
+    legend.position = "top"
+  )
+```
+
+### Interpretation:
+
+### 1. Modèles de classification
+
+Les trois modèles de classification comparés sont **LDA**, **CART classification** et **Random Forest**.\
+Globalement, les trois modèles présentent des performances élevées, avec des valeurs proches ou supérieures à **0,85** sur l’ensemble des métriques. Cela indique que la variable cible `Classe_Calories` est globalement bien prédite à partir des variables explicatives retenues.
+
+Parmi ces modèles, **Random Forest** apparaît comme le plus performant ou au moins le plus robuste de façon globale, avec les valeurs les plus élevées sur la plupart des indicateurs.\
+Cela suggère que les relations entre les variables explicatives et la classe de dépense calorique ne sont pas strictement linéaires, et qu’un modèle d’ensemble comme Random Forest capte mieux la complexité des données que la LDA ou un arbre CART unique.
+
+La **LDA** conserve néanmoins de très bonnes performances, ce qui montre que la séparation entre classes est déjà assez nette dans l’espace des variables quantitatives.\
+Le **CART classification** est légèrement moins performant, ce qui est attendu : un arbre unique est souvent plus simple à interpréter, mais moins stable et moins performant qu’une forêt aléatoire.
+
+### 2. Modèles de régression
+
+Pour la prédiction directe de `Calories_Burned`, deux modèles sont comparés : **CART régression** et **PLS**.\
+Les indicateurs retenus sont le **R²**, le **RMSE** et le **MAE**.
+
+Le modèle **PLS** obtient de meilleures performances que le **CART régression** :
+
+-   son **R²** est plus élevé, ce qui signifie qu’il explique une plus grande part de la variabilité des calories brûlées ;
+
+-   son **RMSE** est plus faible ;
+
+-   son **MAE** est également plus faible.
+
+Autrement dit, la **PLS fournit des prédictions plus précises et plus stables** que l’arbre de régression.\
+Ce résultat est cohérent avec la structure des données : la PLS est particulièrement adaptée lorsqu’il existe de la **multicolinéarité** entre les variables quantitatives, et lorsqu’on souhaite intégrer simultanément une information issue des variables qualitatives via les axes d’**AFCM**.
+
+À l’inverse, le **CART régression** reste utile pour une lecture plus simple et plus interprétable des seuils de décision, mais il est ici moins performant sur le plan prédictif
+
 # Conclusion
 
-Cette analyse a permis de mettre en place une démarche complète autour du jeu de données **Gym Members Exercise Dataset**.
-
-Dans un premier temps, la préparation des données a permis de sélectionner un ensemble cohérent de variables quantitatives et qualitatives, tout en limitant les redondances.\
-L’analyse descriptive a ensuite fourni une première lecture de la structure du jeu de données.
-
-L’ACP a permis de résumer l’information contenue dans les variables quantitatives et d’explorer les relations entre individus, variables et groupes.\
-La CAH a complété cette approche exploratoire en mettant en évidence des profils homogènes d’individus.
-
-Enfin, les modèles supervisés ont permis d’évaluer la capacité prédictive des variables étudiées :
-
--   pour la **classification** de la dépense calorique (`Classe_Calories`) ;
--   pour la **régression** directe de `Calories_Burned`.
-
-Le modèle de classification le plus performant est celui dont l’accuracy test est la plus élevée, tandis que pour la régression, le meilleur compromis correspond à un **R² élevé** et un **RMSE faible**.
-
-Cette démarche montre ainsi l’intérêt de combiner des méthodes descriptives, exploratoires et prédictives dans l’analyse d’un jeu de données multidimensionnel.
+La comparaison visuelle des performances montre que Random Forest est le meilleur modèle pour la classification des classes de calories, tandis que la PLS est la méthode la plus performante pour la prédiction quantitative des calories brûlées.
