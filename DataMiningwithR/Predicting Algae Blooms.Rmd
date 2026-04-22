@@ -1,0 +1,92 @@
+---
+title: "Predicting Algae Blooms"
+author: "PHAM Huong"
+date: "2026-03-16"
+output: html_document
+---
+
+# Predicting Algae Blooms
+
+## Loading the Data into R
+
+```{r}
+algae <- read.table('/Users/thanhhuong/R/Data_Analysis/DataMiningwithR/Analysis.txt',
+           header=FALSE,
+           dec='.',
+           col.names=c('season','size','speed','mxPH','mnO2','Cl',
+           'NO3','NH4','oPO4','PO4','Chla','a1','a2','a3','a4',
+           'a5','a6','a7'),
+           na.strings=c('XXXXXXX'))
+
+```
+
+## Data Visualization and Summarization
+
+```{r}
+library(ggplot2)
+ggplot(algae,aes(x=mxPH)) + geom_histogram(aes(y=..density..))
+```
+
+```{r}
+ggplot(algae,aes(x=mxPH)) + 
+    geom_histogram(aes(y=..density..)) + 
+    geom_density(color="red") + geom_rug() + 
+    ggtitle("The Histogram of mxPH (maximum pH)") + 
+    xlab("") + ylab("")
+library(car)
+qqPlot(algae$mxPH,main='Normal QQ plot of maximum pH',ylab="")
+```
+
+```{r}
+library(car)
+gh <- ggplot(algae,aes(x=mxPH)) + geom_histogram(aes(y=..density..)) + geom_density(color="red") + geom_rug() + ggtitle("The Histogram of mxPH (maximum pH)") + xlab("") + ylab("")
+par(mfrow=c(1,2))
+vpL <- viewport(height=unit(1, "npc"), width=unit(0.5, "npc"), 
+                           just="left", 
+                           y=0.5, x=0)
+qqPlot(algae$mxPH,main='Normal QQ plot of maximum pH')
+print(gh,vp=vpL)
+qqPlot(algae$mxPH,main='Normal QQ plot of maximum pH',ylab="")
+```
+
+```{r}
+ggplot(algae,aes(x=factor(0),y=oPO4)) + 
+    geom_boxplot() + geom_rug() + 
+    geom_hline(aes(yintercept=mean(algae$oPO4, na.rm = TRUE)),linetype=2,colour="red") +
+    ylab("Orthophosphate (oPO4)") + xlab("") + scale_x_discrete(breaks=NULL)
+
+```
+
+```{r}
+plot(algae$NH4, xlab = "")
+abline(h = mean(algae$NH4, na.rm = T), lty = 1)
+abline(h = mean(algae$NH4, na.rm = T) + sd(algae$NH4, na.rm = T), lty = 2)
+abline(h = median(algae$NH4, na.rm = T), lty = 3)
+identify(algae$NH4)
+```
+
+```{r}
+plot(algae$NH4, xlab = "")
+clickedRows <- identify(algae$NH4)
+algae[clickedRows, ]
+```
+
+```{r}
+library(dplyr)
+filter(algae, NH4 > 19000)
+```
+
+```{r}
+library(DMwR2)
+library(dplyr)  
+data(algae)
+```
+
+```{r}
+data(algae,package="DMwR2")
+mean(algae$a1)
+mean(algae$NO3)
+mean(algae$NO3, na.rm=TRUE)
+median(algae$a3)
+median(algae$mxPH, na.rm=TRUE)
+```
